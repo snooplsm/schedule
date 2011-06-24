@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<RadioGroup
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:paddingLeft="20dip"
+		android:id="@+id/time_group">
+
+		<RadioButton
+			android:layout_width="fill_parent"
+			android:layout_height="30dip"
+			android:layout_weight="1"
+			android:paddingLeft="60dip"
+			android:text="  5 minutes before"/>
+		<RadioButton
+			android:layout_width="fill_parent"
+			android:layout_height="30dip"
+			android:paddingLeft="60dip"
+			android:layout_weight="1"
+			android:text="  4 minutes before"/>
+		<RadioButton
+			android:layout_width="fill_parent"
+			android:layout_height="30dip"
+			android:paddingLeft="60dip"
+			android:layout_weight="1"
+			android:text="  3 minutes before"/>
+		<RadioButton
+			android:layout_width="fill_parent"
+			android:layout_height="30dip"
+			android:paddingLeft="60dip"
+			android:layout_weight="1"
+			android:text="  2 minutes before"/>
+		<RadioButton
+			android:layout_width="fill_parent"
+			android:layout_height="30dip"
+			android:paddingLeft="60dip"
+			android:layout_weight="1"
+			android:text="  1 minute before"/>
+		<RadioButton
+			android:layout_width="fill_parent"
+			android:layout_height="30dip"
+			android:paddingLeft="60dip"
+			android:layout_weight="1"
+			android:text="  on actual time"/>
+
+	</RadioGroup>
+
+</LinearLayout>
