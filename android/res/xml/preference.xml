@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<CheckBoxPreference
+		android:summary="pop up jumper on station select"
+		android:title="auto jump"
+		android:key="showJumper"
+		android:persistent="true"
+		android:defaultValue="true"/>
+	<CheckBoxPreference
+		android:summary="determine train status and track #"
+		android:title="use departurevision"
+		android:key="useDepartureVision"
+		android:persistent="true"
+		android:defaultValue="true"/>
+	<CheckBoxPreference
+		android:summary="get notified when you need to upgrade"
+		android:title="check for updates"
+		android:key="checkForUpdates"
+		android:persistent="true"
+		android:defaultValue="true"/>
+	<CheckBoxPreference
+		android:summary="places the date the schedule ends on the front page"
+		android:title="show schedule expiration"
+		android:key="showScheduleExpiration"
+		android:persistent="true"
+		android:defaultValue="false"/>
+</PreferenceScreen>

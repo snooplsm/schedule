@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:orientation="horizontal"
+		android:layout_height="60dip">
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:textSize="20dip"
+			android:layout_alignParentLeft="true"
+			android:paddingLeft="20dip"
+			android:textColor="@color/lgrey_start"
+			android:text="["/>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:gravity="center"
+			android:layout_centerInParent="true"
+			android:textSize="20dip"
+			android:textColor="@color/lgrey_start"
+			android:text="A HappyTap App"/>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="@color/lgrey_start"
+			android:textSize="20dip"
+			android:gravity="center"
+			android:layout_centerVertical="true"
+			android:layout_alignParentRight="true"
+			android:paddingRight="20dip"
+			android:text="]"/>
+	</RelativeLayout>
+
+</LinearLayout>

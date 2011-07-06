@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<TextView
+
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="New York Penn Station"/>
+
+	<TextView
+
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="Rahway"/>
+
+	<CheckBox 
+	
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="i under stand that this app does not support connections and transfers"
+		
+	/>
+	
+	<EditText 
+		android:layout_width="fill_parent"
+		android:minHeight="200dip"
+		android:layout_height="wrap_content"/>
+	/>
+
+	<RelativeLayout 
+		android:layout_width="fill_parent"
+		android:layout_height="50dip">
+		<TextView
+			android:text="Submit"/>
+	></RelativeLayout>
+
+</LinearLayout>
