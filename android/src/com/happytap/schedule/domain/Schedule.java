@@ -22,6 +22,9 @@ public class Schedule implements Serializable {
 	public Set<String> tripIdsInReverseOrder;
 	public Map<String, Service> services;
 	public Map<String, Trip> tripIdToTrip;
+	public String departId;
+	public String arriveId;
+	public String[] connections;
 	public Map<String, StationToStation> tripIdToBlockId;
 	public Map<String, Set<String>> blockIdToTripId;
 	public Date start;
@@ -80,6 +83,8 @@ public class Schedule implements Serializable {
 				sts.blockId = tripIdToBlockId(tripId);
 				sts.departTime = departTime;
 				sts.arriveTime = arriveTime; 
+				sts.departId = depart.stopId;
+				sts.arriveId = arrive.stopId;
 				Set<String> trips = blockIdToTripId.get(sts.blockId);
 				if(trips==null) {
 					trips = new HashSet<String>();
@@ -98,8 +103,42 @@ public class Schedule implements Serializable {
 						}
 
 					});
+			if(connections!=null) {
+				convertToConnections(_stationToStations);
+			}
 			traverse(_stationToStations, traversal);
 		}
+	}
+	
+	private void convertToConnections(List<StationToStation> stationToStation) {
+		List<StationToStation> connections = new ArrayList<StationToStation>();
+		int maxThreshold = 60*2000; // 1 hr
+		int minThreshold = 0;
+		
+		for(StationToStation s : stationToStation) {
+			if(s.departId.equals(departId)) {
+				
+			} else {
+				connections.add(s);
+			}
+		}
+		stationToStation.removeAll(connections);
+		List<StationToStation> removeMe = new ArrayList<StationToStation>();
+		for(StationToStation s : stationToStation) {
+			for(StationToStation connection : connections) {
+				long diff = connection.departTime.getTimeInMillis() - s.arriveTime.getTimeInMillis();
+				if(diff<maxThreshold && diff > minThreshold) {
+					if(s.connections == null) {
+						s.connections = new ArrayList<StationToStation>(2);						
+					}
+					s.connections.add(connection);
+				}
+			}
+			if(s.connections==null) {
+				removeMe.add(s);
+			}
+		}
+		stationToStation.removeAll(removeMe);
 	}
 
 	public void inOrderTraversal(ScheduleTraverser t) {

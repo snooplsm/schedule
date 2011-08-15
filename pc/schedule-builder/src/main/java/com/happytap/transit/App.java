@@ -1,9 +1,12 @@
 package com.happytap.transit;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,17 +19,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import sun.misc.IOUtils;
 import au.com.bytecode.opencsv.CSVReader;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.happytap.transit.ReverseGeocode.AddressComponent;
+import com.happytap.transit.ReverseGeocode.Result;
+import com.happytap.transit.ReverseGeocode.Results;
 
 /**
  * Hello world!
@@ -44,6 +53,7 @@ public class App {
 	private List<? extends Service> services;
 	private Map<String, DayService> dayServices;
 	private List<DateService> dateServices;
+	private List<DayService> calServices;
 	private List<StopTime> stopTimes;
 	private List<SimpleStopTime> simpleStopTimes;
 	private Map<String,Set<Route>> stationIdToRoutes = new HashMap<String, Set<Route>>();
@@ -76,14 +86,14 @@ public class App {
 	private void splitDatabase() {
 		ProcessBuilder b = new ProcessBuilder();
 		b.directory(databaseFile.getParentFile());
-		b.command("/usr/bin/split", "-b", "100k", databaseFile.getName(),
-				databaseFile.getName() + "_");
+		b.command("/usr/bin/split", "-b", "100k", "-a","3", databaseFile.getName(),
+				databaseFile.getName().replace(".", "_") + "_");
 		try {
 			b.start();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		databaseFile.delete();
+		//databaseFile.delete();
 	}
 
 	class TimeBean {
@@ -177,11 +187,13 @@ public class App {
 			conn.commit();
 			prep.close();
 			prep = conn
-					.prepareStatement("insert into stops(id,name) values(?,?)");
+					.prepareStatement("insert into stops(id,name,lat,lon) values(?,?,?,?)");
 			conn.setAutoCommit(false);
 			for (Station s : stations.values()) {
 				prep.setString(1, s.id);
 				prep.setString(2, s.name);
+				prep.setFloat(3, s.lat);
+				prep.setFloat(4, s.lon);
 				prep.addBatch();
 			}
 			prep.executeBatch();
@@ -198,8 +210,27 @@ public class App {
 			}
 			prep.executeBatch();
 			conn.commit();
+			prep.clearBatch();
+			prep = conn.prepareStatement("insert into calendar(service_id,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start,end) values (?,?,?,?,?,?,?,?,?,?)");
+
+			for(DayService s : calServices) {
+				prep.setString(1, s.id);
+				prep.setInt(2, s.monday);
+				prep.setInt(3, s.tuesday);
+				prep.setInt(4, s.wednesday);
+				prep.setInt(5, s.thursday);
+				prep.setInt(6, s.friday);
+				prep.setInt(7, s.saturday);
+				prep.setInt(8, s.sunday);
+				prep.setLong(9, s.start.getTime());
+				prep.setLong(10, s.end.getTime());
+				prep.addBatch();
+			}
+			prep.executeBatch();
+			conn.commit();
 			prep = conn
-					.prepareStatement("insert into routes(id,name) values(?,?)");
+			.prepareStatement("insert into routes(id,name) values(?,?)");
+	conn.setAutoCommit(false);
 			for (Route r : routes.values()) {
 				prep.setString(1, r.id);
 				prep.setString(2, r.name);
@@ -231,26 +262,29 @@ public class App {
 			stopTime.trip.route.stations.add(stopTime.stop);
 			stopTime.stop.routes.add(stopTime.trip.route);			
 		}
-		
-		TrainGraph graph = new TrainGraph();
-
-		for(Trip trip : trips.values()) {
-			Iterator<Station> iter = trip.stations.values().iterator();
-			Station prev = null;
-			while(prev!=null || iter.hasNext()) {
-				Station station = iter.next();
-				if(prev!=null) {
-					graph.addEdge(prev, station, trip.route);
-				}
-				if(iter.hasNext()) {
-					prev = station;
-				} else {
-					prev = null;
-				}
-				
-			}
-			System.out.println("alright");
-		}
+//		
+//		TrainGraph graph = new TrainGraph();
+//
+//		for(Trip trip : trips.values()) {
+//			Iterator<Station> iter = trip.stations.values().iterator();
+//			Station prev = null;
+//			while(prev!=null || iter.hasNext()) {
+//				Station station = iter.next();
+//				if(prev!=null) {
+//					graph.addEdge(prev, station, trip.route);
+//				}
+//				if(iter.hasNext()) {
+//					prev = station;
+//				} else {
+//					prev = null;
+//				}
+//				
+//			}
+//			Station newyork = stations.get("105");
+//			Station radburn = stations.get("126");
+//			graph.findShortestPath(newyork, radburn);
+//			System.out.println("alright");
+//		}
 		
 		for (final Map.Entry<String, Set<Station>> entry : routeToStations
 				.entrySet()) {
@@ -427,6 +461,7 @@ public class App {
 	private void makeServices() {
 		try {
 			dateServices = new ArrayList<DateService>();
+			calServices = new ArrayList<DayService>();
 			String serviceId = "service_id";
 			int serviceIdPos;
 			String date = "date";
@@ -447,9 +482,47 @@ public class App {
 				service.exceptionType = toInt(row[exceptionTypePos]);
 				dateServices.add(service);
 			}
+			reader.close();			
 			File file = new File(gtfsFolder, "calendar.txt");
 			if (!file.exists()) {
-				services = dateServices;
+				return;				
+				//services = dateServices;
+			}
+			reader = new CSVReader(new FileReader(new File(
+					gtfsFolder, "calendar.txt")));
+			headers = reader.readNext();
+			String monday = "monday";
+			String tuesday = "tuesday";
+			String wednesday = "wednesday";
+			String thursday = "thursday";
+			String friday = "friday";
+			String saturday = "saturday";
+			String sunday = "sunday";
+			String start = "start_date";
+			String end = "end_date";
+			int mPos = find(monday,headers);
+			int tuPos = find(tuesday,headers);
+			int wPos = find(wednesday,headers);
+			int thPos = find(thursday,headers);
+			int fPos = find(friday,headers);
+			int saPos = find(saturday,headers);
+			int suPos = find(sunday,headers);
+			int sPos = find(start,headers);
+			int ePos = find(end,headers);
+			while ((row = reader.readNext()) != null) {
+				DayService service = new DayService();
+				service.id = row[serviceIdPos];
+				service.monday = toInt(row[mPos]);
+				service.tuesday = toInt(row[tuPos]);
+				service.wednesday = toInt(row[wPos]);
+				service.thursday = toInt(row[thPos]);
+				service.friday = toInt(row[fPos]);
+				service.saturday = toInt(row[saPos]);
+				service.sunday = toInt(row[suPos]);
+				service.setStart(row[sPos]);
+				service.setEnd(row[ePos]);
+				//service.exceptionType = toInt(row[exceptionTypePos]);
+				calServices.add(service);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -458,31 +531,34 @@ public class App {
 
 	class Service implements Serializable {
 		String id;
+		int exceptionType;
 	}
 
 	class DayService extends Service {
-		static final int monday = 2;
-		static final int tuesday = 4;
-		static final int wednesday = 16;
-		static final int thursday = 32;
-		static final int friday = 64;
-		static final int saturday = 128;
-		static final int sunday = 256;
-		int flag;
-
-		void set(int flag, String val) {
-			if ("0".equals(val)) {
-				this.flag |= flag;
-			} else {
-				this.flag &= flag;
+		int monday,tuesday,wednesday,thursday,friday,saturday,sunday;
+		Date start,end;
+		
+		void setStart(String date) {
+			try {
+				this.start = dateFormat.parse(date);
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
 			}
 		}
+		void setEnd(String date) {
+			try {
+				this.end = dateFormat.parse(date);
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		int flag;
 	}
 
 	static DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	class DateService extends Service implements Serializable {
-		int exceptionType;
+		
 		Date date;
 
 		void setDate(String date) {
@@ -576,24 +652,111 @@ public class App {
 		stations = new HashMap<String, Station>();
 		String stopId = "stop_id";
 		String stopName = "stop_name";
+		String lat = "stop_lat";
+		String lon = "stop_lon";
 		int stopIdPos = -1;
 		int stopNamePos = -1;
+		int latPos = -1;
+		int lonPos = -1;
 		try {
 			CSVReader reader = new CSVReader(new FileReader(new File(
 					gtfsFolder, "stops.txt")));
 			String[] headers = reader.readNext();
 			stopIdPos = find(stopId, headers);
 			stopNamePos = find(stopName, headers);
+			latPos = find(lat,headers);
+			lonPos = find(lon,headers);
 			String[] row = null;
+			Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+			Map<String,AtomicInteger> counts = new HashMap<String,AtomicInteger>();
 			while ((row = reader.readNext()) != null) {
 				Station station = new Station();
 				station.id = row[stopIdPos];
 				station.name = row[stopNamePos];
+				station.lat = Float.parseFloat(row[latPos]);
+				station.lon = Float.parseFloat(row[lonPos]);
+				File cache = new File(gtfsFolder,station.id);
+				if(!cache.exists()) {
+					try {
+						URL u = new URL("http://maps.googleapis.com/maps/api/geocode/json?latlng="+row[latPos]+","+row[lonPos]+"&sensor=true");
+						HttpURLConnection conn = (HttpURLConnection)u.openConnection();
+						conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_7) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.107 Safari/535.1");
+						if(conn.getResponseCode()>=200 && conn.getResponseCode()<300) {
+							FileOutputStream fos = new FileOutputStream(cache);
+							fos.write(IOUtils.readFully(conn.getInputStream(), -1, true));
+							fos.close();
+							long len = cache.length();
+							if(len<=4096) {
+								cache.delete();
+								System.exit(1);
+							}
+							conn.disconnect();
+							Thread.sleep(90);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				String addy = findAddress(gson,cache);
+				if(addy==null) {
+					findAddress(gson,cache);
+				} else {
+					if(addy.length()>27) {
+						System.out.println(addy);
+					}
+				}
+				//station.name = addy + " - " + station.name;
+				AtomicInteger count = counts.get(station.name);
+				if(count==null) {
+					counts.put(station.name, count = new AtomicInteger());
+				}
+				count.incrementAndGet();
 				stations.put(station.id, station);
+			}
+			for(Map.Entry<String, AtomicInteger> e : counts.entrySet()) {
+				//if(e.getValue().intValue()>1) {
+					System.out.println(e.getKey() + " : " + e.getValue());
+				//}
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	private String findAddress(Gson gson, File cache) throws Exception{
+		Results r = gson.fromJson(new FileReader(cache), Results.class);
+		for(Result result : r.getResults()) {
+			AddressComponent toReturn = null;
+			AddressComponent toReturn2 = null;
+			AddressComponent toReturn3 = null;
+			for(AddressComponent add : result.getAddressComponents()) {				
+				for(String type : add.getTypes()) {
+					if(type.equals("sublocality")) {
+						//System.out.println(add.getLongName() + " or " + add.getShortName());
+						return add.getLongName();					
+					}
+					if(type.equals("locality")) {
+						toReturn = add;
+					}
+					if(type.equals("neighborhood")) {
+						toReturn2 = add;
+					}
+					if(type.equals("administrative_area_level_3")) {
+						toReturn3 = add;
+					}
+				}
+				if(toReturn!=null) {
+					return toReturn.getShortName();
+				}
+				if(toReturn2!=null) {
+					return toReturn2.getShortName();
+				}
+				if(toReturn3!=null) {
+					return toReturn3.getShortName();
+				}
+			}
+		}
+		return null;
 	}
 
 	int toInt(String val) {
@@ -612,20 +775,26 @@ public class App {
 	class Station {
 		String name;
 		String id;
+		float lat,lon;
 		Set<Route> routes = new HashSet<Route>();
 
 		public String toString() {
 			return name;
 		}
-		
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + getOuterType().hashCode();
 			result = prime * result + ((id == null) ? 0 : id.hashCode());
+			result = prime * result + Float.floatToIntBits(lat);
+			result = prime * result + Float.floatToIntBits(lon);
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
 			return result;
 		}
+
+
 
 		@Override
 		public boolean equals(Object obj) {
@@ -643,8 +812,19 @@ public class App {
 					return false;
 			} else if (!id.equals(other.id))
 				return false;
+			if (Float.floatToIntBits(lat) != Float.floatToIntBits(other.lat))
+				return false;
+			if (Float.floatToIntBits(lon) != Float.floatToIntBits(other.lon))
+				return false;
+			if (name == null) {
+				if (other.name != null)
+					return false;
+			} else if (!name.equals(other.name))
+				return false;
 			return true;
 		}
+
+
 
 		private App getOuterType() {
 			return App.this;

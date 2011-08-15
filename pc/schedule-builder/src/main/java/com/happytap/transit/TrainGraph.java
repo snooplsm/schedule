@@ -2,6 +2,7 @@ package com.happytap.transit;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,6 +92,33 @@ public class TrainGraph {
 	}
 	
 	public List<Edge> findShortestPath(Station from, Station to) {
+		List<Station> queue = new LinkedList<Station>();
+		queue.add(from);
+		Set<Station> marked = new HashSet<Station>();
+		while(!queue.isEmpty()) {
+			Station s = queue.remove(0);
+			for(Route r : s.routes) {
+				for(Station station : r.stations) {
+					if(station.equals(to)) {
+						System.out.println("found");
+					}
+					if(!marked.contains(station)) {
+						marked.add(station);
+						queue.add(station);
+					}
+				}
+			}
+		}
+//		for(Route route : from.routes) {
+//			List<Route> queue = new LinkedList<Route>();
+//			Set<Route> marked = new HashSet<Route>();
+//			queue.add(route);
+//			marked.add(route);
+//			while(queue.isEmpty()) {
+//				
+//			}
+//			
+//		}
 		
 		return null;
 		

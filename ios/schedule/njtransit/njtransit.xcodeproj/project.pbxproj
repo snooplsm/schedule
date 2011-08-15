@@ -1,0 +1,458 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BEC6F07513F5A77F00036BD2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEC6F07413F5A77F00036BD2 /* UIKit.framework */; };
+		BEC6F07713F5A77F00036BD2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEC6F07613F5A77F00036BD2 /* Foundation.framework */; };
+		BEC6F07913F5A77F00036BD2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEC6F07813F5A77F00036BD2 /* CoreGraphics.framework */; };
+		BEC6F07F13F5A78000036BD2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BEC6F07D13F5A78000036BD2 /* InfoPlist.strings */; };
+		BEC6F08213F5A78000036BD2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC6F08113F5A78000036BD2 /* main.m */; };
+		BEC6F08513F5A78000036BD2 /* njtransitAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC6F08413F5A78000036BD2 /* njtransitAppDelegate.m */; };
+		BEC6F08813F5A78000036BD2 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BEC6F08613F5A78000036BD2 /* MainWindow.xib */; };
+		BEC6F08B13F5A78000036BD2 /* njtransitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC6F08A13F5A78000036BD2 /* njtransitViewController.m */; };
+		BEC6F08E13F5A78000036BD2 /* njtransitViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BEC6F08C13F5A78000036BD2 /* njtransitViewController.xib */; };
+		BEC6F09513F5A78000036BD2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEC6F07413F5A77F00036BD2 /* UIKit.framework */; };
+		BEC6F09613F5A78000036BD2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEC6F07613F5A77F00036BD2 /* Foundation.framework */; };
+		BEC6F09713F5A78000036BD2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEC6F07813F5A77F00036BD2 /* CoreGraphics.framework */; };
+		BEC6F09F13F5A78000036BD2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BEC6F09D13F5A78000036BD2 /* InfoPlist.strings */; };
+		BEC6F0A213F5A78000036BD2 /* njtransitTests.h in Resources */ = {isa = PBXBuildFile; fileRef = BEC6F0A113F5A78000036BD2 /* njtransitTests.h */; };
+		BEC6F0A413F5A78000036BD2 /* njtransitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC6F0A313F5A78000036BD2 /* njtransitTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BEC6F09813F5A78000036BD2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BEC6F06713F5A77F00036BD2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BEC6F06F13F5A77F00036BD2;
+			remoteInfo = njtransit;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		BEC6F07013F5A77F00036BD2 /* njtransit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = njtransit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEC6F07413F5A77F00036BD2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		BEC6F07613F5A77F00036BD2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		BEC6F07813F5A77F00036BD2 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		BEC6F07C13F5A78000036BD2 /* njtransit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "njtransit-Info.plist"; sourceTree = "<group>"; };
+		BEC6F07E13F5A78000036BD2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		BEC6F08013F5A78000036BD2 /* njtransit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "njtransit-Prefix.pch"; sourceTree = "<group>"; };
+		BEC6F08113F5A78000036BD2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		BEC6F08313F5A78000036BD2 /* njtransitAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = njtransitAppDelegate.h; sourceTree = "<group>"; };
+		BEC6F08413F5A78000036BD2 /* njtransitAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = njtransitAppDelegate.m; sourceTree = "<group>"; };
+		BEC6F08713F5A78000036BD2 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		BEC6F08913F5A78000036BD2 /* njtransitViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = njtransitViewController.h; sourceTree = "<group>"; };
+		BEC6F08A13F5A78000036BD2 /* njtransitViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = njtransitViewController.m; sourceTree = "<group>"; };
+		BEC6F08D13F5A78000036BD2 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/njtransitViewController.xib; sourceTree = "<group>"; };
+		BEC6F09413F5A78000036BD2 /* njtransitTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = njtransitTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEC6F09C13F5A78000036BD2 /* njtransitTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "njtransitTests-Info.plist"; sourceTree = "<group>"; };
+		BEC6F09E13F5A78000036BD2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		BEC6F0A013F5A78000036BD2 /* njtransitTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "njtransitTests-Prefix.pch"; sourceTree = "<group>"; };
+		BEC6F0A113F5A78000036BD2 /* njtransitTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = njtransitTests.h; sourceTree = "<group>"; };
+		BEC6F0A313F5A78000036BD2 /* njtransitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = njtransitTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BEC6F06D13F5A77F00036BD2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BEC6F07513F5A77F00036BD2 /* UIKit.framework in Frameworks */,
+				BEC6F07713F5A77F00036BD2 /* Foundation.framework in Frameworks */,
+				BEC6F07913F5A77F00036BD2 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BEC6F09013F5A78000036BD2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BEC6F09513F5A78000036BD2 /* UIKit.framework in Frameworks */,
+				BEC6F09613F5A78000036BD2 /* Foundation.framework in Frameworks */,
+				BEC6F09713F5A78000036BD2 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		BEC6F06513F5A77F00036BD2 = {
+			isa = PBXGroup;
+			children = (
+				BEC6F07A13F5A77F00036BD2 /* njtransit */,
+				BEC6F09A13F5A78000036BD2 /* njtransitTests */,
+				BEC6F07313F5A77F00036BD2 /* Frameworks */,
+				BEC6F07113F5A77F00036BD2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BEC6F07113F5A77F00036BD2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BEC6F07013F5A77F00036BD2 /* njtransit.app */,
+				BEC6F09413F5A78000036BD2 /* njtransitTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BEC6F07313F5A77F00036BD2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BEC6F07413F5A77F00036BD2 /* UIKit.framework */,
+				BEC6F07613F5A77F00036BD2 /* Foundation.framework */,
+				BEC6F07813F5A77F00036BD2 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BEC6F07A13F5A77F00036BD2 /* njtransit */ = {
+			isa = PBXGroup;
+			children = (
+				BEC6F08313F5A78000036BD2 /* njtransitAppDelegate.h */,
+				BEC6F08413F5A78000036BD2 /* njtransitAppDelegate.m */,
+				BEC6F08613F5A78000036BD2 /* MainWindow.xib */,
+				BEC6F08913F5A78000036BD2 /* njtransitViewController.h */,
+				BEC6F08A13F5A78000036BD2 /* njtransitViewController.m */,
+				BEC6F08C13F5A78000036BD2 /* njtransitViewController.xib */,
+				BEC6F07B13F5A78000036BD2 /* Supporting Files */,
+			);
+			path = njtransit;
+			sourceTree = "<group>";
+		};
+		BEC6F07B13F5A78000036BD2 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				BEC6F07C13F5A78000036BD2 /* njtransit-Info.plist */,
+				BEC6F07D13F5A78000036BD2 /* InfoPlist.strings */,
+				BEC6F08013F5A78000036BD2 /* njtransit-Prefix.pch */,
+				BEC6F08113F5A78000036BD2 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BEC6F09A13F5A78000036BD2 /* njtransitTests */ = {
+			isa = PBXGroup;
+			children = (
+				BEC6F0A113F5A78000036BD2 /* njtransitTests.h */,
+				BEC6F0A313F5A78000036BD2 /* njtransitTests.m */,
+				BEC6F09B13F5A78000036BD2 /* Supporting Files */,
+			);
+			path = njtransitTests;
+			sourceTree = "<group>";
+		};
+		BEC6F09B13F5A78000036BD2 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				BEC6F09C13F5A78000036BD2 /* njtransitTests-Info.plist */,
+				BEC6F09D13F5A78000036BD2 /* InfoPlist.strings */,
+				BEC6F0A013F5A78000036BD2 /* njtransitTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		BEC6F06F13F5A77F00036BD2 /* njtransit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BEC6F0A713F5A78000036BD2 /* Build configuration list for PBXNativeTarget "njtransit" */;
+			buildPhases = (
+				BEC6F06C13F5A77F00036BD2 /* Sources */,
+				BEC6F06D13F5A77F00036BD2 /* Frameworks */,
+				BEC6F06E13F5A77F00036BD2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = njtransit;
+			productName = njtransit;
+			productReference = BEC6F07013F5A77F00036BD2 /* njtransit.app */;
+			productType = "com.apple.product-type.application";
+		};
+		BEC6F09313F5A78000036BD2 /* njtransitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BEC6F0AA13F5A78000036BD2 /* Build configuration list for PBXNativeTarget "njtransitTests" */;
+			buildPhases = (
+				BEC6F08F13F5A78000036BD2 /* Sources */,
+				BEC6F09013F5A78000036BD2 /* Frameworks */,
+				BEC6F09113F5A78000036BD2 /* Resources */,
+				BEC6F09213F5A78000036BD2 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BEC6F09913F5A78000036BD2 /* PBXTargetDependency */,
+			);
+			name = njtransitTests;
+			productName = njtransitTests;
+			productReference = BEC6F09413F5A78000036BD2 /* njtransitTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BEC6F06713F5A77F00036BD2 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = BEC6F06A13F5A77F00036BD2 /* Build configuration list for PBXProject "njtransit" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = BEC6F06513F5A77F00036BD2;
+			productRefGroup = BEC6F07113F5A77F00036BD2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BEC6F06F13F5A77F00036BD2 /* njtransit */,
+				BEC6F09313F5A78000036BD2 /* njtransitTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BEC6F06E13F5A77F00036BD2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BEC6F07F13F5A78000036BD2 /* InfoPlist.strings in Resources */,
+				BEC6F08813F5A78000036BD2 /* MainWindow.xib in Resources */,
+				BEC6F08E13F5A78000036BD2 /* njtransitViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BEC6F09113F5A78000036BD2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BEC6F09F13F5A78000036BD2 /* InfoPlist.strings in Resources */,
+				BEC6F0A213F5A78000036BD2 /* njtransitTests.h in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BEC6F09213F5A78000036BD2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BEC6F06C13F5A77F00036BD2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BEC6F08213F5A78000036BD2 /* main.m in Sources */,
+				BEC6F08513F5A78000036BD2 /* njtransitAppDelegate.m in Sources */,
+				BEC6F08B13F5A78000036BD2 /* njtransitViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BEC6F08F13F5A78000036BD2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BEC6F0A413F5A78000036BD2 /* njtransitTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BEC6F09913F5A78000036BD2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BEC6F06F13F5A77F00036BD2 /* njtransit */;
+			targetProxy = BEC6F09813F5A78000036BD2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		BEC6F07D13F5A78000036BD2 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BEC6F07E13F5A78000036BD2 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		BEC6F08613F5A78000036BD2 /* MainWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BEC6F08713F5A78000036BD2 /* en */,
+			);
+			name = MainWindow.xib;
+			sourceTree = "<group>";
+		};
+		BEC6F08C13F5A78000036BD2 /* njtransitViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BEC6F08D13F5A78000036BD2 /* en */,
+			);
+			name = njtransitViewController.xib;
+			sourceTree = "<group>";
+		};
+		BEC6F09D13F5A78000036BD2 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BEC6F09E13F5A78000036BD2 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		BEC6F0A513F5A78000036BD2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		BEC6F0A613F5A78000036BD2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		BEC6F0A813F5A78000036BD2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "njtransit/njtransit-Prefix.pch";
+				INFOPLIST_FILE = "njtransit/njtransit-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		BEC6F0A913F5A78000036BD2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "njtransit/njtransit-Prefix.pch";
+				INFOPLIST_FILE = "njtransit/njtransit-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		BEC6F0AB13F5A78000036BD2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/njtransit.app/njtransit";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "njtransitTests/njtransitTests-Prefix.pch";
+				INFOPLIST_FILE = "njtransitTests/njtransitTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		BEC6F0AC13F5A78000036BD2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/njtransit.app/njtransit";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "njtransitTests/njtransitTests-Prefix.pch";
+				INFOPLIST_FILE = "njtransitTests/njtransitTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BEC6F06A13F5A77F00036BD2 /* Build configuration list for PBXProject "njtransit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BEC6F0A513F5A78000036BD2 /* Debug */,
+				BEC6F0A613F5A78000036BD2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BEC6F0A713F5A78000036BD2 /* Build configuration list for PBXNativeTarget "njtransit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BEC6F0A813F5A78000036BD2 /* Debug */,
+				BEC6F0A913F5A78000036BD2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		BEC6F0AA13F5A78000036BD2 /* Build configuration list for PBXNativeTarget "njtransitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BEC6F0AB13F5A78000036BD2 /* Debug */,
+				BEC6F0AC13F5A78000036BD2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BEC6F06713F5A77F00036BD2 /* Project object */;
+}

@@ -3,6 +3,7 @@ package com.happytap.schedule.database;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,6 +16,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -24,16 +27,22 @@ import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.Service;
 import com.happytap.schedule.domain.StopTime;
 import com.happytap.schedule.domain.Trip;
+import com.njtransit.rail.R;
 
 @Singleton
 public class ScheduleDao {
 
 	private final SQLiteDatabase database;
+	private Context context;
+	@Inject
+	SharedPreferences preferences;
+
 
 	@Inject
-	public ScheduleDao(SQLiteDatabase database) {
+	public ScheduleDao(SQLiteDatabase database, Context context) {
 		super();
 		this.database = database;
+		this.context = context;
 	}
 
 	private static DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -48,6 +57,20 @@ public class ScheduleDao {
 		return c.getTimeInMillis();
 	}
 
+	private String[] getConnectionStations(String departId, String arriveId) {
+		String[] connections = context.getResources().getStringArray(R.array.connections);
+		String to = departId+","+arriveId;
+		String from = arriveId+","+departId;
+		for(String connection : connections) {
+			if(connection.startsWith(to) || connection.startsWith(from)) {
+				int index = connection.lastIndexOf(",");
+				String sub = connection.substring(index+1);
+				return sub.split("\\|");
+			}
+		}
+		return null;
+	}
+	
 	public Schedule getSchedule(final String departStationId,
 			final String arriveStationId, Date start, Date end) {
 
@@ -55,12 +78,33 @@ public class ScheduleDao {
 		Date endDate = new Date(clearExtraFields(end));
 		String startString = clearExtraFields(start).toString();
 		String endString = clearExtraFields(end).toString();
-
+		String[] connections = getConnectionStations(departStationId, arriveStationId);
+		List<String> stations = new ArrayList<String>(connections==null ? 2 : connections.length+2);
+		if(connections!=null) {
+			for(String connection : connections) {
+				stations.add(connection);
+			}
+		}
+		stations.add(departStationId);
+		stations.add(arriveStationId);
+		String stationsFragment = "stop_id="+join(stations," or stop_id=");
+		final String calendarQuery;
+		final String[] params;
+		if(!preferences.getBoolean("usesCalendar", false)) {
+			params = new String[] {startString,endString};
+			calendarQuery = "select service_id from calendar_dates where (calendar_date between ? and ?) and exception_type=1";
+		} else {
+			params = new String[] {startString,endString,startString,endString};
+			
+			calendarQuery = "select service_id from calendar where start <= ? and end >= ? and service_id in (select service_id from calendar_dates where (calendar_date between ? and ?) and exception_type=1)";
+		}
+		String query1 = "select trip_id, sequence, stop_id, service_id, departure, arrival from stop_times where (" + stationsFragment + ") and service_id in (" + calendarQuery + ")";
+		query1 = query1.replace("?", "%s");
+		query1 = String.format(query1, params);
 		Cursor cursor = database
 				.rawQuery(
-						"select trip_id, sequence, stop_id, service_id, departure, arrival from stop_times where (stop_id=? or stop_id=?) and service_id in (select service_id from calendar_dates where (calendar_date between ? and ?) and exception_type=1)",
-						new String[] { departStationId, arriveStationId,
-								startString, endString });
+						"select trip_id, sequence, stop_id, service_id, departure, arrival from stop_times where (" + stationsFragment + ") and service_id in (" + calendarQuery + ")",
+						params);
 		Map<String, List<StopTime>> tripToResult = new HashMap<String, List<StopTime>>();
 		Set<String> serviceIds = new HashSet<String>();
 		while (cursor.moveToNext()) {
@@ -112,12 +156,16 @@ public class ScheduleDao {
 		}
 		Set<String> regular = new HashSet<String>();
 		Set<String> reverse = new HashSet<String>();
+		if(connections!=null) {
+			
+		}
 		for (Map.Entry<String, List<StopTime>> entry : tripToResult.entrySet()) {
 			if (entry.getValue().size() != 2) {
 				continue;
 			} else {
 				StopTime a = entry.getValue().get(0);
 				StopTime b = entry.getValue().get(1);
+				System.out.println(a.stopId + " - " + b.stopId);
 				if (a.stopId.equals(departStationId)) {
 					if (a.sequence < b.sequence) {
 						regular.add(entry.getKey());
@@ -152,6 +200,9 @@ public class ScheduleDao {
 			cursor.close();
 		}
 		Schedule s = new Schedule();
+		s.connections = connections;
+		s.departId = departStationId;
+		s.arriveId = arriveStationId;
 		s.tripIdToTrip = tripIdToTrips;
 		s.tripIdToStopTimes = tripToResult;
 		s.services = services;
@@ -162,6 +213,10 @@ public class ScheduleDao {
 		s.userEnd = end;
 		s.userStart = start;
 		return s;
+	}
+	
+	public static String join(String delimiter, Object...s) {
+		return join(Arrays.asList(s),delimiter);
 	}
 	
 	public static String join(Collection<?> s, String delimiter) {

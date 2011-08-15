@@ -13,4 +13,11 @@ public class StopTime implements Serializable {
 	public Date departure;
 	public Date arrival;
 	public String serviceId;
+	@Override
+	public String toString() {
+		return "StopTime [" + (stopId != null ? "stopId=" + stopId : "") + "]";
+	}
+
+	
+	
 }

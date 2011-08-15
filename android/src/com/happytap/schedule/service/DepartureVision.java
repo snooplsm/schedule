@@ -22,20 +22,15 @@ public class DepartureVision {
 		
 	}
     
-    private InputStream stream;
-    
-    private Gson gson;
-    
-    private boolean cancelled = false;
+	private DeparturePoller poller;
     
     StringBuilder b = new StringBuilder();
     
     public void cancel() {
-    	cancelled = true;
+    	poller = null;
     }
 
-    public DepartureVision() {
-		gson = new Gson();
+    public DepartureVision() {		
     }
     
     private LinkedHashSet<TrainStatusListener> listeners = new LinkedHashSet<TrainStatusListener>();
@@ -48,41 +43,26 @@ public class DepartureVision {
     	listeners.remove(listener);
     }
     
+    private boolean cancelled;
+    
     public void stopDepartures() throws IOException {
-    	if(stream!=null) {
-    		stream.close();
-    		stream = null;
-    	}
+    	poller = null;
+    	cancelled = true;
     }
 
     public void startDepartures(String id) throws IOException {
     	stopDepartures();
+    	poller = new DeparturePoller();
     	cancelled = false;
-    	URL u = new URL("http://technically.us:7979/njt/"+id.toLowerCase());
-    	
-		stream = u.openStream();    
 		while (!cancelled) {
-			int k = stream.read();
-			if (k == -1) {
-				continue;
-			}
-			char c = (char) k;
-			if (c == '\n') {
-				TrainStatus status = gson.fromJson(
-						b.toString(),
-						TrainStatus.class);
-				if (status.getTrack() != null) {													
-					status.setTrack(status.getTrack().replace("Track", ""));
-				}
-				if (status.getStatus() != null
-						&& status.getStatus()
-								.trim().length() == 0) {
-					status.setStatus(null);
-				}
+			for(TrainStatus status : poller.getTrainStatuses(id)) {
 				onTrainStatus(status);
-				b.setLength(0);
-			} else {
-				b.append(c);
+			}
+			try {
+				Thread.sleep(9000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
     }

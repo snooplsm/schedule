@@ -189,6 +189,35 @@
 		<item>32906,Jersey Ave</item>
 		<item>37953,Newark Airport</item>
 	</string-array>
+	<string-array
+		name="connections">
+		<!--
+			<item>105,126,38187|38174</item> <item>105,46,38187|38174</item>
+			<item>105,121,38187|38174</item> <item>105,25,38187|38174</item>
+			<item>105,51,38187|38174</item> <item>105,66,38187|38174</item>
+			<item>105,75,38187|38174</item> <item>105,33,38187|38174</item>
+			<item>105,115,38187|38174</item> <item>105,29,38187|38174</item>
+			<item>105,116,38187|38174</item> <item>105,58,38187|38174</item>
+			<item>105,52,38187|38174</item> <item>105,131,38187|38174</item>
+			<item>105,64,38187|38174</item> <item>105,151,38187|38174</item>
+			<item>105,3,38187|38174</item> <item>105,128,38187|38174</item>
+			<item>105,38417,38187|38174</item> <item>105,78,38187|38174</item>
+			<item>105,144,38187|38174</item> <item>105,160,38187|38174</item>
+			<item>105,146,38187|38174</item> <item>105,43,38187|38174</item>
+			<item>105,5,38187|38174</item> <item>105,110,38187|38174</item>
+			<item>105,132,38187|38174</item> <item>105,111,38187|38174</item>
+			<item>105,42,38187|38174</item> <item>105,156,38187|38174</item>
+			<item>105,62,38187|38174</item> <item>105,159,38187|38174</item>
+			<item>105,114,38187|38174</item> <item>105,90,38187|38174</item>
+			<item>105,118,38187|38174</item> <item>105,100,38187|38174</item>
+			<item>105,38105,107</item> <item>105,31,107</item> <item>105,32,107</item>
+			<item>105,47,107</item> <item>105,155,107</item> <item>105,44,107</item>
+			<item>105,102,107</item> <item>105,120,107</item> <item>105,36,107</item>
+			<item>105,21,107</item> <item>105,24,107</item> <item>105,138,107</item>
+			<item>105,129,107</item> <item>105,108,107</item> <item>105,157,107</item>
+			<item>105,68,107</item> <item>105,6,107</item> <item>105,60,107</item>
+		-->
+	</string-array>
 	<string
 		name="application_url">http://bit.ly/njtransit-rail</string>
 

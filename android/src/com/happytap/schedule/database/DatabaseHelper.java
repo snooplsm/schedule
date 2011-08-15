@@ -5,10 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
+import java.util.Comparator;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,6 +18,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 
 import com.google.inject.Inject;
@@ -49,11 +50,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final int VERSION = 1;
 	private static final String DATABASE_VERSION = "database_version";
 
+	private boolean useExternalStorage() {
+		boolean mExternalStorageAvailable = false;
+		boolean mExternalStorageWriteable = false;
+		String state = Environment.getExternalStorageState();
+
+		if (Environment.MEDIA_MOUNTED.equals(state)) {
+			// We can read and write the media
+			mExternalStorageAvailable = mExternalStorageWriteable = true;
+		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+			// We can only read the media
+			mExternalStorageAvailable = true;
+			mExternalStorageWriteable = false;
+		} else {
+			// Something else is wrong. It may be one of many other states, but
+			// all we need
+			// to know is we can neither read nor write
+			mExternalStorageAvailable = mExternalStorageWriteable = false;
+		}
+		return mExternalStorageWriteable;
+	}
+
+	private File externalStorageDatabaseFolder() {
+		File file = new File(Environment.getExternalStorageDirectory()
+				+ "/Android/data/"
+				+ context.getApplicationContext().getPackageName() + "/files/");
+		return file;
+	}
+
 	@Override
 	public synchronized SQLiteDatabase getReadableDatabase() {
 		SharedPreferences prefs = context.getSharedPreferences("database_info",
 				Context.MODE_PRIVATE);
-		File database = context.getDatabasePath(NAME);
+		final File database;
+		if (useExternalStorage()) {
+			File folder = externalStorageDatabaseFolder();
+			folder.mkdirs();
+			database = new File(folder, NAME);
+			context.getDatabasePath(NAME).delete();
+		} else {
+			database = context.getDatabasePath(NAME);
+		}
 		int lastVersion = prefs.getInt(DATABASE_VERSION, -1);
 		int version = getVersion();
 		if (lastVersion < version) {
@@ -64,7 +101,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				throw new RuntimeException(e);
 			}
 		}
-		return super.getReadableDatabase();
+		if (!useExternalStorage()) {
+			return super.getReadableDatabase();
+		} else {
+			return SQLiteDatabase.openDatabase(database.getPath(), null,
+					SQLiteDatabase.OPEN_READONLY);
+		}
 	}
 
 	private void copyDatabaseTo(File database) throws IOException {
@@ -74,15 +116,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		} catch (Exception e) {
 			Log.e(getClass().getSimpleName(), "onBeforeCopy Exception", e);
 		}
-		List<String> partions = new ArrayList<String>();
-		final String[] files = context.getAssets().list("database");
-		for (String f : files) {
-			if (f.startsWith("database.sqlite_")) {
-				partions.add(f);
+
+		Field[] fields = R.raw.class.getFields();
+		long totalSize = 0;
+		for (int i = 0; i < fields.length; i++) {
+			if(!fields[i].getName().startsWith("database")) {
+				continue;
+			}
+			try {
+				InputStream in = context.getResources().openRawResource(
+						fields[i].getInt(null));
+				totalSize += in.available();
+				in.close();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
 			}
 		}
-		Collections.sort(partions);
-		long totalSize = partions.size() * 51200;
 
 		try {
 			installMeter.onSizeToBeCopiedCalculated(totalSize);
@@ -97,11 +146,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				database.createNewFile();
 			}
 			out = new FileOutputStream(database);
-			byte[] buffer = new byte[1024];
+			byte[] buffer = new byte[1024 * 5];
 			long totalBytesCopied = 0;
-			for (String partition : partions) {
-				final InputStream in = context.getAssets().open(
-						"database/" + partition);
+			Arrays.sort(fields, new Comparator<Field>() {
+
+				@Override
+				public int compare(Field object1, Field object2) {
+					return object1.getName().compareTo(object2.getName());
+				}
+
+			});
+			for (int i = 0; i < fields.length; i++) {
+				if(!fields[i].getName().startsWith("database")) {
+					continue;
+				}
+				InputStream in = context.getResources().openRawResource(
+						fields[i].getInt(null));
+
 				int read;
 				while ((read = in.read(buffer)) > 0) {
 					out.write(buffer);
@@ -117,6 +178,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					Log.e(getClass().getSimpleName(),
 							"onPercentCopied Exception", e);
 				}
+
 			}
 			SharedPreferences prefs = context.getSharedPreferences(
 					"database_info", Context.MODE_PRIVATE);
@@ -129,7 +191,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				out.close();
 			}
 		}
-		SQLiteDatabase db = super.getWritableDatabase();
+		SQLiteDatabase db = SQLiteDatabase.openDatabase(database.getPath(),
+				null, SQLiteDatabase.OPEN_READWRITE);
 		String[] replacements = context.getResources().getStringArray(
 				R.array.replacement_names);
 		db.beginTransaction();
@@ -141,18 +204,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 		db.setTransactionSuccessful();
 		db.endTransaction();
-		Cursor c = db
-				.rawQuery(
-						"select min(calendar_date), max(calendar_date) from calendar_dates",
-						null);
-		if (c.moveToNext()) {
-			Calendar min = Calendar.getInstance();
-			min.setTimeInMillis(c.getLong(0));
-			Calendar max = Calendar.getInstance();
-			max.setTimeInMillis(c.getLong(1));
-			preferences.edit().putLong("minimumCalendarDate", c.getLong(0))
-			.putLong("maximumCalendarDate", c.getLong(1)).commit();
+		Cursor cal = db.rawQuery("select min(start), max(end) from calendar",
+				null);
+		if (cal.moveToNext()) {
+			preferences.edit().putLong("minimumCalendarDate", cal.getLong(0))
+					.putLong("maximumCalendarDate", cal.getLong(1)).putBoolean("usesCalendar", true).commit();
+		} else {
+			Cursor c = db
+					.rawQuery(
+							"select min(calendar_date), max(calendar_date) from calendar_dates",
+							null);
+			if (c.moveToNext()) {
+				Calendar min = Calendar.getInstance();
+				min.setTimeInMillis(c.getLong(0));
+				Calendar max = Calendar.getInstance();
+				max.setTimeInMillis(c.getLong(1));
+				preferences.edit().putLong("minimumCalendarDate", c.getLong(0))
+						.putLong("maximumCalendarDate", c.getLong(1)).putBoolean("usesCalendar", false).commit();
+			}
+			c.close();
 		}
+		cal.close();
 
 		try {
 			installMeter.onFinishedCopying();
