@@ -46,6 +46,9 @@ public class Schedule implements Serializable {
 			List<StopTime> stopTimes = tripIdToStopTimes.get(tripId);
 			StopTime depart = stopTimes.get(0);
 			Service service = services.get(depart.serviceId);
+			if(service.dates==null) {
+				continue;
+			}
 			for (Date date : service.dates) {
 				if (date.getTime() >= start.getTime()
 						&& date.getTime() <= end.getTime()) {

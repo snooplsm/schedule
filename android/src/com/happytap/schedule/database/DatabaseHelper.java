@@ -206,7 +206,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.endTransaction();
 		Cursor cal = db.rawQuery("select min(start), max(end) from calendar",
 				null);
-		if (cal.moveToNext()) {
+		if (cal.moveToNext() && cal.getLong(0)>0) {
 			preferences.edit().putLong("minimumCalendarDate", cal.getLong(0))
 					.putLong("maximumCalendarDate", cal.getLong(1)).putBoolean("usesCalendar", true).commit();
 		} else {

@@ -13,29 +13,30 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.google.ads.Ad;
 import com.google.ads.AdListener;
 import com.google.ads.AdRequest;
+import com.google.ads.AdRequest.ErrorCode;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
-import com.google.ads.AdRequest.ErrorCode;
 import com.google.inject.Inject;
 import com.happytap.schedule.adapter.ScheduleAdapter;
 import com.happytap.schedule.dialog.AlarmTimeDialog;
@@ -170,12 +171,32 @@ public class StationToStationActivity extends ScheduleActivity implements
 	}
 
 	MenuItem shareItem;
+	
+	MenuItem rate;
+	
+	MenuItem email;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		shareItem = menu.add("Share");
 		shareItem.setIcon(getResources().getDrawable(
 				android.R.drawable.ic_menu_share));
+		rate = menu.add("Rate");
+		rate.setIcon(R.drawable.ic_menu_star);
+		email = menu.add("Email us");
+		email.setIcon(android.R.drawable.ic_menu_send);
+		return true;
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		if(listView!=null && listView.getAdapter()!=null && listView.getAdapter().getCount()>0) {
+			rate.setVisible(true);
+			shareItem.setVisible(true);
+		} else {
+			shareItem.setVisible(false);
+			rate.setVisible(false);
+		}
 		return true;
 	}
 
@@ -237,6 +258,26 @@ public class StationToStationActivity extends ScheduleActivity implements
 		}
 		if (item.equals(alarmDepart)) {
 			showDialog(DIALOG_DEPART);
+			return true;
+		}
+		if(item.equals(rate)) {
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName()));
+			startActivity(intent);
+			return true;
+		}
+		if(item.equals(email)) {
+			Intent i = new Intent(Intent.ACTION_SEND);
+			i.setType("plain/text");
+			i.putExtra(Intent.EXTRA_EMAIL, new String[] {"njtransitrail-feedback@wmwm.us"});
+			StringBuilder b= new StringBuilder("NJTransit Rail Feedback " + getIntent().getStringExtra(DEPARTURE_STATION) + " : " + getIntent().getStringExtra(ARRIVAL_STATION));
+			try {
+				b.append(" version:" + getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+			} catch (Exception e) {
+				
+			}
+			i.putExtra(Intent.EXTRA_SUBJECT, b.toString());
+			i.putExtra(Intent.EXTRA_TEXT, "");
+			startActivity(i);
 			return true;
 		}
 		return false;
@@ -307,6 +348,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.reload);
 		reverse.setImageDrawable(svg.createPictureDrawable());
 		departureView.setOnClickListener(this);
+		
 	}
 
 	private static final int DIALOG_ARRIVE = 1;

@@ -110,45 +110,10 @@ public class LoadScheduleActivity extends RoboActivity {
 		doBindService();
 		departureText.setText(getIntent().getStringExtra(DEPARTURE_STATION));
 		arrivalText.setText(getIntent().getStringExtra(ARRIVAL_STATION));
-		adView = new AdView(this, AdSize.BANNER, getString(R.string.publisherId));
-		adView.loadAd(new AdRequest());
 		final View orAd =  getLayoutInflater().inflate(R.layout.our_ad, null);
-		adView.setAdListener(new AdListener() {
-
-			@Override
-			public void onDismissScreen(Ad arg0) {
-				
-			}
-
-			@Override
-			public void onFailedToReceiveAd(Ad arg0, ErrorCode arg1) {
-				
-			}
-
-			@Override
-			public void onLeaveApplication(Ad arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onPresentScreen(Ad arg0) {
-				
-			}
-
-			@Override
-			public void onReceiveAd(Ad arg0) {
-				int index = adLayout.indexOfChild(orAd);
-				if(index>=0) {
-					adLayout.removeViewAt(index);
-				}
-			}
-			
-		});
 		adFodder.setVisibility(View.GONE);
 		
 		adLayout.addView(orAd);
-		adLayout.addView(adView);
 	}
 	
 	@Override

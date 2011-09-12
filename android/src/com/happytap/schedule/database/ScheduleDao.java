@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,7 +38,6 @@ public class ScheduleDao {
 	@Inject
 	SharedPreferences preferences;
 
-
 	@Inject
 	public ScheduleDao(SQLiteDatabase database, Context context) {
 		super();
@@ -58,19 +58,20 @@ public class ScheduleDao {
 	}
 
 	private String[] getConnectionStations(String departId, String arriveId) {
-		String[] connections = context.getResources().getStringArray(R.array.connections);
-		String to = departId+","+arriveId;
-		String from = arriveId+","+departId;
-		for(String connection : connections) {
-			if(connection.startsWith(to) || connection.startsWith(from)) {
+		String[] connections = context.getResources().getStringArray(
+				R.array.connections);
+		String to = departId + "," + arriveId;
+		String from = arriveId + "," + departId;
+		for (String connection : connections) {
+			if (connection.startsWith(to) || connection.startsWith(from)) {
 				int index = connection.lastIndexOf(",");
-				String sub = connection.substring(index+1);
+				String sub = connection.substring(index + 1);
 				return sub.split("\\|");
 			}
 		}
 		return null;
 	}
-	
+
 	public Schedule getSchedule(final String departStationId,
 			final String arriveStationId, Date start, Date end) {
 
@@ -78,33 +79,99 @@ public class ScheduleDao {
 		Date endDate = new Date(clearExtraFields(end));
 		String startString = clearExtraFields(start).toString();
 		String endString = clearExtraFields(end).toString();
-		String[] connections = getConnectionStations(departStationId, arriveStationId);
-		List<String> stations = new ArrayList<String>(connections==null ? 2 : connections.length+2);
-		if(connections!=null) {
-			for(String connection : connections) {
+		String[] connections = getConnectionStations(departStationId,
+				arriveStationId);
+		List<String> stations = new ArrayList<String>(connections == null ? 2
+				: connections.length + 2);
+		if (connections != null) {
+			for (String connection : connections) {
 				stations.add(connection);
 			}
 		}
 		stations.add(departStationId);
 		stations.add(arriveStationId);
-		String stationsFragment = "stop_id="+join(stations," or stop_id=");
+		String stationsFragment = "stop_id=" + join(stations, " or stop_id=");
 		final String calendarQuery;
 		final String[] params;
-		if(!preferences.getBoolean("usesCalendar", false)) {
-			params = new String[] {startString,endString};
+		boolean usesCalendar = preferences.getBoolean("usesCalendar", false);
+		if (!usesCalendar) {
+			params = new String[] { startString, endString };
 			calendarQuery = "select service_id from calendar_dates where (calendar_date between ? and ?) and exception_type=1";
 		} else {
-			params = new String[] {startString,endString,startString,endString};
+			Calendar c = Calendar.getInstance();
+			c.setTime(startDate);
+			int day = c.get(Calendar.DAY_OF_WEEK);
+			c.setTime(endDate);
 			
-			calendarQuery = "select service_id from calendar where start <= ? and end >= ? and service_id in (select service_id from calendar_dates where (calendar_date between ? and ?) and exception_type=1)";
+//			String m = (day == Calendar.MONDAY || day2==Calendar.MONDAY) ? "1" : "0";
+//			String t = (day == Calendar.TUESDAY || day2==Calendar.TUESDAY) ? "1" : "0";
+//			String w = (day == Calendar.WEDNESDAY || day2==Calendar.WEDNESDAY) ? "1" : "0";
+//			String r = (day == Calendar.THURSDAY || day2==Calendar.THURSDAY) ? "1" : "0";
+//			String f = (day == Calendar.FRIDAY || day2==Calendar.FRIDAY) ? "1" : "0";
+//			String s = (day == Calendar.SATURDAY || day2==Calendar.SATURDAY) ? "1" : "0";
+//			String n = (day == Calendar.SUNDAY || day2==Calendar.SUNDAY) ? "1" : "0";
+			StringBuilder b = new StringBuilder();
+			if(day==Calendar.MONDAY) {
+				b.append("monday=1");
+			}
+			if(day==Calendar.TUESDAY) {
+				b.append("tuesday=1");
+			}
+			if(day==Calendar.WEDNESDAY) {
+				b.append("wednesday=1");
+			}
+			if(day==Calendar.THURSDAY) {
+				b.append("thursday=1");
+			}
+			if(day==Calendar.FRIDAY) {
+				b.append("friday=1");
+			}
+			if(day==Calendar.SATURDAY) {
+				b.append("saturday=1");
+			}
+			if(day==Calendar.SUNDAY) {
+				b.append("sunday=1");
+			}
+			day = c.get(Calendar.DAY_OF_WEEK);
+			b.append(" or ");
+			if(day==Calendar.MONDAY) {
+				b.append("monday=1");
+			}
+			if(day==Calendar.TUESDAY) {
+				b.append("tuesday=1");
+			}
+			if(day==Calendar.WEDNESDAY) {
+				b.append("wednesday=1");
+			}
+			if(day==Calendar.THURSDAY) {
+				b.append("thursday=1");
+			}
+			if(day==Calendar.FRIDAY) {
+				b.append("friday=1");
+			}
+			if(day==Calendar.SATURDAY) {
+				b.append("saturday=1");
+			}
+			if(day==Calendar.SUNDAY) {
+				b.append("sunday=1");
+			}
+			params = new String[] { startString, endString };
+
+			calendarQuery = "select service_id from calendar where start <= ? and end >= ? and (" + b + ")";
 		}
-		String query1 = "select trip_id, sequence, stop_id, service_id, departure, arrival from stop_times where (" + stationsFragment + ") and service_id in (" + calendarQuery + ")";
+		String query1 = "select trip_id, sequence, stop_id, service_id, departure, arrival from stop_times where ("
+				+ stationsFragment
+				+ ") and service_id in ("
+				+ calendarQuery
+				+ ")";
 		query1 = query1.replace("?", "%s");
 		query1 = String.format(query1, params);
 		Cursor cursor = database
 				.rawQuery(
-						"select trip_id, sequence, stop_id, service_id, departure, arrival from stop_times where (" + stationsFragment + ") and service_id in (" + calendarQuery + ")",
-						params);
+						"select trip_id, sequence, stop_id, service_id, departure, arrival from stop_times where ("
+								+ stationsFragment
+								+ ") and service_id in ("
+								+ calendarQuery + ")", params);
 		Map<String, List<StopTime>> tripToResult = new HashMap<String, List<StopTime>>();
 		Set<String> serviceIds = new HashSet<String>();
 		while (cursor.moveToNext()) {
@@ -128,36 +195,108 @@ public class ScheduleDao {
 			serviceIds.add(r.serviceId);
 		}
 		cursor.close();
-		cursor = database
-				.rawQuery(
-						"select service_id, calendar_date from calendar_dates where calendar_date between ? and ? and exception_type=1",
-						new String[] { startString, endString });
 		Map<String, Service> services = new HashMap<String, Service>();
-		while (cursor.moveToNext()) {
-			String serviceId = cursor.getString(0);
-			Long date = cursor.getLong(1);
-			Service s = services.get(serviceId);
-			if (s == null) {
-				s = new Service();
-				s.serviceId = serviceId;
-				services.put(s.serviceId, s);
-			} else {
-			}
-			Calendar cal = Calendar.getInstance();
-			cal.setTimeInMillis(date);
-			cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-			Date dateD = cal.getTime();
-			if (dateD.getTime() > endDate.getTime()
-					|| dateD.getTime() < startDate.getTime()) {
-			} else {
-				s.dates.add(dateD);
-			}
+		if (!usesCalendar) {
+			cursor = database
+					.rawQuery(
+							"select service_id, calendar_date from calendar_dates where calendar_date between ? and ? and exception_type=1",
+							new String[] { startString, endString });
+			while (cursor.moveToNext()) {
+				String serviceId = cursor.getString(0);
+				Long date = cursor.getLong(1);
+				Service s = services.get(serviceId);
+				if (s == null) {
+					s = new Service();
+					s.serviceId = serviceId;
+					services.put(s.serviceId, s);
+				} else {
+				}
+				Calendar cal = Calendar.getInstance();
+				cal.setTimeInMillis(date);
+				cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+				Date dateD = cal.getTime();
+				if (dateD.getTime() > endDate.getTime()
+						|| dateD.getTime() < startDate.getTime()) {
+				} else {
+					s.dates.add(dateD);
+				}
 
+			}
+		} else {
+			cursor = database
+					.rawQuery(
+							"select service_id, monday,tuesday,wednesday,thursday,friday,saturday,sunday,start,end from calendar where start >= ? and end <= ?",
+							new String[] { startString, endString });
+			while(cursor.moveToNext()) {
+				String serviceId = cursor.getString(0);
+				Calendar c = Calendar.getInstance();
+				c.setTimeZone(TimeZone.getTimeZone("UTC"));
+				c.setTimeInMillis(startDate.getTime());								
+				int monday = cursor.getInt(1);
+				int tuesday = cursor.getInt(2);
+				int wed = cursor.getInt(3);
+				int thur = cursor.getInt(4);
+				int fri = cursor.getInt(5);
+				int sat = cursor.getInt(6);
+				int sun = cursor.getInt(7);
+				Service s = services.get(serviceId);
+				if (s == null) {
+					s = new Service();
+					s.serviceId = serviceId;
+					services.put(s.serviceId, s);
+				}
+				if(monday==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.MONDAY) {					
+					s.dates.add(c.getTime());
+				}
+				if(tuesday==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.TUESDAY) {					
+					s.dates.add(c.getTime());
+				}
+				if(wed==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.WEDNESDAY) {					
+					s.dates.add(c.getTime());
+				}
+				if(thur==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.THURSDAY) {					
+					s.dates.add(c.getTime());
+				}
+				if(fri==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.FRIDAY) {					
+					s.dates.add(c.getTime());
+				}
+				if(sat==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY) {					
+					s.dates.add(c.getTime());
+				}
+				if(monday==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {					
+					s.dates.add(c.getTime());
+				}		
+				c.setTimeZone(TimeZone.getTimeZone("UTC"));
+				c.setTimeInMillis(endDate.getTime());
+				if(monday==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.MONDAY) {					
+					s.dates.add(c.getTime());
+				}
+				if(tuesday==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.TUESDAY) {					
+					s.dates.add(c.getTime());
+				}
+				if(wed==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.WEDNESDAY) {					
+					s.dates.add(c.getTime());
+				}
+				if(thur==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.THURSDAY) {					
+					s.dates.add(c.getTime());
+				}
+				if(fri==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.FRIDAY) {					
+					s.dates.add(c.getTime());
+				}
+				if(sat==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY) {					
+					s.dates.add(c.getTime());
+				}
+				if(monday==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {					
+					s.dates.add(c.getTime());
+				}		
+			}
+			
 		}
+		cursor.close();
 		Set<String> regular = new HashSet<String>();
 		Set<String> reverse = new HashSet<String>();
-		if(connections!=null) {
-			
+		if (connections != null) {
+
 		}
 		for (Map.Entry<String, List<StopTime>> entry : tripToResult.entrySet()) {
 			if (entry.getValue().size() != 2) {
@@ -184,12 +323,14 @@ public class ScheduleDao {
 			}
 		}
 		cursor.close();
-		Map<String,Trip> tripIdToTrips = new HashMap<String,Trip>();
-		if(tripToResult.size()>0) {			
-			String query = String.format("select id, block_id from trips where id = %s",join(tripToResult.keySet()," or id="));
-			cursor = database.rawQuery(query,null);
+		Map<String, Trip> tripIdToTrips = new HashMap<String, Trip>();
+		if (tripToResult.size() > 0) {
+			String query = String.format(
+					"select id, block_id from trips where id = %s",
+					join(tripToResult.keySet(), " or id="));
+			cursor = database.rawQuery(query, null);
 			int count = cursor.getCount();
-			while(cursor.moveToNext()) {
+			while (cursor.moveToNext()) {
 				String id = cursor.getString(0);
 				String blockId = cursor.getString(1);
 				Trip trip = new Trip();
@@ -214,29 +355,29 @@ public class ScheduleDao {
 		s.userStart = start;
 		return s;
 	}
-	
-	public static String join(String delimiter, Object...s) {
-		return join(Arrays.asList(s),delimiter);
+
+	public static String join(String delimiter, Object... s) {
+		return join(Arrays.asList(s), delimiter);
 	}
-	
+
 	public static String join(Collection<?> s, String delimiter) {
-        StringBuffer buffer = new StringBuffer();
-        Iterator<?> iter = s.iterator();
-        while (iter.hasNext()) {
-        	Object nxt = iter.next();
-        	if(nxt instanceof String) {
-        		buffer.append('\'');
-        	}
-            buffer.append(nxt);
-            if(nxt instanceof String) {
-            	buffer.append('\'');
-            }
-            if (iter.hasNext()) {
-                buffer.append(delimiter);
-            }
-        }
-        return buffer.toString();
-    }
+		StringBuffer buffer = new StringBuffer();
+		Iterator<?> iter = s.iterator();
+		while (iter.hasNext()) {
+			Object nxt = iter.next();
+			if (nxt instanceof String) {
+				buffer.append('\'');
+			}
+			buffer.append(nxt);
+			if (nxt instanceof String) {
+				buffer.append('\'');
+			}
+			if (iter.hasNext()) {
+				buffer.append(delimiter);
+			}
+		}
+		return buffer.toString();
+	}
 
 	static DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 }
