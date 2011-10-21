@@ -2,9 +2,9 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.njtransit.rail"
-	android:versionCode="2011091201"
+	android:versionCode="2011100101"
 	
-	android:versionName="2011-09-12"
+	android:versionName="2011-10-01"
 	android:installLocation="auto"
 	>
 	

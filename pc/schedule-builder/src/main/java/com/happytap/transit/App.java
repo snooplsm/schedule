@@ -1,12 +1,9 @@
 package com.happytap.transit;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,9 +13,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import sun.misc.IOUtils;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.gson.FieldNamingPolicy;
@@ -56,8 +55,8 @@ public class App {
 	private List<DayService> calServices;
 	private List<StopTime> stopTimes;
 	private List<SimpleStopTime> simpleStopTimes;
-	private Map<String,Set<Route>> stationIdToRoutes = new HashMap<String, Set<Route>>();
-	private Map<String,Set<Station>> routeToStations = new HashMap<String, Set<Station>>();
+	private Map<String, Set<Route>> stationIdToRoutes = new HashMap<String, Set<Route>>();
+	private Map<String, Set<Station>> routeToStations = new HashMap<String, Set<Station>>();
 
 	public static void main(String... args) {
 		File gtfsFolder = new File(args[0]);
@@ -86,14 +85,15 @@ public class App {
 	private void splitDatabase() {
 		ProcessBuilder b = new ProcessBuilder();
 		b.directory(databaseFile.getParentFile());
-		b.command("/usr/bin/split", "-b", "100k", "-a","3", databaseFile.getName(),
-				databaseFile.getName().replace(".", "_") + "_");
+		b.command("/usr/bin/split", "-b", "100k", "-a", "3",
+				databaseFile.getName(), databaseFile.getName()
+						.replace(".", "_") + "_");
 		try {
 			b.start();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		//databaseFile.delete();
+		// databaseFile.delete();
 	}
 
 	class TimeBean {
@@ -179,7 +179,9 @@ public class App {
 				prep.setString(2, t.route.id);
 				prep.setString(3, t.serviceId);
 				prep.setString(4, t.name);
-				prep.setInt(5, t.direction);
+				if (t.direction != null) {
+					prep.setInt(5, t.direction);
+				}
 				prep.setString(6, t.blockId);
 				prep.addBatch();
 			}
@@ -211,9 +213,10 @@ public class App {
 			prep.executeBatch();
 			conn.commit();
 			prep.clearBatch();
-			prep = conn.prepareStatement("insert into calendar(service_id,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start,end) values (?,?,?,?,?,?,?,?,?,?)");
+			prep = conn
+					.prepareStatement("insert into calendar(service_id,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start,end) values (?,?,?,?,?,?,?,?,?,?)");
 
-			for(DayService s : calServices) {
+			for (DayService s : calServices) {
 				prep.setString(1, s.id);
 				prep.setInt(2, s.monday);
 				prep.setInt(3, s.tuesday);
@@ -229,8 +232,8 @@ public class App {
 			prep.executeBatch();
 			conn.commit();
 			prep = conn
-			.prepareStatement("insert into routes(id,name) values(?,?)");
-	conn.setAutoCommit(false);
+					.prepareStatement("insert into routes(id,name) values(?,?)");
+			conn.setAutoCommit(false);
 			for (Route r : routes.values()) {
 				prep.setString(1, r.id);
 				prep.setString(2, r.name);
@@ -260,32 +263,44 @@ public class App {
 			stopTime.trip.stations.put(stopTime.sequence, stopTime.stop);
 			simpleStopTimes.add(sst);
 			stopTime.trip.route.stations.add(stopTime.stop);
-			stopTime.stop.routes.add(stopTime.trip.route);			
+			stopTime.stop.routes.add(stopTime.trip.route);
 		}
-//		
-//		TrainGraph graph = new TrainGraph();
-//
-//		for(Trip trip : trips.values()) {
-//			Iterator<Station> iter = trip.stations.values().iterator();
-//			Station prev = null;
-//			while(prev!=null || iter.hasNext()) {
-//				Station station = iter.next();
-//				if(prev!=null) {
-//					graph.addEdge(prev, station, trip.route);
-//				}
-//				if(iter.hasNext()) {
-//					prev = station;
-//				} else {
-//					prev = null;
-//				}
-//				
-//			}
-//			Station newyork = stations.get("105");
-//			Station radburn = stations.get("126");
-//			graph.findShortestPath(newyork, radburn);
-//			System.out.println("alright");
-//		}
-		
+		TrainGraph g = new TrainGraph();
+		for(Trip trip : trips.values()) {
+			Station previous = null;
+			for(Map.Entry<Integer, Station> entry : trip.stations.entrySet()) {
+				Station station = entry.getValue();
+				if(previous==null) {
+					previous = station;
+					continue;
+				}
+				g.addEdge(previous, station, trip.route, 1.0);
+			}
+		}
+		//
+		// TrainGraph graph = new TrainGraph();
+		//
+		// for(Trip trip : trips.values()) {
+		// Iterator<Station> iter = trip.stations.values().iterator();
+		// Station prev = null;
+		// while(prev!=null || iter.hasNext()) {
+		// Station station = iter.next();
+		// if(prev!=null) {
+		// graph.addEdge(prev, station, trip.route);
+		// }
+		// if(iter.hasNext()) {
+		// prev = station;
+		// } else {
+		// prev = null;
+		// }
+		//
+		// }
+		// Station newyork = stations.get("105");
+		// Station radburn = stations.get("126");
+		// graph.findShortestPath(newyork, radburn);
+		// System.out.println("alright");
+		// }
+
 		for (final Map.Entry<String, Set<Station>> entry : routeToStations
 				.entrySet()) {
 			System.out.print(routes.get(entry.getKey()).name + "\n\t");
@@ -294,26 +309,22 @@ public class App {
 			}
 			System.out.print('\n');
 		}
-		
+
 		Station jerseyAve = stations.get("32906");
 		Station arrive = stations.get("105");
-		
-		
-		
-//		for(Route departRoute : depart.routes) {
-//			for(Route arriveRoute : arrive.routes) {
-//				BreadthFirstIterator<Route,DefaultEdge> i = new BreadthFirstIterator<Route,DefaultEdge>(graph,departRoute) {
-//					protected void finishVertex(Route arg0) {
-//						super.finishVertex(arg0);
-//						this.
-//					}
-//				};
-//			}
-//		}
+
+		// for(Route departRoute : depart.routes) {
+		// for(Route arriveRoute : arrive.routes) {
+		// BreadthFirstIterator<Route,DefaultEdge> i = new
+		// BreadthFirstIterator<Route,DefaultEdge>(graph,departRoute) {
+		// protected void finishVertex(Route arg0) {
+		// super.finishVertex(arg0);
+		// this.
+		// }
+		// };
+		// }
+		// }
 	}
-	
-	
-	
 
 	private void makeStopTimes() {
 		try {
@@ -334,7 +345,7 @@ public class App {
 			String[] row = null;
 			while ((row = reader.readNext()) != null) {
 				StopTime time = new StopTime();
-				time.trip = trips.get(row[tripIdPos]);
+				time.trip = trips.get(row[tripIdPos].trim());
 				time.arrive(row[arrivalTimeId]);
 				time.depart(row[departureTimeId]);
 				time.stop = stations.get(row[stopIdPos]);
@@ -475,6 +486,10 @@ public class App {
 			datePos = find(date, headers);
 			exceptionTypePos = find(exceptionType, headers);
 			String[] row = null;
+			File file = new File(gtfsFolder, "calendar.txt");
+			if (file.exists()) {
+
+			}
 			while ((row = reader.readNext()) != null) {
 				DateService service = new DateService();
 				service.id = row[serviceIdPos];
@@ -482,14 +497,13 @@ public class App {
 				service.exceptionType = toInt(row[exceptionTypePos]);
 				dateServices.add(service);
 			}
-			reader.close();			
-			File file = new File(gtfsFolder, "calendar.txt");
+			reader.close();
+
 			if (!file.exists()) {
-				return;				
-				//services = dateServices;
+				return;
+				// services = dateServices;
 			}
-			reader = new CSVReader(new FileReader(new File(
-					gtfsFolder, "calendar.txt")));
+			reader = new CSVReader(new FileReader(file));
 			headers = reader.readNext();
 			String monday = "monday";
 			String tuesday = "tuesday";
@@ -500,30 +514,67 @@ public class App {
 			String sunday = "sunday";
 			String start = "start_date";
 			String end = "end_date";
-			int mPos = find(monday,headers);
-			int tuPos = find(tuesday,headers);
-			int wPos = find(wednesday,headers);
-			int thPos = find(thursday,headers);
-			int fPos = find(friday,headers);
-			int saPos = find(saturday,headers);
-			int suPos = find(sunday,headers);
-			int sPos = find(start,headers);
-			int ePos = find(end,headers);
+			int mPos = find(monday, headers);
+			int tuPos = find(tuesday, headers);
+			int wPos = find(wednesday, headers);
+			int thPos = find(thursday, headers);
+			int fPos = find(friday, headers);
+			int saPos = find(saturday, headers);
+			int suPos = find(sunday, headers);
+			int sPos = find(start, headers);
+			int ePos = find(end, headers);
+			List<DateService> newServices = new LinkedList<DateService>();
 			while ((row = reader.readNext()) != null) {
 				DayService service = new DayService();
 				service.id = row[serviceIdPos];
-				service.monday = toInt(row[mPos]);
-				service.tuesday = toInt(row[tuPos]);
-				service.wednesday = toInt(row[wPos]);
-				service.thursday = toInt(row[thPos]);
-				service.friday = toInt(row[fPos]);
-				service.saturday = toInt(row[saPos]);
-				service.sunday = toInt(row[suPos]);
-				service.setStart(row[sPos]);
-				service.setEnd(row[ePos]);
-				//service.exceptionType = toInt(row[exceptionTypePos]);
+				service.monday = toInt(row[mPos].trim());
+				service.tuesday = toInt(row[tuPos].trim());
+				service.wednesday = toInt(row[wPos].trim());
+				service.thursday = toInt(row[thPos].trim());
+				service.friday = toInt(row[fPos].trim());
+				service.saturday = toInt(row[saPos].trim());
+				service.sunday = toInt(row[suPos].trim());
+				service.setStart(row[sPos].trim());
+				service.setEnd(row[ePos].trim());
+				Calendar current = Calendar.getInstance();
+				for (Date curr = service.start; curr.getTime() <= service.end
+						.getTime();) {
+					current.setTime(curr);
+					int day = current.get(Calendar.DAY_OF_WEEK);
+					if ((day == Calendar.MONDAY && service.monday == 1)
+							|| (day == Calendar.TUESDAY && service.tuesday == 1)
+							|| (day == Calendar.WEDNESDAY && service.wednesday == 1)
+							|| (day == Calendar.THURSDAY && service.thursday == 1)
+							|| (day == Calendar.FRIDAY && service.friday == 1)
+							|| (day == Calendar.SATURDAY && service.saturday == 1)
+							|| (day == Calendar.SUNDAY && service.sunday == 1)) {
+						DateService s = new DateService();
+						s.id = service.id;
+						s.date = curr;
+						s.exceptionType = 1;
+						newServices.add(s);
+					}
+					current.add(Calendar.DAY_OF_YEAR, 1);
+					curr = current.getTime();
+
+				}
 				calServices.add(service);
 			}
+			for (DateService dateService : dateServices) {
+				if (dateService.exceptionType == 2) {
+					for (Iterator<DateService> i = newServices.iterator(); i
+							.hasNext();) {
+						DateService check = i.next();
+						if (check.id.equals(dateService.id)
+								&& check.date.equals(dateService.date)) {
+							System.out.println(dateService.date);
+							i.remove();
+						}
+					}
+				}
+			}
+			dateServices.addAll(newServices);
+			calServices.clear();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -535,9 +586,9 @@ public class App {
 	}
 
 	class DayService extends Service {
-		int monday,tuesday,wednesday,thursday,friday,saturday,sunday;
-		Date start,end;
-		
+		int monday, tuesday, wednesday, thursday, friday, saturday, sunday;
+		Date start, end;
+
 		void setStart(String date) {
 			try {
 				this.start = dateFormat.parse(date);
@@ -545,6 +596,7 @@ public class App {
 				throw new RuntimeException(e);
 			}
 		}
+
 		void setEnd(String date) {
 			try {
 				this.end = dateFormat.parse(date);
@@ -552,13 +604,14 @@ public class App {
 				throw new RuntimeException(e);
 			}
 		}
+
 		int flag;
 	}
 
 	static DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	class DateService extends Service implements Serializable {
-		
+
 		Date date;
 
 		void setDate(String date) {
@@ -597,12 +650,14 @@ public class App {
 			String[] row = null;
 			while ((row = reader.readNext()) != null) {
 				Trip trip = new Trip();
-				trip.id = row[tripIdPos];
-				trip.name = row[tripNamePos];
-				trip.route = routes.get(row[routeIdPos]);
-				trip.serviceId = row[serviceIdPos];
-				trip.direction = toInt(row[directionIdPos]);
-				trip.blockId = row[blockIdPos];
+				trip.id = row[tripIdPos].trim();
+				trip.name = row[tripNamePos].trim();
+				trip.route = routes.get(row[routeIdPos].trim());
+				trip.serviceId = row[serviceIdPos].trim();
+				if (directionIdPos >= 0) {
+					trip.direction = toInt(row[directionIdPos].trim());
+				}
+				trip.blockId = row[blockIdPos].trim();
 				System.out.println(trip.blockId);
 				trips.put(trip.id, trip);
 			}
@@ -619,8 +674,8 @@ public class App {
 		String serviceId;
 		String blockId;
 		Integer direction;
-		
-		TreeMap<Integer,Station> stations = new TreeMap<Integer,Station>();
+
+		TreeMap<Integer, Station> stations = new TreeMap<Integer, Station>();
 	}
 
 	private void makeRoutes() {
@@ -639,7 +694,7 @@ public class App {
 			while ((row = reader.readNext()) != null) {
 				Route route = new Route();
 				route.id = row[routeIdPos];
-				route.name = row[routeNamePos];
+				route.name = row[routeNamePos].trim();
 				routes.put(route.id, route);
 			}
 
@@ -664,94 +719,101 @@ public class App {
 			String[] headers = reader.readNext();
 			stopIdPos = find(stopId, headers);
 			stopNamePos = find(stopName, headers);
-			latPos = find(lat,headers);
-			lonPos = find(lon,headers);
+			latPos = find(lat, headers);
+			lonPos = find(lon, headers);
 			String[] row = null;
-			Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-			Map<String,AtomicInteger> counts = new HashMap<String,AtomicInteger>();
+			Gson gson = new GsonBuilder().setFieldNamingPolicy(
+					FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+			Map<String, AtomicInteger> counts = new HashMap<String, AtomicInteger>();
 			while ((row = reader.readNext()) != null) {
 				Station station = new Station();
 				station.id = row[stopIdPos];
-				station.name = row[stopNamePos];
-				station.lat = Float.parseFloat(row[latPos]);
-				station.lon = Float.parseFloat(row[lonPos]);
-				File cache = new File(gtfsFolder,station.id);
-				if(!cache.exists()) {
-					try {
-						URL u = new URL("http://maps.googleapis.com/maps/api/geocode/json?latlng="+row[latPos]+","+row[lonPos]+"&sensor=true");
-						HttpURLConnection conn = (HttpURLConnection)u.openConnection();
-						conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_7) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.107 Safari/535.1");
-						if(conn.getResponseCode()>=200 && conn.getResponseCode()<300) {
-							FileOutputStream fos = new FileOutputStream(cache);
-							fos.write(IOUtils.readFully(conn.getInputStream(), -1, true));
-							fos.close();
-							long len = cache.length();
-							if(len<=4096) {
-								cache.delete();
-								System.exit(1);
-							}
-							conn.disconnect();
-							Thread.sleep(90);
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-				String addy = findAddress(gson,cache);
-				if(addy==null) {
-					findAddress(gson,cache);
-				} else {
-					if(addy.length()>27) {
-						System.out.println(addy);
-					}
-				}
-				//station.name = addy + " - " + station.name;
-				AtomicInteger count = counts.get(station.name);
-				if(count==null) {
-					counts.put(station.name, count = new AtomicInteger());
-				}
-				count.incrementAndGet();
+				station.name = row[stopNamePos].trim();
+				// station.lat = Float.parseFloat(row[latPos]);
+				// station.lon = Float.parseFloat(row[lonPos]);
+				File cache = new File(gtfsFolder, station.id);
+				// if(!cache.exists()) {
+				// try {
+				// URL u = new
+				// URL("http://maps.googleapis.com/maps/api/geocode/json?latlng="+row[latPos]+","+row[lonPos]+"&sensor=true");
+				// HttpURLConnection conn =
+				// (HttpURLConnection)u.openConnection();
+				// conn.setRequestProperty("User-Agent",
+				// "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_7) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.107 Safari/535.1");
+				// if(conn.getResponseCode()>=200 && conn.getResponseCode()<300)
+				// {
+				// FileOutputStream fos = new FileOutputStream(cache);
+				// fos.write(IOUtils.readFully(conn.getInputStream(), -1,
+				// true));
+				// fos.close();
+				// long len = cache.length();
+				// if(len<=4096) {
+				// cache.delete();
+				// System.exit(1);
+				// }
+				// conn.disconnect();
+				// Thread.sleep(90);
+				// }
+				// } catch (Exception e) {
+				// e.printStackTrace();
+				// }
+				// }
+				// String addy = findAddress(gson,cache);
+				// if(addy==null) {
+				// findAddress(gson,cache);
+				// } else {
+				// if(addy.length()>27) {
+				// System.out.println(addy);
+				// }
+				// }
+				// //station.name = addy + " - " + station.name;
+				// AtomicInteger count = counts.get(station.name);
+				// if(count==null) {
+				// counts.put(station.name, count = new AtomicInteger());
+				// }
+				// count.incrementAndGet();
 				stations.put(station.id, station);
 			}
-			for(Map.Entry<String, AtomicInteger> e : counts.entrySet()) {
-				//if(e.getValue().intValue()>1) {
-					System.out.println(e.getKey() + " : " + e.getValue());
-				//}
+			for (Map.Entry<String, AtomicInteger> e : counts.entrySet()) {
+				// if(e.getValue().intValue()>1) {
+				System.out.println(e.getKey() + " : " + e.getValue());
+				// }
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	private String findAddress(Gson gson, File cache) throws Exception{
+
+	private String findAddress(Gson gson, File cache) throws Exception {
 		Results r = gson.fromJson(new FileReader(cache), Results.class);
-		for(Result result : r.getResults()) {
+		for (Result result : r.getResults()) {
 			AddressComponent toReturn = null;
 			AddressComponent toReturn2 = null;
 			AddressComponent toReturn3 = null;
-			for(AddressComponent add : result.getAddressComponents()) {				
-				for(String type : add.getTypes()) {
-					if(type.equals("sublocality")) {
-						//System.out.println(add.getLongName() + " or " + add.getShortName());
-						return add.getLongName();					
+			for (AddressComponent add : result.getAddressComponents()) {
+				for (String type : add.getTypes()) {
+					if (type.equals("sublocality")) {
+						// System.out.println(add.getLongName() + " or " +
+						// add.getShortName());
+						return add.getLongName();
 					}
-					if(type.equals("locality")) {
+					if (type.equals("locality")) {
 						toReturn = add;
 					}
-					if(type.equals("neighborhood")) {
+					if (type.equals("neighborhood")) {
 						toReturn2 = add;
 					}
-					if(type.equals("administrative_area_level_3")) {
+					if (type.equals("administrative_area_level_3")) {
 						toReturn3 = add;
 					}
 				}
-				if(toReturn!=null) {
+				if (toReturn != null) {
 					return toReturn.getShortName();
 				}
-				if(toReturn2!=null) {
+				if (toReturn2 != null) {
 					return toReturn2.getShortName();
 				}
-				if(toReturn3!=null) {
+				if (toReturn3 != null) {
 					return toReturn3.getShortName();
 				}
 			}
@@ -765,7 +827,7 @@ public class App {
 
 	int find(String key, String[] data) {
 		for (int i = 0; i < data.length; i++) {
-			if (data[i].equals(key)) {
+			if (data[i].trim().equals(key)) {
 				return i;
 			}
 		}
@@ -775,7 +837,7 @@ public class App {
 	class Station {
 		String name;
 		String id;
-		float lat,lon;
+		float lat, lon;
 		Set<Route> routes = new HashSet<Route>();
 
 		public String toString() {
@@ -793,8 +855,6 @@ public class App {
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
 			return result;
 		}
-
-
 
 		@Override
 		public boolean equals(Object obj) {
@@ -824,8 +884,6 @@ public class App {
 			return true;
 		}
 
-
-
 		private App getOuterType() {
 			return App.this;
 		}
@@ -836,7 +894,7 @@ public class App {
 		String name;
 		String id;
 		Set<Station> stations = new HashSet<Station>();
-		
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -864,7 +922,6 @@ public class App {
 				return false;
 			return true;
 		}
-		
 
 		@Override
 		public String toString() {

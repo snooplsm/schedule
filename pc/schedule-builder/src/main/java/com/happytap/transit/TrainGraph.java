@@ -13,20 +13,19 @@ import com.happytap.transit.App.Station;
 public class TrainGraph {
 	
 	private class Edge {
-		private Station station;
+		
+		private Station source,target;
 		private Route route;
+		private Double weight;
 		
-		
-		public Edge(Station station, Route route) {
-			super();
-			this.station = station;
+		public Edge(Station source, Station target, Route route, Double weight) {
+			this.source = source;
+			this.target = target;
 			this.route = route;
+			this.weight = weight;
 		}
 		
-		public String toString() {
-			return station + " - " + route;
-		}
-		
+	
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -34,9 +33,16 @@ public class TrainGraph {
 			result = prime * result + getOuterType().hashCode();
 			result = prime * result + ((route == null) ? 0 : route.hashCode());
 			result = prime * result
-					+ ((station == null) ? 0 : station.hashCode());
+					+ ((source == null) ? 0 : source.hashCode());
+			result = prime * result
+					+ ((target == null) ? 0 : target.hashCode());
+			result = prime * result
+					+ ((weight == null) ? 0 : weight.hashCode());
 			return result;
 		}
+
+
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
@@ -53,13 +59,26 @@ public class TrainGraph {
 					return false;
 			} else if (!route.equals(other.route))
 				return false;
-			if (station == null) {
-				if (other.station != null)
+			if (source == null) {
+				if (other.source != null)
 					return false;
-			} else if (!station.equals(other.station))
+			} else if (!source.equals(other.source))
+				return false;
+			if (target == null) {
+				if (other.target != null)
+					return false;
+			} else if (!target.equals(other.target))
+				return false;
+			if (weight == null) {
+				if (other.weight != null)
+					return false;
+			} else if (!weight.equals(other.weight))
 				return false;
 			return true;
 		}
+
+
+
 		private TrainGraph getOuterType() {
 			return TrainGraph.this;
 		}
@@ -68,6 +87,7 @@ public class TrainGraph {
 	}
 	
 	private Map<Station, Set<Edge>> stationNeighbors = new HashMap<Station,Set<Edge>>();
+	private Set<Edge> edges = new HashSet<Edge>();
 
 	public void addVertex(Station station) {
 		if(stationNeighbors.containsKey(station)) {
@@ -77,18 +97,13 @@ public class TrainGraph {
 		}
 	}
 	
-	public void addEdge(Station vertex, Station vertexNeighbor, Route edge) {		
-		_addEdge(vertex, vertexNeighbor, edge);
-		_addEdge(vertexNeighbor,vertex, edge);
+	public void addEdge(Station vertex, Station vertexNeighbor, Route edge, Double weight) {		
+		_addEdge(vertex, vertexNeighbor, edge, weight);
 	}
 	
-	private void _addEdge(Station vertex, Station vertexNeighbor, Route edge) {
-		Set<Edge> neighbors = stationNeighbors.get(vertex);
-		if(neighbors==null) {
-			neighbors = new HashSet<Edge>();
-			stationNeighbors.put(vertex,neighbors);
-		}
-		neighbors.add(new Edge(vertexNeighbor,edge));
+	private void _addEdge(Station vertex, Station vertexNeighbor, Route edge, Double weight) {		
+		edges.add(new Edge(vertex,vertexNeighbor,edge, weight));
+		//stationNeighbors.get(vertex).add(edgex);
 	}
 	
 	public List<Edge> findShortestPath(Station from, Station to) {
