@@ -41,11 +41,12 @@
 			android:layout_weight="1"
 			android:text="  1 minute before"/>
 		<RadioButton
+		    android:id="@+id/custom"
 			android:layout_width="fill_parent"
 			android:layout_height="30dip"
 			android:paddingLeft="60dip"
 			android:layout_weight="1"
-			android:text="  on actual time"/>
+			android:text="  custom"/>
 
 	</RadioGroup>
 

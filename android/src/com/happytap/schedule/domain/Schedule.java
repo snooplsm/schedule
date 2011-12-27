@@ -35,6 +35,8 @@ public class Schedule implements Serializable {
 	void traverse(List<StationToStation> stationToStations, ScheduleTraverser traverser) {
 		int size = stationToStations.size();
 		for(int i =0; i < size; i++) {
+			StationToStation s = stationToStations.get(i);
+			System.out.println("time:" + s.departTime.getTime());
 			traverser.populateItem(i, stationToStations.get(i), size);
 		}
 	}
@@ -119,7 +121,7 @@ public class Schedule implements Serializable {
 		int minThreshold = 0;
 		
 		for(StationToStation s : stationToStation) {
-			if(s.departId.equals(departId)) {
+			if(s.departId.equals(departId) && !s.arriveId.equals(arriveId)) {
 				
 			} else {
 				connections.add(s);

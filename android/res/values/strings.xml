@@ -195,8 +195,7 @@
 	</string-array>
 	<string-array
 		name="connections">
-		<!--
-			<item>105,126,38187|38174</item> <item>105,46,38187|38174</item>
+			<!-- <item>105,126,38187|38174</item> <item>105,46,38187|38174</item>
 			<item>105,121,38187|38174</item> <item>105,25,38187|38174</item>
 			<item>105,51,38187|38174</item> <item>105,66,38187|38174</item>
 			<item>105,75,38187|38174</item> <item>105,33,38187|38174</item>
@@ -219,8 +218,7 @@
 			<item>105,102,107</item> <item>105,120,107</item> <item>105,36,107</item>
 			<item>105,21,107</item> <item>105,24,107</item> <item>105,138,107</item>
 			<item>105,129,107</item> <item>105,108,107</item> <item>105,157,107</item>
-			<item>105,68,107</item> <item>105,6,107</item> <item>105,60,107</item>
-		-->
+			<item>105,68,107</item> <item>105,6,107</item> <item>105,60,107</item> -->
 	</string-array>
 	<string
 		name="application_url">http://bit.ly/njtransit-rail</string>
