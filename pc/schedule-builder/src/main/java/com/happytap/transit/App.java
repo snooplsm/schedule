@@ -259,27 +259,27 @@ public class App {
 			sst.serviceId = stopTime.trip.serviceId;
 			sst.routeId = stopTime.trip.route.id;
 			sst.sequence = stopTime.sequence;
+			if(stopTime.stop==null) {
+				System.out.println("foo");
+			}
 			sst.stopId = stopTime.stop.id;
 			stopTime.trip.stations.put(stopTime.sequence, stopTime.stop);
 			simpleStopTimes.add(sst);
 			stopTime.trip.route.stations.add(stopTime.stop);
 			stopTime.stop.routes.add(stopTime.trip.route);
 		}
-<<<<<<< HEAD
 		TrainGraph g = new TrainGraph();
-		for(Trip trip : trips.values()) {
+		for (Trip trip : trips.values()) {
 			Station previous = null;
-			for(Map.Entry<Integer, Station> entry : trip.stations.entrySet()) {
+			for (Map.Entry<Integer, Station> entry : trip.stations.entrySet()) {
 				Station station = entry.getValue();
-				if(previous==null) {
+				if (previous == null) {
 					previous = station;
 					continue;
 				}
 				g.addEdge(previous, station, trip.route, 1.0);
 			}
 		}
-=======
->>>>>>> c624c351a2c882594fc75d93645df0d15a8c4dc7
 		//
 		// TrainGraph graph = new TrainGraph();
 		//
@@ -349,10 +349,14 @@ public class App {
 			while ((row = reader.readNext()) != null) {
 				StopTime time = new StopTime();
 				time.trip = trips.get(row[tripIdPos].trim());
-				time.arrive(row[arrivalTimeId]);
-				time.depart(row[departureTimeId]);
-				time.stop = stations.get(row[stopIdPos]);
-				time.sequence = toInt(row[stopSequencePos]);
+				time.arrive(row[arrivalTimeId].trim());
+				time.depart(row[departureTimeId].trim());
+				Station stop = stations.get(row[stopIdPos].trim());
+				if(stop==null) {
+					System.out.println("foo");
+				}
+				time.stop = stop;
+				time.sequence = toInt(row[stopSequencePos].trim());
 				stopTimes.add(time);
 			}
 		} catch (Exception e) {
@@ -489,11 +493,10 @@ public class App {
 			datePos = find(date, headers);
 			exceptionTypePos = find(exceptionType, headers);
 			String[] row = null;
-			File file = new File(gtfsFolder, "calendar.txt");
-			if (file.exists()) {
-
-			}
 			while ((row = reader.readNext()) != null) {
+				if(row.length!=3) {
+					continue;
+				}
 				DateService service = new DateService();
 				service.id = row[serviceIdPos];
 				service.setDate(row[datePos]);
@@ -501,7 +504,9 @@ public class App {
 				dateServices.add(service);
 			}
 			reader.close();
+
 			File file = new File(gtfsFolder, "calendar.txt");
+
 			if (!file.exists()) {
 				return;
 				// services = dateServices;
@@ -526,7 +531,6 @@ public class App {
 			int suPos = find(sunday, headers);
 			int sPos = find(start, headers);
 			int ePos = find(end, headers);
-<<<<<<< HEAD
 			List<DateService> newServices = new LinkedList<DateService>();
 			while ((row = reader.readNext()) != null) {
 				DayService service = new DayService();
@@ -562,21 +566,6 @@ public class App {
 					curr = current.getTime();
 
 				}
-=======
-			while ((row = reader.readNext()) != null) {
-				DayService service = new DayService();
-				service.id = row[serviceIdPos];
-				service.monday = toInt(row[mPos]);
-				service.tuesday = toInt(row[tuPos]);
-				service.wednesday = toInt(row[wPos]);
-				service.thursday = toInt(row[thPos]);
-				service.friday = toInt(row[fPos]);
-				service.saturday = toInt(row[saPos]);
-				service.sunday = toInt(row[suPos]);
-				service.setStart(row[sPos]);
-				service.setEnd(row[ePos]);
-				// service.exceptionType = toInt(row[exceptionTypePos]);
->>>>>>> c624c351a2c882594fc75d93645df0d15a8c4dc7
 				calServices.add(service);
 			}
 			for (DateService dateService : dateServices) {
@@ -665,14 +654,13 @@ public class App {
 			routeIdPos = find(routeId, headers);
 			serviceIdPos = find(serviceId, headers);
 			blockIdPos = find(blockId, headers);
-			if(blockIdPos==-1) {
-				blockIdPos = find("trip_short_name",headers);
+			if (blockIdPos == -1) {
+				blockIdPos = find("trip_short_name", headers);
 			}
 			directionIdPos = find(directionId, headers);
 			String[] row = null;
 			while ((row = reader.readNext()) != null) {
 				Trip trip = new Trip();
-<<<<<<< HEAD
 				trip.id = row[tripIdPos].trim();
 				trip.name = row[tripNamePos].trim();
 				trip.route = routes.get(row[routeIdPos].trim());
@@ -681,15 +669,6 @@ public class App {
 					trip.direction = toInt(row[directionIdPos].trim());
 				}
 				trip.blockId = row[blockIdPos].trim();
-=======
-				trip.id = row[tripIdPos];
-				trip.name = row[tripNamePos];
-				trip.route = routes.get(row[routeIdPos]);
-				trip.serviceId = row[serviceIdPos];
-				trip.direction = toInt(row[directionIdPos]);
-				
-				trip.blockId = row[blockIdPos];
->>>>>>> c624c351a2c882594fc75d93645df0d15a8c4dc7
 				System.out.println(trip.blockId);
 				trips.put(trip.id, trip);
 			}
@@ -761,7 +740,7 @@ public class App {
 			while ((row = reader.readNext()) != null) {
 				Station station = new Station();
 				station.id = row[stopIdPos];
-<<<<<<< HEAD
+
 				station.name = row[stopNamePos].trim();
 				// station.lat = Float.parseFloat(row[latPos]);
 				// station.lon = Float.parseFloat(row[lonPos]);
@@ -792,12 +771,6 @@ public class App {
 				// e.printStackTrace();
 				// }
 				// }
-=======
-				station.name = row[stopNamePos];
-				station.lat = Float.parseFloat(row[latPos]);
-				station.lon = Float.parseFloat(row[lonPos]);
-
->>>>>>> c624c351a2c882594fc75d93645df0d15a8c4dc7
 				// String addy = findAddress(gson,cache);
 				// if(addy==null) {
 				// findAddress(gson,cache);
@@ -806,26 +779,8 @@ public class App {
 				// System.out.println(addy);
 				// }
 				// }
-<<<<<<< HEAD
-				// //station.name = addy + " - " + station.name;
-=======
-				// station.name = addy + " - " + station.name;
->>>>>>> c624c351a2c882594fc75d93645df0d15a8c4dc7
-				// AtomicInteger count = counts.get(station.name);
-				// if(count==null) {
-				// counts.put(station.name, count = new AtomicInteger());
-				// }
-				// count.incrementAndGet();
 				stations.put(station.id, station);
 			}
-<<<<<<< HEAD
-			for (Map.Entry<String, AtomicInteger> e : counts.entrySet()) {
-				// if(e.getValue().intValue()>1) {
-				System.out.println(e.getKey() + " : " + e.getValue());
-				// }
-			}
-=======
->>>>>>> c624c351a2c882594fc75d93645df0d15a8c4dc7
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
