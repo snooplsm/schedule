@@ -1,4 +1,5 @@
-gen
-bin
-target
+android/gen
+android/bin
+android/target
+android/res/raw/database*
 .DS_Store
