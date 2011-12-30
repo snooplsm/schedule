@@ -200,31 +200,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			String[] idToName = replacements[i].split(",");
 			ContentValues cv = new ContentValues();
 			cv.put("name", idToName[1]);
-			db.update("stops", cv, "id=?", new String[] { idToName[0] });
+			db.update("stop", cv, "stop_id=?", new String[] { idToName[0] });
 		}
 		db.setTransactionSuccessful();
 		db.endTransaction();
-		Cursor cal = db.rawQuery("select min(start), max(end) from calendar",
-				null);
-		if (cal.moveToNext() && cal.getLong(0)>0) {
-			preferences.edit().putLong("minimumCalendarDate", cal.getLong(0))
-					.putLong("maximumCalendarDate", cal.getLong(1)).putBoolean("usesCalendar", true).commit();
-		} else {
-			Cursor c = db
-					.rawQuery(
-							"select min(calendar_date), max(calendar_date) from calendar_dates",
-							null);
-			if (c.moveToNext()) {
-				Calendar min = Calendar.getInstance();
-				min.setTimeInMillis(c.getLong(0));
-				Calendar max = Calendar.getInstance();
-				max.setTimeInMillis(c.getLong(1));
-				preferences.edit().putLong("minimumCalendarDate", c.getLong(0))
-						.putLong("maximumCalendarDate", c.getLong(1)).putBoolean("usesCalendar", false).commit();
-			}
-			c.close();
+		Cursor c = db
+				.rawQuery(
+						"select min(calendar_date), max(calendar_date) from service",
+						null);
+		if (c.moveToNext()) {
+			Calendar min = Calendar.getInstance();
+			min.setTimeInMillis(c.getLong(0));
+			Calendar max = Calendar.getInstance();
+			max.setTimeInMillis(c.getLong(1));
+			preferences.edit().putLong("minimumCalendarDate", c.getLong(0))
+					.putLong("maximumCalendarDate", c.getLong(1)).putBoolean("usesCalendar", false).commit();
 		}
-		cal.close();
+		c.close();
 
 		try {
 			installMeter.onFinishedCopying();

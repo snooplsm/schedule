@@ -4,41 +4,48 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import roboguice.inject.InjectView;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.os.AsyncTask.Status;
 import android.text.format.DateUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.googlecode.android.widgets.DateSlider.DateSlider;
-import com.googlecode.android.widgets.DateSlider.DefaultDateSlider;
 import com.googlecode.android.widgets.DateSlider.DateSlider.OnDateSetListener;
+import com.googlecode.android.widgets.DateSlider.DefaultDateSlider;
 import com.happytap.schedule.database.DatabaseHelper;
-import com.happytap.schedule.database.PreferencesDao;
+import com.happytap.schedule.database.ScheduleDao;
 import com.happytap.schedule.database.DatabaseHelper.InstallDatabaseMeter;
+import com.happytap.schedule.database.PreferencesDao;
+import com.happytap.schedule.domain.Favorite;
 import com.happytap.schedule.provider.PreferencesDatabaseProvider;
 import com.happytap.schedule.provider.SQLiteDatabaseProvider;
 import com.happytap.schedule.service.ScheduleService;
@@ -240,6 +247,9 @@ public class SplashScreenActivity extends ScheduleActivity {
 	private Messenger mService = null;
 	
 	@Inject
+	private PreferencesDao preferencesDao;
+	
+	@Inject
 	SharedPreferences preferences;	MenuItem preferencesItem;	@Inject
 	private PreferencesDatabaseProvider preferencesProvider;
 
@@ -248,6 +258,9 @@ public class SplashScreenActivity extends ScheduleActivity {
 
 	@InjectView(R.id.reverse)
 	private ImageView reverse;
+	
+	@InjectView(R.id.favs)
+	private ImageView favs;
 	
 	private OnClickListener reverseListener = new OnClickListener() {
 
@@ -273,6 +286,36 @@ public class SplashScreenActivity extends ScheduleActivity {
 			}						
 		}
 		
+	};
+	
+	private OnClickListener favsListener = new OnClickListener() {
+		public void onClick(View arg0) {
+			
+			final List<Favorite> favs = preferencesDao.topHistory();
+			ScheduleDao dao = injector.getInstance(ScheduleDao.class);
+			dao.name(favs);
+			final CharSequence[] k = new CharSequence[favs.size()];
+			int i = 0;
+			for(Favorite fav : favs) {
+				k[i++] = fav.sourceName + " ↝ " + fav.targetName;
+			}
+
+			if(favs.isEmpty()) {
+				Toast.makeText(SplashScreenActivity.this, "No favorites available yet.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+		    AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
+		    builder.setTitle("Favorites");
+		    builder.setItems(k, new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int item) {
+		        	Favorite fav = favs.get(item);
+		        	arrivalText.setText(fav.targetName);
+		        	arrivalStopId = fav.targetId;
+		        	departureText.setText(fav.sourceName);
+		        	departureStopId = fav.sourceId;
+		        }
+		    }).show();
+		};
 	};
 	
 	MenuItem share;;
@@ -368,10 +411,14 @@ public class SplashScreenActivity extends ScheduleActivity {
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.newjersey);
 		splashImage.setImageDrawable(svg.createPictureDrawable());
 		svg = SVGParser.getSVGFromResource(getResources(), R.raw.reload);
-		reverse.setImageDrawable(svg.createPictureDrawable());	
+		reverse.setImageDrawable(svg.createPictureDrawable());
+		svg = SVGParser.getSVGFromResource(getResources(), R.raw.star);
+		favs.setImageDrawable(svg.createPictureDrawable());
+		fixReverseFavs();
 		arrival.setOnClickListener(clickStationListener);		
 		departure.setOnClickListener(clickStationListener);
 		reverse.setOnClickListener(reverseListener);
+		favs.setOnClickListener(favsListener);
 		getSchedule.setOnClickListener(getScheduleClickListener);
 		userDefinedDate = Calendar.getInstance();		
 		
@@ -389,6 +436,20 @@ public class SplashScreenActivity extends ScheduleActivity {
 	}
 
 	
+	private void fixReverseFavs() {
+		if(getSharedPreferences(getApplication().getPackageName()+"_preferences", Context.MODE_PRIVATE).getBoolean("showFavs", true)) {
+			favs.setVisibility(View.VISIBLE);
+			((LinearLayout.LayoutParams)reverse.getLayoutParams()).gravity=Gravity.NO_GRAVITY;
+			((LinearLayout.LayoutParams)reverse.getLayoutParams()).weight = 0;
+		} else {
+			favs.setVisibility(View.GONE);
+			((LinearLayout.LayoutParams)reverse.getLayoutParams()).weight = 1;
+			((LinearLayout.LayoutParams)reverse.getLayoutParams()).gravity=Gravity.CENTER_HORIZONTAL;
+		}
+		favs.invalidate();
+		reverse.invalidate();
+		reverse.getParent().requestLayout();
+	}
 	public void onCreateContextMenu(android.view.ContextMenu menu, View v, android.view.ContextMenu.ContextMenuInfo menuInfo) {
 		PreferencesDao dao = injector.getInstance(PreferencesDao.class);
 		
@@ -481,6 +542,7 @@ public class SplashScreenActivity extends ScheduleActivity {
 		}
 		displayDate();
 		showScheduleEnd(false);
+		fixReverseFavs();
 		
 		
 	}

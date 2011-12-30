@@ -14,8 +14,6 @@ public class StationToStation implements Serializable {
 		public Calendar arriveTime;		
 		public String blockId;
 		
-		public List<StationToStation> connections;
-		
 		public Calendar getDepartTime() {
 			return departTime;
 		}
@@ -23,15 +21,50 @@ public class StationToStation implements Serializable {
 		public Calendar getArriveTime() {
 			return arriveTime;
 		}
+		
+		public int getDuration() {
+			return (int)(arriveTime.getTimeInMillis()-departTime.getTimeInMillis())/60000;
+		}
 
 		@Override
 		public String toString() {
-			return "StationToStation ["
-					+ (departTime != null ? "departTime=" + departTime.getTime() + ", "
-							: "")
-					+ (arriveTime != null ? "arriveTime=" + arriveTime.getTime() + ", "
-							: "") + (blockId != null ? "tripId=" + blockId : "")
-					+ "]";
-		}		
+			return "StationToStation [departId=" + departId + ", arriveId="
+					+ arriveId + ", departTime=" + departTime.getTime() + ", arriveTime="
+					+ arriveTime.getTime() + ", duration=" + getDuration() + "]";
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((arriveTime == null) ? 0 : arriveTime.hashCode());
+			result = prime * result
+					+ ((departTime == null) ? 0 : departTime.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			StationToStation other = (StationToStation) obj;
+			if (arriveTime == null) {
+				if (other.arriveTime != null)
+					return false;
+			} else if (!arriveTime.equals(other.arriveTime))
+				return false;
+			if (departTime == null) {
+				if (other.departTime != null)
+					return false;
+			} else if (!departTime.equals(other.departTime))
+				return false;
+			return true;
+		}
+
 		
 	}

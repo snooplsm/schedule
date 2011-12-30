@@ -49,7 +49,7 @@ public class StationListActivity extends RoboListActivity implements OnItemLongC
 	}
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		setTheme(R.style.Theme_Light);

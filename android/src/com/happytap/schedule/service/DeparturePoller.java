@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.happytap.schedule.domain.TrainStatus;
@@ -30,7 +31,7 @@ public class DeparturePoller {
 			conn.setReadTimeout(20000);
 			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7");
 			if(conn.getResponseCode()!=200) {
-				throw new IllegalArgumentException("not a 200 status code");
+				return Collections.emptyList();
 			}
 			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			StringBuilder data = new StringBuilder();

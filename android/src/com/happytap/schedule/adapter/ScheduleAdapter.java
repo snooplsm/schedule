@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.happytap.schedule.activity.SplashScreenActivity;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.ScheduleTraverser;
+import com.happytap.schedule.domain.StationInterval;
 import com.happytap.schedule.domain.StationToStation;
 import com.happytap.schedule.domain.TrainStatus;
 import com.happytap.schedule.util.date.DateUtils;
@@ -25,60 +26,60 @@ import com.njtransit.rail.R;
 public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 
 	Schedule schedule;
-	
+
 	private boolean isToday;
 	private Calendar limit;
 	private boolean reversed = false;
-	
+
 	private void traverse() {
 		limit = Calendar.getInstance();
-		limit.setTime(schedule.end);		
+		limit.setTime(schedule.end);
 		Calendar start = Calendar.getInstance();
 		start.setTime(schedule.start);
 		isToday = DateUtils.isToday(start);
-		if(isToday) {
-			limit.set(Calendar.HOUR_OF_DAY,7);
+		if (isToday) {
+			limit.set(Calendar.HOUR_OF_DAY, 7);
 			limit.set(Calendar.MINUTE, 0);
 		} else {
 			limit.add(Calendar.DAY_OF_YEAR, 0);
 			limit.set(Calendar.HOUR_OF_DAY, 0);
-			limit.set(Calendar.MINUTE,0);
-			limit.set(Calendar.SECOND,0);
-			limit.set(Calendar.MILLISECOND,0);
+			limit.set(Calendar.MINUTE, 0);
+			limit.set(Calendar.SECOND, 0);
+			limit.set(Calendar.MILLISECOND, 0);
 		}
-		
+
 		final Calendar priorLimit = Calendar.getInstance();
 		priorLimit.add(Calendar.HOUR_OF_DAY, -2);
-		
+
 		ScheduleTraverser traverser = new ScheduleTraverser() {
 
 			@Override
 			public void populateItem(int index,
 					StationToStation stationToStation, int total) {
-				if(!isToday) {
-					if(!stationToStation.departTime.before(limit)) {
+				System.out.println(stationToStation);
+				if (!isToday) {
+					if (!stationToStation.departTime.before(limit)) {
 						add(stationToStation);
 					}
-				} else
-				if(!stationToStation.departTime.after(limit)) {
-					if(!stationToStation.arriveTime.before(priorLimit)) {
+				} else if (!stationToStation.departTime.after(limit)) {
+					if (!stationToStation.arriveTime.before(priorLimit)) {
 						add(stationToStation);
 					}
-					
+
 				}
 			}
 		};
-		if(reversed) {
+		if (reversed) {
 			schedule.inReverseOrderTraversal(traverser);
 		} else {
 			schedule.inOrderTraversal(traverser);
 		}
 	}
-	
+
 	public ScheduleAdapter(Context context, Schedule schedule) {
 		super(context, R.layout.station_to_station_item);
 		this.schedule = schedule;
-		
+
 		traverse();
 
 	}
@@ -104,34 +105,126 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 		}
 		StationToStation sts = getItem(position);
 		TextView textView = (TextView) v.findViewById(R.id.time);
-		textView.setText(time(sts));
 		TextView duration = (TextView) v.findViewById(R.id.duration);
-		duration.setText(duration(sts));
 		TextView departsIn = (TextView) v.findViewById(R.id.away);
+		TextView connections = (TextView) v.findViewById(R.id.connections);
+		textView.setText(time(sts));
 		departs(departsIn, sts);
-		TextView tomorrow = (TextView) v.findViewById(R.id.time_descriptor);
-		tomorrow(tomorrow,sts);
-		TrainStatus status = trainStatuses.get(sts.blockId);
-		if (status == null) {
-			onNoTrainStatus(v, sts);
-			return v;
+		if (sts instanceof StationInterval) {
+			StationInterval sts2 = (StationInterval) sts;
+			textView.setText(time(sts2));
+			duration.setText(duration(sts2));
+			connections.setVisibility(View.VISIBLE);
+			if(sts2.schedule.transfers.length>1) {
+				populateConnections(connections, sts2);
+			} else {
+				connections.setVisibility(View.GONE);
+			}
+		} else {
+			connections.setVisibility(View.GONE);
+			textView.setText(time(sts));
+			duration.setText(duration(sts));
+			TextView tomorrow = (TextView) v.findViewById(R.id.time_descriptor);
+			tomorrow(tomorrow, sts);
+			TrainStatus status = trainStatuses.get(sts.blockId);
+			if (status == null) {
+				onNoTrainStatus(v, sts);
+				return v;
+			}
+			trainStatus(v, sts, status);
 		}
-		trainStatus(v, sts, status);
 		return v;
 	}
-	
+
+	private void populateConnections(TextView connections, StationInterval sts2) {
+		StringBuilder b = new StringBuilder();
+		boolean added = false;
+		while (sts2.hasNext()) {
+			boolean isTransfer = sts2.isTransfer();
+			if (isTransfer) {
+				// String arrive = time.format(sts2.getArriveTime().getTime())
+				// .toLowerCase();
+				// arrive = arrive.substring(0, arrive.length() - 2);
+				// b.append(sts2.schedule.stopIdToName.get(sts2.arriveId));
+				// b.append(" ");
+				added = false;
+			} else {
+				added = true;
+				String depart = time.format(sts2.getDepartTime().getTime())
+						.toLowerCase();
+				depart = depart.substring(0, depart.length() - 1).replace(" ",
+						"");
+				b.append("(");
+				b.append(depart);
+				b.append(")");
+				b.append(" ");
+				b.append(sts2.schedule.stopIdToName.get(sts2.departId));
+				b.append(" ");
+				b.append("↝");
+
+				b.append(" ");
+				String arrive = time.format(sts2.getArriveTime().getTime())
+						.toLowerCase();
+				arrive = arrive.substring(0, arrive.length() - 1).replace(" ",
+						"");
+				b.append("(");
+				b.append(arrive);
+				b.append(")");
+				b.append(" ");
+				b.append(sts2.schedule.stopIdToName.get(sts2.arriveId));
+			}
+
+			if (sts2.hasNext()) {
+				sts2 = sts2.next();
+				if (added) {
+					b.append(" ");
+					if (sts2.isTransfer()) {
+						b.append("↻\n");
+					} else {
+						b.append("↝");
+						b.append(" ");
+					}
+					
+				}
+
+			} else {
+				break;
+			}
+		}
+		String depart = time.format(sts2.getDepartTime().getTime())
+				.toLowerCase();
+		depart = depart.substring(0, depart.length() - 1).replace(" ", "");
+		b.append("(");
+		b.append(depart);
+		b.append(")");
+		b.append(" ");
+		b.append(sts2.schedule.stopIdToName.get(sts2.departId));
+		b.append(" ");
+		b.append("↝");
+		b.append(" ");
+		b.append("(");
+		String arrive = time.format(sts2.getArriveTime().getTime())
+				.toLowerCase();
+		arrive = arrive.substring(0, arrive.length() - 1).replace(" ", "");
+		b.append(arrive);
+		b.append(") ");
+		b.append(sts2.schedule.stopIdToName.get(sts2.arriveId));
+		connections.setText(b.toString());
+	}
+
 	private void tomorrow(TextView tomorrowView, StationToStation sts) {
 		Calendar tomorrow = Calendar.getInstance();
 		tomorrow.add(Calendar.DAY_OF_YEAR, 1);
-		tomorrow.set(Calendar.HOUR_OF_DAY,0);
-		tomorrow.set(Calendar.MINUTE,0);
-		tomorrow.set(Calendar.SECOND,0);
-		tomorrow.set(Calendar.MILLISECOND,0);
-		if(!isToday) {
-			tomorrowView.setText(SplashScreenActivity.df.format(sts.departTime.getTime()));
+		tomorrow.set(Calendar.HOUR_OF_DAY, 0);
+		tomorrow.set(Calendar.MINUTE, 0);
+		tomorrow.set(Calendar.SECOND, 0);
+		tomorrow.set(Calendar.MILLISECOND, 0);
+		if (!isToday) {
+			tomorrowView.setText(SplashScreenActivity.df.format(sts.departTime
+					.getTime()));
 			tomorrowView.setVisibility(View.VISIBLE);
 		} else {
-			if(sts.departTime.after(tomorrow)) {
+			if (sts.departTime.after(tomorrow)) {
 				tomorrowView.setText("next day");
 				tomorrowView.setVisibility(View.VISIBLE);
 			} else {
@@ -144,8 +237,8 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 	private void onNoTrainStatus(View view, StationToStation sts) {
 		TextView timeDescriptor = (TextView) view
 				.findViewById(R.id.time_descriptor);
-		if(timeDescriptor.getVisibility()==View.VISIBLE) {
-			
+		if (timeDescriptor.getVisibility() == View.VISIBLE) {
+
 		} else {
 			timeDescriptor.setVisibility(View.GONE);
 		}
@@ -164,20 +257,31 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 			}
 			b.append("on track ").append(status.getTrack().toLowerCase());
 		}
-		if(timeDescriptor.getVisibility()==View.VISIBLE) {
-			timeDescriptor.setText(timeDescriptor.getText()+" " + b.toString());
+		if (timeDescriptor.getVisibility() == View.VISIBLE) {
+			timeDescriptor.setText(timeDescriptor.getText() + " "
+					+ b.toString());
 		} else {
 			timeDescriptor.setText(b.toString());
 			timeDescriptor.setVisibility(View.VISIBLE);
 		}
-		
-		
+
 	}
 
 	public static DateFormat time = new SimpleDateFormat("h:mm aa");
 
 	private String duration(StationToStation sts) {
 		long diff = sts.arriveTime.getTimeInMillis()
+				- sts.departTime.getTimeInMillis();
+		return "" + diff / 60000 + " minutes";
+	}
+
+	private String duration(StationInterval sts) {
+		StationInterval sts2 = sts;
+		while (sts2.hasNext()) {
+			// TODO: optimize by just jumping to the end...
+			sts2 = sts2.next();
+		}
+		long diff = sts2.arriveTime.getTimeInMillis()
 				- sts.departTime.getTimeInMillis();
 		return "" + diff / 60000 + " minutes";
 	}
@@ -193,8 +297,7 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 			int mins = (int) (diff / 60000);
 
 			if (mins <= 100) {
-				departsIn.setText("departs in " + mins
-						+ " minutes");
+				departsIn.setText("departs in " + mins + " minutes");
 				departsIn.setVisibility(View.VISIBLE);
 			}
 		}
@@ -206,30 +309,41 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 		return String.format("%s - %s", depart, arrive).toLowerCase();
 	}
 
+	public static String time(StationInterval sts) {
+		String depart = time.format(sts.getDepartTime().getTime());
+		StationInterval sts2 = sts;
+		while (sts2.hasNext()) {
+			// TODO: optimize by just jumping to the end...
+			sts2 = sts2.next();
+		}
+		String arrive = time.format(sts2.getArriveTime().getTime());
+		return String.format("%s - %s", depart, arrive).toLowerCase();
+	}
+
 	private Map<String, TrainStatus> trainStatuses = new HashMap<String, TrainStatus>();
-	
+
 	private Map<String, TrainStatus> reversedTrainStatuses;
-	
+
 	private Map<String, TrainStatus> normalTrainStatuses = trainStatuses;
 
 	public final void onStatus(TrainStatus status) {
 		trainStatuses.put(status.getTrain(), status);
 		notifyDataSetChanged();
 	}
-	
+
 	/**
 	 * reverse the schedule
 	 */
-	public void reverse() {		
-		reversed = !reversed;			
-		if(!reversed) {
+	public void reverse() {
+		reversed = !reversed;
+		if (!reversed) {
 			trainStatuses = reversedTrainStatuses;
 		} else {
 			trainStatuses = normalTrainStatuses;
 		}
-		
-		if(trainStatuses==null) {
-			trainStatuses = new HashMap<String,TrainStatus>();
+
+		if (trainStatuses == null) {
+			trainStatuses = new HashMap<String, TrainStatus>();
 		}
 		clear();
 		traverse();

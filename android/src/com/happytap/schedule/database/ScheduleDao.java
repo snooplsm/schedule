@@ -4,10 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,7 +13,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,6 +21,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.happytap.schedule.adapter.StationAdapter;
+import com.happytap.schedule.domain.ConnectionInterval;
+import com.happytap.schedule.domain.Favorite;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.Service;
 import com.happytap.schedule.domain.StopTime;
@@ -71,264 +71,119 @@ public class ScheduleDao {
 		}
 		return null;
 	}
+	
+	private static final SimpleDateFormat SIMPLE = new SimpleDateFormat("yyyyMMdd");
+	/**
+	 * 
+	 * 
+	 * @param d
+	 * @return YYMMDD
+	 */
+	private String simpleDate(Date d) {
+		return SIMPLE.format(d);
+	}
 
 	public Schedule getSchedule(final String departStationId,
 			final String arriveStationId, Date start, Date end) {
-
+		Cursor cur = database.rawQuery("select a,b from schedule_path where source=? and target=? and level=0 order by sequence asc", new String[]{departStationId,arriveStationId});
+		String[][] pairs = new String[cur.getCount()][2];
+		int i = 0;
+		Set<String> p = new HashSet<String>();
+		while(cur.moveToNext()) {
+			pairs[i][0]=cur.getString(0);
+			pairs[i][1]=cur.getString(1);
+			System.out.println(pairs[i][0] + " - " + pairs[i][1]);
+			p.add(pairs[i][0]);
+			p.add(pairs[i][1]);
+			i++;
+		}
+		cur.close();
+		cur = database.rawQuery(String.format("select stop_id, name from stop where stop_id in (%s)",join(p,",")),
+				null);
+		Map<String,String> idToName = new HashMap<String,String>();
+		while(cur.moveToNext()) {
+			String id = cur.getString(0);
+			String name = StationAdapter.makePretty(cur.getString(1));
+			idToName.put(id, name);
+		}
+		cur.close();
 		Date startDate = new Date(clearExtraFields(start));
 		Date endDate = new Date(clearExtraFields(end));
-		String startString = clearExtraFields(start).toString();
-		String endString = clearExtraFields(end).toString();
-		String[] connections = getConnectionStations(departStationId,
-				arriveStationId);
-		List<String> stations = new ArrayList<String>(connections == null ? 2
-				: connections.length + 2);
-		if (connections != null) {
-			for (String connection : connections) {
-				stations.add(connection);
-			}
-		}
-		stations.add(departStationId);
-		stations.add(arriveStationId);
-		String stationsFragment = "stop_id=" + join(stations, " or stop_id=");
-		final String calendarQuery;
-		final String[] params;
-		boolean usesCalendar = preferences.getBoolean("usesCalendar", false);
-		if (!usesCalendar) {
-			params = new String[] { startString, endString };
-			calendarQuery = "select service_id from calendar_dates where (calendar_date between ? and ?) and exception_type=1";
-		} else {
-			Calendar c = Calendar.getInstance();
-			c.setTime(startDate);
-			int day = c.get(Calendar.DAY_OF_WEEK);
-			c.setTime(endDate);
-			
-//			String m = (day == Calendar.MONDAY || day2==Calendar.MONDAY) ? "1" : "0";
-//			String t = (day == Calendar.TUESDAY || day2==Calendar.TUESDAY) ? "1" : "0";
-//			String w = (day == Calendar.WEDNESDAY || day2==Calendar.WEDNESDAY) ? "1" : "0";
-//			String r = (day == Calendar.THURSDAY || day2==Calendar.THURSDAY) ? "1" : "0";
-//			String f = (day == Calendar.FRIDAY || day2==Calendar.FRIDAY) ? "1" : "0";
-//			String s = (day == Calendar.SATURDAY || day2==Calendar.SATURDAY) ? "1" : "0";
-//			String n = (day == Calendar.SUNDAY || day2==Calendar.SUNDAY) ? "1" : "0";
-			StringBuilder b = new StringBuilder();
-			if(day==Calendar.MONDAY) {
-				b.append("monday=1");
-			}
-			if(day==Calendar.TUESDAY) {
-				b.append("tuesday=1");
-			}
-			if(day==Calendar.WEDNESDAY) {
-				b.append("wednesday=1");
-			}
-			if(day==Calendar.THURSDAY) {
-				b.append("thursday=1");
-			}
-			if(day==Calendar.FRIDAY) {
-				b.append("friday=1");
-			}
-			if(day==Calendar.SATURDAY) {
-				b.append("saturday=1");
-			}
-			if(day==Calendar.SUNDAY) {
-				b.append("sunday=1");
-			}
-			day = c.get(Calendar.DAY_OF_WEEK);
-			b.append(" or ");
-			if(day==Calendar.MONDAY) {
-				b.append("monday=1");
-			}
-			if(day==Calendar.TUESDAY) {
-				b.append("tuesday=1");
-			}
-			if(day==Calendar.WEDNESDAY) {
-				b.append("wednesday=1");
-			}
-			if(day==Calendar.THURSDAY) {
-				b.append("thursday=1");
-			}
-			if(day==Calendar.FRIDAY) {
-				b.append("friday=1");
-			}
-			if(day==Calendar.SATURDAY) {
-				b.append("saturday=1");
-			}
-			if(day==Calendar.SUNDAY) {
-				b.append("sunday=1");
-			}
-			params = new String[] { startString, endString };
-
-			calendarQuery = "select service_id from calendar where start <= ? and end >= ? and (" + b + ")";
-		}
-		String query1 = "select trip_id, sequence, stop_id, service_id, departure, arrival from stop_times where ("
-				+ stationsFragment
-				+ ") and service_id in ("
-				+ calendarQuery
-				+ ")";
-		query1 = query1.replace("?", "%s");
-		query1 = String.format(query1, params);
-		Cursor cursor = database
-				.rawQuery(
-						"select trip_id, sequence, stop_id, service_id, departure, arrival from stop_times where ("
-								+ stationsFragment
-								+ ") and service_id in ("
-								+ calendarQuery + ")", params);
+		String startString = simpleDate(startDate);
+		String endString = simpleDate(endDate);
+		
+		
+		Map<String[],List<ConnectionInterval>> pairToTimes = new HashMap<String[],List<ConnectionInterval>>();
+		Map<String,Integer> transferEdges = new HashMap<String,Integer>();
 		Map<String, List<StopTime>> tripToResult = new HashMap<String, List<StopTime>>();
 		Set<String> serviceIds = new HashSet<String>();
-		while (cursor.moveToNext()) {
-			StopTime r = new StopTime();
-			r.tripId = cursor.getString(0);
-			r.sequence = cursor.getInt(1);
-			r.stopId = cursor.getString(2);
-			r.serviceId = cursor.getString(3);
+		
+		Map<String, Service> services = new HashMap<String, Service>();
+		Set<String> tripIds = new HashSet<String>();
+		for(i=0; i < pairs.length; i++) {
+			String query = "select a1.depart,a2.arrive,a1.service_id,a1.trip_id from nested_trip a1 join nested_trip a2 on (a1.trip_id=a2.trip_id and a1.stop_id=? and a2.stop_id=? and a1.lft < a2.lft) where a1.service_id in (select service_id from service where date=? or date=?) order by a1.depart asc";			
+			Cursor rur = database.rawQuery("select duration from transfer_edge where source=? and target=?", new String[] {pairs[i][0],pairs[i][1]});
+			if(rur.moveToNext()) {
+				Integer duration = rur.getInt(0);
+				transferEdges.put(pairs[i][0]+"-"+pairs[i][1], duration);
+				continue; 
+			}
+			Cursor qur = database.rawQuery(query, new String[]{pairs[i][0],pairs[i][1],startString,endString});			
+			List<ConnectionInterval> intervals = new ArrayList<ConnectionInterval>();
+			pairToTimes.put(pairs[i], intervals);
+			
+			while(qur.moveToNext()) {
+				String depart = qur.getString(0);
+				String arrive = qur.getString(1);
+				String serviceId = qur.getString(2);
+				String tripId = qur.getString(3);
+				
+				ConnectionInterval interval = new ConnectionInterval();
+				interval.tripId = tripId;
+				tripIds.add(tripId);
+				interval.serviceId = serviceId;
+				interval.departure = depart;
+				interval.arrival = arrive;
+				interval.sourceId = pairs[i][0];
+				interval.targetId = pairs[i][1];
+				serviceIds.add(serviceId);				
+				intervals.add(interval);
+			}
+			qur.close();
+		}
+		
+		cur.close();
+		cur = database.rawQuery("select date,service_id from service where date=? or date=?", new String[]{startString, endString});
+		while(cur.moveToNext()) {
+			String serviceId = cur.getString(1);
+			Service s = services.get(serviceId);
+			if (s == null) {
+				s = new Service();
+				s.serviceId = serviceId;
+				services.put(s.serviceId, s);
+			} else {
+			}
+			Calendar cal = Calendar.getInstance();
 			try {
-				r.departure = timeFormat.parse(cursor.getString(4));
-				r.arrival = timeFormat.parse(cursor.getString(5));
-			} catch (Exception e) {
+				cal.setTimeInMillis(SIMPLE.parse(cur.getString(0)).getTime());
+			}catch (Exception e) {
 				throw new RuntimeException(e);
 			}
-			List<StopTime> result = tripToResult.get(r.tripId);
-			if (result == null) {
-				result = new ArrayList<StopTime>(2);
-				tripToResult.put(r.tripId, result);
-			}
-			result.add(r);
-			serviceIds.add(r.serviceId);
-		}
-		cursor.close();
-		Map<String, Service> services = new HashMap<String, Service>();
-		if (!usesCalendar) {
-			cursor = database
-					.rawQuery(
-							"select service_id, calendar_date from calendar_dates where calendar_date between ? and ? and exception_type=1",
-							new String[] { startString, endString });
-			while (cursor.moveToNext()) {
-				String serviceId = cursor.getString(0);
-				Long date = cursor.getLong(1);
-				Service s = services.get(serviceId);
-				if (s == null) {
-					s = new Service();
-					s.serviceId = serviceId;
-					services.put(s.serviceId, s);
-				} else {
-				}
-				Calendar cal = Calendar.getInstance();
-				cal.setTimeInMillis(date);
-				cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-				Date dateD = cal.getTime();
-				if (dateD.getTime() > endDate.getTime()
-						|| dateD.getTime() < startDate.getTime()) {
-				} else {
-					s.dates.add(dateD);
-				}
-
-			}
-		} else {
-			cursor = database
-					.rawQuery(
-							"select service_id, monday,tuesday,wednesday,thursday,friday,saturday,sunday,start,end from calendar where start >= ? and end <= ?",
-							new String[] { startString, endString });
-			while(cursor.moveToNext()) {
-				String serviceId = cursor.getString(0);
-				Calendar c = Calendar.getInstance();
-				c.setTimeZone(TimeZone.getTimeZone("UTC"));
-				c.setTimeInMillis(startDate.getTime());								
-				int monday = cursor.getInt(1);
-				int tuesday = cursor.getInt(2);
-				int wed = cursor.getInt(3);
-				int thur = cursor.getInt(4);
-				int fri = cursor.getInt(5);
-				int sat = cursor.getInt(6);
-				int sun = cursor.getInt(7);
-				Service s = services.get(serviceId);
-				if (s == null) {
-					s = new Service();
-					s.serviceId = serviceId;
-					services.put(s.serviceId, s);
-				}
-				if(monday==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.MONDAY) {					
-					s.dates.add(c.getTime());
-				}
-				if(tuesday==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.TUESDAY) {					
-					s.dates.add(c.getTime());
-				}
-				if(wed==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.WEDNESDAY) {					
-					s.dates.add(c.getTime());
-				}
-				if(thur==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.THURSDAY) {					
-					s.dates.add(c.getTime());
-				}
-				if(fri==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.FRIDAY) {					
-					s.dates.add(c.getTime());
-				}
-				if(sat==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY) {					
-					s.dates.add(c.getTime());
-				}
-				if(monday==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {					
-					s.dates.add(c.getTime());
-				}		
-				c.setTimeZone(TimeZone.getTimeZone("UTC"));
-				c.setTimeInMillis(endDate.getTime());
-				if(monday==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.MONDAY) {					
-					s.dates.add(c.getTime());
-				}
-				if(tuesday==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.TUESDAY) {					
-					s.dates.add(c.getTime());
-				}
-				if(wed==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.WEDNESDAY) {					
-					s.dates.add(c.getTime());
-				}
-				if(thur==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.THURSDAY) {					
-					s.dates.add(c.getTime());
-				}
-				if(fri==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.FRIDAY) {					
-					s.dates.add(c.getTime());
-				}
-				if(sat==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY) {					
-					s.dates.add(c.getTime());
-				}
-				if(monday==1 && c.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {					
-					s.dates.add(c.getTime());
-				}		
-			}
-			
-		}
-		cursor.close();
-		Set<String> regular = new HashSet<String>();
-		Set<String> reverse = new HashSet<String>();
-		if (connections != null) {
-
-		}
-		for (Map.Entry<String, List<StopTime>> entry : tripToResult.entrySet()) {
-			if (entry.getValue().size() != 2) {
-				continue;
+			Date dateD = cal.getTime();
+			if (dateD.getTime() > endDate.getTime()
+					|| dateD.getTime() < startDate.getTime()) {
 			} else {
-				StopTime a = entry.getValue().get(0);
-				StopTime b = entry.getValue().get(1);
-				System.out.println(a.stopId + " - " + b.stopId);
-				if (a.stopId.equals(departStationId)) {
-					if (a.sequence < b.sequence) {
-						regular.add(entry.getKey());
-					} else {
-						Collections.reverse(entry.getValue());
-						reverse.add(entry.getKey());
-					}
-				} else {
-					if (a.sequence < b.sequence) {
-						reverse.add(entry.getKey());
-					} else {
-						Collections.reverse(entry.getValue());
-						regular.add(entry.getKey());
-					}
-				}
+				s.dates.add(dateD);
 			}
 		}
-		cursor.close();
+		cur.close();
+				
 		Map<String, Trip> tripIdToTrips = new HashMap<String, Trip>();
 		if (tripToResult.size() > 0) {
 			String query = String.format(
 					"select id, block_id from trips where id = %s",
-					join(tripToResult.keySet(), " or id="));
-			cursor = database.rawQuery(query, null);
+					join(tripIds, " or id="));
+			Cursor cursor = database.rawQuery(query, null);
 			int count = cursor.getCount();
 			while (cursor.moveToNext()) {
 				String id = cursor.getString(0);
@@ -341,19 +196,42 @@ public class ScheduleDao {
 			cursor.close();
 		}
 		Schedule s = new Schedule();
-		s.connections = connections;
 		s.departId = departStationId;
 		s.arriveId = arriveStationId;
-		s.tripIdToTrip = tripIdToTrips;
-		s.tripIdToStopTimes = tripToResult;
+		s.transfers = pairs;
 		s.services = services;
-		s.tripIdsInProperOrder = regular;
-		s.tripIdsInReverseOrder = reverse;
+		s.connections = pairToTimes;
+		s.transferEdges = transferEdges;
+		s.stopIdToName = idToName;
 		s.start = startDate;
 		s.end = endDate;
 		s.userEnd = end;
 		s.userStart = start;
 		return s;
+	}
+	
+	public void name(List<Favorite> favs) {
+		Set<String> ids = new HashSet<String>();
+		for(Favorite f : favs) {
+			ids.add(f.sourceId);
+			ids.add(f.targetId);
+		}
+		if(ids.isEmpty()) {
+			return;
+		}
+		Cursor cursor = database.rawQuery(String.format("select stop_id,name from stop where stop_id in (%s)",ScheduleDao.join(ids, ",")),null);
+		
+		Map<String,String> kk = new HashMap<String,String>();
+		while(cursor.moveToNext()) {
+			String id = cursor.getString(0);
+			String name = cursor.getString(1);
+			name = StationAdapter.makePretty(name);
+			kk.put(id,name);
+		}
+		for(Favorite f : favs) {
+			f.sourceName = kk.get(f.sourceId);
+			f.targetName = kk.get(f.targetId);
+		}
 	}
 
 	public static String join(String delimiter, Object... s) {

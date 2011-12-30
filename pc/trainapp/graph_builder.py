@@ -381,9 +381,11 @@ def buildGraph(agencies) :
 					day = ahour / 24 + 1
 				arriveTime = datetime(1970,1,day,ahour%24,amin,asec)
 				key = source['id'] + ":" + target['id']
-				if key not in alltimes:
-					alltimes[key] = []
-				alltimes[key].append(tk.mktime(arriveTime.timetuple())-tk.mktime(departTime.timetuple()))
+				if source['id'] not in alltimes:
+					alltimes[source['id']] = {}
+				if target['id'] not in alltimes[source['id']]:
+					alltimes[source['id']][target['id']] = []
+				alltimes[source['id']][target['id']].append(tk.mktime(arriveTime.timetuple())-tk.mktime(departTime.timetuple()))
 #				if alltimes[key][len(alltimes[key])-1] < 0 :
 #					print "arrive",arriveTime,"-","depart",departTime
 				source['name'] = stations[source['id']]['name']
@@ -431,21 +433,7 @@ def buildGraph(agencies) :
 	# for routeId in routeToTrips:
 	# 	for trip in routeToTrips[routeId]:			
 	# 		stops = tripToStops[trip["id"]]
-	for tripId in tripToStops:
-		trip = trips[tripId]
-		stops = tripToStops[tripId]
-		route = trip['route_id']
-		for position in range(len(stops)):
-			stop = stops[position]
-			stopId = stop['id']
-			sRoutes = stopRoutes[stopId]
-			if len(sRoutes)>1:
-				for sRoute in sRoutes:
-					if route != sRoute:
-						H.add_node(route)
-						H.add_node(sRoute)
-						if(H.has_edge(route,sRoute)==False):
-							H.add_edge(route,sRoute)
+						
 	print "strongly connected stations: ",networkx.algorithms.components.strongly_connected.number_strongly_connected_components(G)
 	print "strongly connected routes: ",networkx.algorithms.components.strongly_connected.number_strongly_connected_components(H)
 	draw(G,"stations_before.dot")
@@ -525,7 +513,7 @@ def buildGraph(agencies) :
 									H.add_node(aRoute)
 									H.add_node(bRoute)
 									if H.has_edge(aRoute,bRoute)==False:
-										H.add_edge(aRoute,bRoute)
+										H.add_edge(aRoute,bRoute,{"weight":int(round(dist/1.389))})
 #										print aRoute, "to", bRoute
 #						if "routes" not in G[fromId][toId]:
 #							G[fromId][toId]["routes"] = {};
@@ -535,13 +523,61 @@ def buildGraph(agencies) :
 						c.close()
 			conn.commit()
 			metersPerSecond = 1.389
+	print "ok"
+	for a in alltimes:
+		print "alright"
+		for b in alltimes[a]:
+			print "here"
+			min = sys.maxint
+			max = 0
+			total = 0.0
+			for time in alltimes[a][b]:
+				total = total + time
+				if min>time:
+					min = time		
+				if time>max:
+					max = time
+			if a not in mintimes:
+				mintimes[a] = {}
+			mintimes[a][b] = min
+			if a not in avgtimes:
+				avgtimes[a] = {}		
+			avgtimes[a][b] = total / float(len(alltimes[a][b]))
+			if a not in maxtimes:
+				maxtimes[a] = {}
+			maxtimes[a][b] = max
+			#print mintimes[key], avgtimes[key]
+			G[a][b]['weight'] = mintimes[a][b]
+#			G[a][b] = avgtimes[key]
+#			G[a][b] = maxtimes[key]
+	for tripId in tripToStops:
+		trip = trips[tripId]
+		stops = tripToStops[tripId]
+		route = trip['route_id']
+		weight = 0
+		lastStop = None
+		for position in range(len(stops)):
+			stop = stops[position]
+			if lastStop!=None:
+				time = mintimes[lastStop["id"]][stop["id"]]
+				weight = weight + time
+			lastStop = stop
+			stopId = stop['id']
+			sRoutes = stopRoutes[stopId]
+			if len(sRoutes)>1:
+				for sRoute in sRoutes:
+					if route != sRoute:
+						H.add_node(route)
+						H.add_node(sRoute)
+						if(H.has_edge(route,sRoute)==False):
+							H.add_edge(route,sRoute,{"weight":weight})
 	print "strongly connected stations: ",networkx.algorithms.components.strongly_connected.number_strongly_connected_components(G)
 	print "strongly connected routes: ",networkx.algorithms.components.strongly_connected.number_strongly_connected_components(H)
 	draw(G,"stations_after.dot")
 	draw(H,"routes_after.dot")
 #	raw_input("k?")			
 #	print "all pairs shortest paths routes"
-	paths = networkx.algorithms.shortest_paths.unweighted.all_pairs_shortest_path(H)
+	paths = networkx.algorithms.shortest_paths.weighted.all_pairs_dijkstra_path(H)
 	routePaths = paths
 	for source in paths:
 		for target in paths[source]:
@@ -587,122 +623,119 @@ def buildGraph(agencies) :
 			lastStation = stop
 		conn.commit()
 #	c.execute("select rgt from nested_trip ")
-	for key in alltimes:
-		min = sys.maxint
-		max = 0
-		total = 0.0
-		for time in alltimes[key]:
-			total = total + time
-			if min>time:
-				min = time		
-			if time>max:
-				max = time
-		mintimes[key] = min		
-		avgtimes[key] = total / float(len(alltimes[key]))
-		maxtimes[key] = max
-		#print mintimes[key], avgtimes[key]
-		split = key.split(":")
-		G[split[0]][split[1]]['min_weight'] = mintimes[key]
-		G[split[0]][split[1]]['avg_weight'] = avgtimes[key]
-		G[split[0]][split[1]]['max_weight'] = maxtimes[key]
 	#print G["148"]["32905"]['min_weight'],G["148"]["32905"]['avg_weight']
 	#print "PRINCETON->NEWARK", G["125"]["107"]['min_weight'],G["125"]["107"]['avg_weight'],G["125"]["107"]['max_weight']
 #	print "all pairs shortest path"
-	paths = networkx.algorithms.shortest_paths.unweighted.all_pairs_shortest_path(G)
-	
-	for source in paths:
-		for target in paths[source]:
-			#nodes = ",".join(map((lambda x: prepend+x),paths[source][target][1:len(paths[source][target])-1]))
-			nodes = ",".join(paths[source][target][1:len(paths[source][target])-1])
-#			if source=="n103" and target=="n32906":
-#				print "how?",paths[source][target]
-#				k = raw_input("?")
-			if len(paths[source][target])!=0:
-				c.execute("INSERT INTO shortest_path(source,target,nodes) values(?,?,?)",(source,target,nodes))
-				c.close()
-		conn.commit()
-	for stationA in stations:
-		for stationB in stations:
-			if stationA in paths:
-				if stationB in paths[stationA]:
-					shortestPath = paths[stationA][stationB]
-					pathLength = len(shortestPath)
-					if(pathLength>1):
-						aRoutes = stopRoutes[stationA]
-						bRoutes = stopRoutes[stationB]
-						minRouteLength = sys.maxint
-						minRoute = None
-						for aRoute in aRoutes:
-							for bRoute in bRoutes:
-								if aRoute in routePaths and bRoute in routePaths[aRoute]:
-									shortestRoutePath = routePaths[aRoute][bRoute]
-									if minRouteLength > len(shortestRoutePath):
-										minRoute = shortestRoutePath
-										minRouteLength = len(minRoute)
-						currRoute = minRoute[0]
-						currRoutePos = -1
-						stationsToUse = []
-						lastStation = stationA
-						startStation = lastStation
-						dirs = []
-						stationsToUse = []
-						countAfter = 0
-						for currStation in shortestPath:
-							station = currStation
-							isTransferEdge = lastStation in transferedges and station in transferedges[lastStation]
-#							isTransferEdge = hasTransferEdge(c,lastStation["stop_id"],station["stop_id"])
-							if isTransferEdge:
-								stationsToUse.append((startStation,lastStation))
-								startStation = station
-								countAfter = 0
-							isOnRoute = currRoute in stopRoutes[station]
-							#hasEdge = G.has_edge(lastStation,station) and G.has_edge(station,lastStation)
-							#print hasEdge
-#							isOnRoute = onRoute(c,station["stop_id"],currRoute)
-#							print station
-							if isOnRoute==False:
-								currRoutePos = currRoutePos+1
-								if currRoutePos> minRouteLength-1:
-									break;
-								currRoute = minRoute[currRoutePos]
-								if isTransferEdge==False:
-									stationsToUse.append((startStation,lastStation))									
-									startStation = lastStation
+	patharray = [networkx.algorithms.shortest_paths.weighted.all_pairs_dijkstra_path(G),networkx.algorithms.shortest_paths.unweighted.all_pairs_shortest_path(G)]
+# 	for source in paths:
+# 		for target in paths[source]:
+# 			#nodes = ",".join(map((lambda x: prepend+x),paths[source][target][1:len(paths[source][target])-1]))
+# 			nodes = ",".join(paths[source][target][1:len(paths[source][target])-1])
+# #			if source=="n103" and target=="n32906":
+# #				print "how?",paths[source][target]
+# #				k = raw_input("?")
+# 			if len(paths[source][target])!=0:
+# 				c.execute("INSERT INTO shortest_path(source,target,nodes) values(?,?,?)",(source,target,nodes))
+# 				c.close()
+# 		conn.commit()
+	for level in range(0,len(patharray)):
+		paths = patharray[level]
+		for stationA in stations:
+			for stationB in stations:
+				if stationA in paths:
+					if stationB in paths[stationA]:
+						shortestPath = paths[stationA][stationB]
+						pathLength = len(shortestPath)
+						if(pathLength>1):
+							aRoutes = stopRoutes[stationA]
+							bRoutes = stopRoutes[stationB]
+							minRouteLength = sys.maxint
+							minRoute = None
+							for aRoute in aRoutes:
+								for bRoute in bRoutes:
+									if aRoute in routePaths and bRoute in routePaths[aRoute]:
+										shortestRoutePath = routePaths[aRoute][bRoute]
+										if minRouteLength > len(shortestRoutePath):
+											minRoute = shortestRoutePath
+											minRouteLength = len(minRoute)
+	#						print minRoute								
+							currRoute = minRoute[0]
+							currRoutePos = -1
+							stationsToUse = []
+							error = False
+							lastStation = stationA
+							startStation = lastStation
+							dirs = []
+							stationsToUse = []
+							countAfter = 0
+							for currStation in shortestPath:
+								station = currStation							
+								isTransferEdge = lastStation in transferedges and station in transferedges[lastStation]
+	#							print "transfer edge?",isTransferEdge
+	#							isTransferEdge = hasTransferEdge(c,lastStation["stop_id"],station["stop_id"])
+								if isTransferEdge:
+									stationsToUse.append((startStation,lastStation))
+									startStation = station
+									countAfter = 0							
+								isOnRoute = currRoute in stopRoutes[station]
+	#							print "on route?",isOnRoute
+								#hasEdge = G.has_edge(lastStation,station) and G.has_edge(station,lastStation)
+								#print hasEdge
+	#							isOnRoute = onRoute(c,station["stop_id"],currRoute)
+	#							print station
+								if isOnRoute==False:
+									currRoutePos = currRoutePos+1
+									if currRoutePos> minRouteLength-1:
+										print stations[stationA]["name"],"->",stations[stationB]["name"],"\n",minRoute
+										error = True
+										break;
+									currRoute = minRoute[currRoutePos]
+	#								print "new route:",currRoute,routes[currRoute]["label"]
 									countAfter = 0
-							else:
-								if lastStation!=station:
-									if lastStation not in directions or station not in directions[lastStation]:
-										print "no directions", stations[lastStation],"to",stations[station]
-									else:										
-										ndirs = directions[lastStation][station]
-										intersection = set(ndirs).intersection(set(dirs))
-										dirs = ndirs
-										if len(intersection) == 0 and countAfter>0:
-											stationsToUse.append((startStation,lastStation))
-											startStation = lastStation
-											countAfter = 0
-										else:
-											countAfter = countAfter+1
-							lastStation = station
-						if startStation!=lastStation:							
-							stationsToUse.append((startStation,lastStation))
-						for index in range(0, len(stationsToUse)):
-							source = stationA
-							target = stationB
-							a = stationsToUse[index][0]
-							b = stationsToUse[index][1]
-							c.execute("INSERT INTO schedule_path(source,target,a,b,sequence) values(?,?,?,?,?)",(source,target,a,b,index))
-							c.close()
-						# indent = 1
-						# print stations[stationA]["name"],stations[stationB]["name"]
-						# for x,y in stationsToUse:
-						# 	indents = ""
-						# 	for k in range(1,indent+1):
-						# 		indents = indents+"\t"	
-						# 	print indents,stations[x]["name"],"->",stations[y]["name"]	
-						# 	indent = indent+1					
-						# print ""
-		conn.commit()
+									if isTransferEdge==False:
+										stationsToUse.append((startStation,lastStation))									
+										startStation = lastStation
+								else:
+									if lastStation!=station:
+										if lastStation not in directions or station not in directions[lastStation]:
+											print "no directions", stations[lastStation],"to",stations[station]
+										else:										
+											ndirs = directions[lastStation][station]
+											intersection = set(ndirs).intersection(set(dirs))
+											dirs = ndirs
+	#										print intersection,ndirs,"--",dirs
+											if len(intersection) == 0 and countAfter>0:
+												stationsToUse.append((startStation,lastStation))
+												startStation = lastStation
+												countAfter = 0
+											else:
+												countAfter = countAfter+1
+								lastStation = station
+							if startStation!=lastStation:							
+								stationsToUse.append((startStation,lastStation))
+							if error==False:
+								for index in range(0, len(stationsToUse)):
+									source = stationA
+									target = stationB
+									a = stationsToUse[index][0]
+									b = stationsToUse[index][1]
+									c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",(source,target,a,b,level,index))
+									c.close()
+							# indent = 1
+							# print stations[stationA]["name"],stations[stationB]["name"]
+							# for x,y in stationsToUse:
+							# 	indents = ""
+							# 	for k in range(1,indent+1):
+							# 		indents = indents+"\t"	
+							# 	print indents,stations[x]["name"],"->",stations[y]["name"]	
+							# 	indent = indent+1					
+							# print ""
+			conn.commit()
+	for stop in stations:
+		stop = stations[stop]
+		c.execute("INSERT INTO stop(name,stop_id,lat,lon) values(?,?,?,?)",(stop["name"],stop["id"],stop["lat"],stop["lon"]))
+		c.close()
+	conn.commit()
 	return (prepend,G,H,stations,walks,stopRoutes,tripToStops)
 shutil.rmtree("target",True)
 os.makedirs("target")
@@ -722,6 +755,7 @@ c.execute("""CREATE TABLE schedule_path (
 		source VARCHAR(20) NOT NULL,
         target VARCHAR(20) NOT NULL,
 		sequence INTEGER,
+		level INTEGER,	
 		a VARCHAR(20) NOT NULL,
 		b VARCHAR(20) NOT NULL
 );""")

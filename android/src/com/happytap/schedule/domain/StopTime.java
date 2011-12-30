@@ -8,16 +8,10 @@ public class StopTime implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	public String tripId;
-	public int sequence;
-	public String stopId;
+	public String sourceId;
+	public String targetId;
 	public Date departure;
 	public Date arrival;
 	public String serviceId;
-	@Override
-	public String toString() {
-		return "StopTime [" + (stopId != null ? "stopId=" + stopId : "") + "]";
-	}
-
-	
 	
 }

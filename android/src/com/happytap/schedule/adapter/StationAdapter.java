@@ -37,7 +37,7 @@ public class StationAdapter extends SimpleCursorAdapter {
 		});
 	}
 	
-	private String makePretty(String str) {
+	public static String makePretty(String str) {
 		char lastChar=' ';
 		StringBuilder sb = new StringBuilder(str);
 		int whitespaceDist = 0;

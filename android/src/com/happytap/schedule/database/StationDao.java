@@ -25,7 +25,7 @@ public class StationDao {
 		this.preferences = preferences;
 	}
 	
-	public static final String ID="id";
+	//public static final String ID="id";
 	public static final String NAME="name";
 	
 	public Cursor getStations() {
@@ -35,7 +35,7 @@ public class StationDao {
 				ignore.add("'"+(String)entry.getValue()+"'");
 			}
 		}
-		return database.rawQuery("select id as _id, name from stops where _id not in ("+ScheduleDao.join(ignore, ",")+") order by lower(name)", null);
+		return database.rawQuery("select stop_id as _id, name from stop where _id not in ("+ScheduleDao.join(ignore, ",")+") order by lower(name)", null);
 //		Cursor cursor =  database.query("stops", new String[]{ID + " as _id", NAME}, ignore.isEmpty() ? null : "_id not in (?)", ignore.isEmpty() ? null : new String[]{ScheduleDao.join(ignore,",")}, null, null, NAME);
 	}
 	
@@ -45,7 +45,7 @@ public class StationDao {
 	 */
 	public Cursor getStationLetters() {
 		String name = String.format("substr(%s,1,1)",NAME);
-		return database.query("stops", new String[]{name}, null, null, name, null, name);
+		return database.query("stop", new String[]{name}, null, null, name, null, name);
 	}
 	
 }
