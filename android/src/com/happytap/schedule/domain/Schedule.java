@@ -106,7 +106,7 @@ public class Schedule implements Serializable {
 		Integer[] k = toRemove.toArray(new Integer[toRemove.size()]);
 		
 		for (int i = k.length - 1; i > -1; i--) {
-			System.out.println(stationToStations.get(k[i].intValue()));
+//			System.out.println(stationToStations.get(k[i].intValue()));
 			stationToStations.remove(k[i].intValue());
 		}
 		nsize = 0;
@@ -134,7 +134,7 @@ public class Schedule implements Serializable {
 		}
 	}
 
-	void traversal(ScheduleTraverser traversal) {
+	void traversal(ScheduleTraverser traversal,Map<String[],Set<String>> tripIds) {
 		int first = 0;
 		int ignore = 0;
 		Set<Integer> deleteMe = new HashSet<Integer>();
@@ -178,7 +178,7 @@ public class Schedule implements Serializable {
 			Integer transferDuration = transferEdges.get(pair[0] + "-"
 					+ pair[1]);
 			if (transferDuration != null) {
-				System.out.println(transferDuration);
+//				System.out.println(transferDuration);
 			}
 			Map<String,List<ConnectionInterval>> k = connections.get(pair);
 			// if k is null, this is a transfer edge.
@@ -189,7 +189,7 @@ public class Schedule implements Serializable {
 			
 			Set<StationInterval> intervals = new HashSet<StationInterval>();
 
-			for(String tripId : inOrder.get(pair)) {
+			for(String tripId : tripIds.get(pair)) {
 				List<ConnectionInterval> ok = k.get(tripId);
 				ConnectionInterval a = ok.get(0);
 				ConnectionInterval b = ok.get(1);
@@ -338,11 +338,11 @@ public class Schedule implements Serializable {
 	}
 
 	public void inOrderTraversal(ScheduleTraverser t) {
-		this.traversal(t);
+		this.traversal(t,inOrder);
 	}
 
 	public void inReverseOrderTraversal(ScheduleTraverser t) {
-		// this.traversal(this.tripIdsInReverseOrder, t);
+		this.traversal(t,reverseOrder);
 	}
 
 	private Calendar populate(Date day, Date time) {

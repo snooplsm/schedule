@@ -490,12 +490,24 @@ public class StationToStationActivity extends ScheduleActivity implements
 		if(departureVision) {
 			departureVisionTask.cancel(true);
 		}
-//		CharSequence temp = departureText.getText();
-//		departureText.setText(arrivalText.getText());
-//		arrivalText.setText(temp);
-//		String temp2 = departureStopId;
-//		departureStopId = arrivalStopId;
-//		arrivalStopId = temp2;
+		if(schedule.transfers.length==1) {
+			CharSequence temp = departureText.getText();
+			departureText.setText(arrivalText.getText());
+			arrivalText.setText(temp);
+			String temp2 = departureStopId;
+			departureStopId = arrivalStopId;
+			arrivalStopId = temp2;
+			getAdapter().reverse();
+			int index = getAdapter().findIndexOfCurrent();
+			if(index>0) {
+				listView.setSelectionFromTop(index-1, 0);
+			}
+			if(departureVision) {
+				departureVisionTask = newDepartureVisionTask();
+				departureVisionTask.execute();
+			}
+			return;
+		}
 		Intent intent = new Intent(StationToStationActivity.this, LoadScheduleActivity.class);
 		intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION, arrivalText.getText());
 		intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION, departureText.getText());		

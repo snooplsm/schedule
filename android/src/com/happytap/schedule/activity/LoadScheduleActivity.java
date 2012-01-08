@@ -159,7 +159,6 @@ private static DecimalFormat df = new DecimalFormat("$0.00");
         public void handleMessage(Message msg) {
         	final Object obj = msg.obj;
         	int what = msg.what;
-        	System.out.println(obj + "" +  what);
         	if(what==ScheduleService.FOUND_SCHEDULE) {
         		new Thread() {
         			public void run() {
@@ -184,7 +183,6 @@ private static DecimalFormat df = new DecimalFormat("$0.00");
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             mService = new Messenger(service);
-            System.out.println("attached");
             try {
                 Message msg = Message.obtain(null,
                         ScheduleService.MSG_REGISTER_CLIENT);

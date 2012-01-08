@@ -243,7 +243,6 @@ public class SplashScreenActivity extends ScheduleActivity {
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             mService = new Messenger(service);
-            System.out.println("attached");
             try {
                 Message msg = Message.obtain(null,
                         ScheduleService.MSG_REGISTER_CLIENT);

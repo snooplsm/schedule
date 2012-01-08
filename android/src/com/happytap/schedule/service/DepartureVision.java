@@ -61,8 +61,7 @@ public class DepartureVision {
 			try {
 				Thread.sleep(9000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				cancelled = true;
 			}
 		}
     }

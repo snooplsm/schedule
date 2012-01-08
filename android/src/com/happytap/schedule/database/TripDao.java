@@ -24,7 +24,6 @@ public class TripDao {
 			}
 		}
 		c.close();
-		System.out.println(b.toString());
 		return b.toString();
 	}
 	
