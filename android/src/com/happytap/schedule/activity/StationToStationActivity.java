@@ -102,8 +102,40 @@ public class StationToStationActivity extends ScheduleActivity implements
 		return getSharedPreferences(getApplication().getPackageName()+"_preferences", Context.MODE_PRIVATE).getBoolean("useDepartureVision", true) && DateUtils.isToday(start);
 	}
 
+	boolean paused;
+	
+	private AsyncTask<Void, Integer, Void> last;
+	
 	protected void onResume() {
 		super.onResume();
+		paused = false;
+		last = new AsyncTask<Void, Integer, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
+				try {
+					while(!isCancelled()) {
+						Calendar c = Calendar.getInstance();
+						c.add(Calendar.MINUTE, 1);
+						c.set(Calendar.SECOND, 0);
+						long diff = c.getTimeInMillis()-System.currentTimeMillis();
+						if(diff<=0) {
+							diff = 20000;
+						}
+						Thread.sleep(diff);
+						publishProgress(1);
+					}
+				} catch (Exception e) {
+					
+				}
+				return null;
+			}
+			
+			@Override
+			protected void onProgressUpdate(Integer... values) {
+				listView.invalidate();
+			}
+		};
+		listView.invalidate();
 		if(!useDepartureVision()) {
 			return;
 		}
@@ -164,6 +196,9 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	protected void onPause() {
 		super.onPause();
+		if(last!=null) {
+			last.cancel(false);
+		}
 		if(!useDepartureVision()) {
 			return;
 		}
@@ -339,7 +374,11 @@ public class StationToStationActivity extends ScheduleActivity implements
 		listView.setOnItemLongClickListener(this);
 		listView.setOnItemClickListener(this);
 		listView.setItemsCanFocus(true);
-		listView.setSelectionFromTop(adapter.findIndexOfCurrent(), 0);
+		int index = adapter.findIndexOfCurrent();
+		if(index>0) {
+			listView.setSelectionFromTop(index-1, 0);
+		}
+		
 		departureStopId = getIntent().getStringExtra(DEPARTURE_ID);
 		arrivalStopId = getIntent().getStringExtra(ARRIVAL_ID);
 		departureText.setText(getIntent().getStringExtra(DEPARTURE_STATION));
@@ -451,18 +490,29 @@ public class StationToStationActivity extends ScheduleActivity implements
 		if(departureVision) {
 			departureVisionTask.cancel(true);
 		}
-		CharSequence temp = departureText.getText();
-		departureText.setText(arrivalText.getText());
-		arrivalText.setText(temp);
-		String temp2 = departureStopId;
-		departureStopId = arrivalStopId;
-		arrivalStopId = temp2;
-		getAdapter().reverse();
-		
-		if(departureVision) {
-			departureVisionTask = newDepartureVisionTask();
-			departureVisionTask.execute();
+//		CharSequence temp = departureText.getText();
+//		departureText.setText(arrivalText.getText());
+//		arrivalText.setText(temp);
+//		String temp2 = departureStopId;
+//		departureStopId = arrivalStopId;
+//		arrivalStopId = temp2;
+		Intent intent = new Intent(StationToStationActivity.this, LoadScheduleActivity.class);
+		intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION, arrivalText.getText());
+		intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION, departureText.getText());		
+		Calendar c = Calendar.getInstance();
+		c.setTime(schedule.start);
+		intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_START, c);
+		intent.putExtra(LoadScheduleActivity.DEPARTURE_ID, arrivalStopId);
+		intent.putExtra(LoadScheduleActivity.ARRIVAL_ID, departureStopId);
+		if(DateUtils.isToday(c)) {
+			Calendar tom = Calendar.getInstance();
+			tom.setTimeInMillis(c.getTimeInMillis());
+			tom.add(Calendar.DAY_OF_YEAR,1);
+			intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_END, tom);
+		} else {
+			intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_END, c);
 		}
+		startActivity(intent);
 		
 	}
 }

@@ -3,3 +3,5 @@ android/bin
 android/target
 android/res/raw/database*
 .DS_Store
+pc/trainapp/target
+pc/schedule-builder/target/

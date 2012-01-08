@@ -11,12 +11,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
-import com.gc.android.market.api.MarketSession;
-import com.gc.android.market.api.MarketSession.Callback;
-import com.gc.android.market.api.model.Market.App;
-import com.gc.android.market.api.model.Market.AppsRequest;
-import com.gc.android.market.api.model.Market.AppsResponse;
-import com.gc.android.market.api.model.Market.ResponseContext;
 import com.google.inject.Inject;
 import com.happytap.schedule.database.PreferencesDao;
 import com.happytap.schedule.database.ScheduleDao;
@@ -84,7 +78,7 @@ public class ScheduleService extends RoboService {
 				mClients.remove(msg.replyTo);
 				break;
 			case CHECK_FOR_UPGRADE:
-				checkForUpgrade();
+				//checkForUpgrade();
 				break;
 			}
 		}
@@ -121,32 +115,6 @@ public class ScheduleService extends RoboService {
 		}.start();
 	}
 	
-	private void checkForUpgrade() {
-		new Thread() {
-			public void run() {
-				try {			
-					MarketSession sess = new MarketSession();
-					AppsRequest req = AppsRequest.newBuilder().setAppId(getApplication().getPackageName()).setStartIndex(0).setEntriesCount(5).build();
-					sess.append(req, new Callback<AppsResponse>() {
-
-						@Override
-						public void onResult(ResponseContext ctx,
-								AppsResponse resp) {
-							for(int i = 0; i < resp.getAppCount(); i++) {
-								App a = resp.getApp(0);
-								System.out.println(a);
-							}
-						}						
-						
-					});
-					sess.flush();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			};
-		}.start();
-	}
-
 	Messenger mMessenger = new Messenger(new IncomingHandler());
 
 	@Override

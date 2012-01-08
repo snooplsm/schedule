@@ -13,6 +13,8 @@ public class StationToStation implements Serializable {
 		public Calendar departTime;
 		public Calendar arriveTime;		
 		public String blockId;
+		public String tripId;
+		public String routeId;
 		
 		public Calendar getDepartTime() {
 			return departTime;
@@ -23,14 +25,17 @@ public class StationToStation implements Serializable {
 		}
 		
 		public int getDuration() {
+			if(arriveTime==null || departTime==null) {
+				return 0;
+			}
 			return (int)(arriveTime.getTimeInMillis()-departTime.getTimeInMillis())/60000;
 		}
 
 		@Override
 		public String toString() {
 			return "StationToStation [departId=" + departId + ", arriveId="
-					+ arriveId + ", departTime=" + departTime.getTime() + ", arriveTime="
-					+ arriveTime.getTime() + ", duration=" + getDuration() + "]";
+					+ arriveId + ", departTime=" + (departTime!=null ? departTime.getTime() : null) + ", arriveTime="
+					+ (arriveTime!=null ? arriveTime.getTime() : null) + ", duration=" + getDuration() + "]";
 		}
 
 		@Override

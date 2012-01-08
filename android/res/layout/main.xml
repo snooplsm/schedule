@@ -170,7 +170,7 @@
         android:layout_centerInParent="true"
         android:background="@drawable/user_details_activity_general_selector"
         android:orientation="vertical"
-        android:visibility="gone" >
+        android:visibility="visible" >
 
         <TextView
             android:layout_width="fill_parent"
@@ -187,6 +187,17 @@
             android:layout_width="fill_parent"
             android:layout_height="50dp"
             android:layout_weight="10" />
+        
+        <TextView 
+            android:id="@+id/percentage"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:text="0%"
+            android:textStyle="bold"
+            />
 
         <TextView
             android:layout_width="fill_parent"

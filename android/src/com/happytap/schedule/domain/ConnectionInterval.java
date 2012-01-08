@@ -10,5 +10,7 @@ public class ConnectionInterval implements Serializable {
 	public String departure;
 	public String arrival;
 	public String serviceId;
-	
+	public String blockId;
+	public int sequence;
+	public String routeId;
 }

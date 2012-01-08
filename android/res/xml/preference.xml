@@ -36,11 +36,4 @@
         android:summary="places the date the schedule ends on the front page"
         android:title="show sched expiration" />
 
-    <EditTextPreference
-        android:defaultValue="7"
-        android:key="nextDayLookahead"
-        android:persistent="true"
-        android:summary="hours to look ahead for the next days schedule"
-        android:title="next day lookahead" />
-
 </PreferenceScreen>

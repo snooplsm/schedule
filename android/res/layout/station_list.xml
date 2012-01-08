@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/map_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/user_details_activity_general_selector"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="2dip" >
+
+        <TextView
+            android:id="@+id/close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="[X]" />
+
+        <LinearLayout
+            android:id="@+id/station_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/map"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_below="@id/departureText"
+                android:gravity="center_vertical"
+                android:paddingLeft="2dip"
+                android:paddingTop="3dip"
+                android:text="Map View"
+                android:textAppearance="@style/TextViewStyleUserDetailsActivityGeneralTitle"
+                android:textSize="15dip" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" 
+        android:id="@+id/meat">
+
+        <ListView
+            android:id="@+android:id/list"
+            style="@android:style/Theme.Light"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/ad_layout"
+            android:background="@color/white" />
+    </RelativeLayout>
+
+</LinearLayout>

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,8 +72,10 @@ public class ScheduleDao {
 		}
 		return null;
 	}
-	
-	private static final SimpleDateFormat SIMPLE = new SimpleDateFormat("yyyyMMdd");
+
+	private static final SimpleDateFormat SIMPLE = new SimpleDateFormat(
+			"yyyyMMdd");
+
 	/**
 	 * 
 	 * 
@@ -85,23 +88,27 @@ public class ScheduleDao {
 
 	public Schedule getSchedule(final String departStationId,
 			final String arriveStationId, Date start, Date end) {
-		Cursor cur = database.rawQuery("select a,b from schedule_path where source=? and target=? and level=0 order by sequence asc", new String[]{departStationId,arriveStationId});
+		Cursor cur = database
+				.rawQuery(
+						"select a,b from schedule_path where source=? and target=? and level=0 order by sequence asc",
+						new String[] { departStationId, arriveStationId });
 		String[][] pairs = new String[cur.getCount()][2];
 		int i = 0;
 		Set<String> p = new HashSet<String>();
-		while(cur.moveToNext()) {
-			pairs[i][0]=cur.getString(0);
-			pairs[i][1]=cur.getString(1);
-			System.out.println(pairs[i][0] + " - " + pairs[i][1]);
+		while (cur.moveToNext()) {
+			pairs[i][0] = cur.getString(0);
+			pairs[i][1] = cur.getString(1);
+			// System.out.println(pairs[i][0] + " - " + pairs[i][1]);
 			p.add(pairs[i][0]);
 			p.add(pairs[i][1]);
 			i++;
 		}
 		cur.close();
-		cur = database.rawQuery(String.format("select stop_id, name from stop where stop_id in (%s)",join(p,",")),
-				null);
-		Map<String,String> idToName = new HashMap<String,String>();
-		while(cur.moveToNext()) {
+		cur = database.rawQuery(String.format(
+				"select stop_id, name from stop where stop_id in (%s)",
+				join(p, ",")), null);
+		Map<String, String> idToName = new HashMap<String, String>();
+		while (cur.moveToNext()) {
 			String id = cur.getString(0);
 			String name = StationAdapter.makePretty(cur.getString(1));
 			idToName.put(id, name);
@@ -111,50 +118,70 @@ public class ScheduleDao {
 		Date endDate = new Date(clearExtraFields(end));
 		String startString = simpleDate(startDate);
 		String endString = simpleDate(endDate);
-		
-		
-		Map<String[],List<ConnectionInterval>> pairToTimes = new HashMap<String[],List<ConnectionInterval>>();
-		Map<String,Integer> transferEdges = new HashMap<String,Integer>();
+
+		Map<String[], Map<String, List<ConnectionInterval>>> pairToTimes = new HashMap<String[], Map<String, List<ConnectionInterval>>>();
+		Map<String, Integer> transferEdges = new HashMap<String, Integer>();
 		Map<String, List<StopTime>> tripToResult = new HashMap<String, List<StopTime>>();
 		Set<String> serviceIds = new HashSet<String>();
-		
+
 		Map<String, Service> services = new HashMap<String, Service>();
 		Set<String> tripIds = new HashSet<String>();
-		for(i=0; i < pairs.length; i++) {
-			String query = "select a1.depart,a2.arrive,a1.service_id,a1.trip_id from nested_trip a1 join nested_trip a2 on (a1.trip_id=a2.trip_id and a1.stop_id=? and a2.stop_id=? and a1.lft < a2.lft) where a1.service_id in (select service_id from service where date=? or date=?) order by a1.depart asc";			
-			Cursor rur = database.rawQuery("select duration from transfer_edge where source=? and target=?", new String[] {pairs[i][0],pairs[i][1]});
-			if(rur.moveToNext()) {
+		Map<String, String> routeIds = new HashMap<String, String>();
+		String stationsFragment = "stop_id=" + join(p, " or stop_id=");
+		String query = "select a1.depart,a1.arrive,a1.service_id,a1.trip_id,a1.block_id,a1.route_id,a1.stop_id,a1.lft from nested_trip a1 where a1.stop_id=? or a1.stop_id=? and a1.service_id in (select service_id from service where date=? or date=?)";
+		for (i = 0; i < pairs.length; i++) {
+			Map<String, List<ConnectionInterval>> tripToConnectionIntervals = new HashMap<String, List<ConnectionInterval>>();
+			Cursor rur = database
+					.rawQuery(
+							"select duration from transfer_edge where source=? and target=?",
+							new String[] { pairs[i][0], pairs[i][1] });
+			if (rur.moveToNext()) {
 				Integer duration = rur.getInt(0);
-				transferEdges.put(pairs[i][0]+"-"+pairs[i][1], duration);
-				continue; 
+				transferEdges.put(pairs[i][0] + "-" + pairs[i][1], duration);
+				rur.close();
+				continue;
 			}
-			Cursor qur = database.rawQuery(query, new String[]{pairs[i][0],pairs[i][1],startString,endString});			
-			List<ConnectionInterval> intervals = new ArrayList<ConnectionInterval>();
-			pairToTimes.put(pairs[i], intervals);
-			
-			while(qur.moveToNext()) {
+			rur.close();
+			Cursor qur = database.rawQuery(query, new String[] { pairs[i][0],
+					pairs[i][1], startString, endString });
+			pairToTimes.put(pairs[i], tripToConnectionIntervals);
+			while (qur.moveToNext()) {
 				String depart = qur.getString(0);
 				String arrive = qur.getString(1);
 				String serviceId = qur.getString(2);
 				String tripId = qur.getString(3);
-				
+				String blockId = qur.getString(4);
+				String routeId = qur.getString(5);
+				String stopId = qur.getString(6);
+				int seq = qur.getInt(7);
+				routeIds.put(routeId, "");
 				ConnectionInterval interval = new ConnectionInterval();
 				interval.tripId = tripId;
+				interval.sequence = seq;
 				tripIds.add(tripId);
+				interval.routeId = routeId;
 				interval.serviceId = serviceId;
 				interval.departure = depart;
 				interval.arrival = arrive;
-				interval.sourceId = pairs[i][0];
-				interval.targetId = pairs[i][1];
-				serviceIds.add(serviceId);				
-				intervals.add(interval);
+				interval.sourceId = stopId;
+				interval.targetId = stopId;
+				interval.blockId = blockId;
+				serviceIds.add(serviceId);
+				List<ConnectionInterval> cin = tripToConnectionIntervals
+						.get(tripId);
+				if (cin == null) {
+					cin = new ArrayList<ConnectionInterval>(2);
+					tripToConnectionIntervals.put(tripId, cin);
+				}
+				cin.add(interval);
 			}
 			qur.close();
 		}
-		
-		cur.close();
-		cur = database.rawQuery("select date,service_id from service where date=? or date=?", new String[]{startString, endString});
-		while(cur.moveToNext()) {
+
+		cur = database.rawQuery(
+				"select date,service_id from service where date=? or date=?",
+				new String[] { startString, endString });
+		while (cur.moveToNext()) {
 			String serviceId = cur.getString(1);
 			Service s = services.get(serviceId);
 			if (s == null) {
@@ -166,7 +193,7 @@ public class ScheduleDao {
 			Calendar cal = Calendar.getInstance();
 			try {
 				cal.setTimeInMillis(SIMPLE.parse(cur.getString(0)).getTime());
-			}catch (Exception e) {
+			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 			Date dateD = cal.getTime();
@@ -177,25 +204,51 @@ public class ScheduleDao {
 			}
 		}
 		cur.close();
-				
-		Map<String, Trip> tripIdToTrips = new HashMap<String, Trip>();
-		if (tripToResult.size() > 0) {
-			String query = String.format(
-					"select id, block_id from trips where id = %s",
-					join(tripIds, " or id="));
-			Cursor cursor = database.rawQuery(query, null);
-			int count = cursor.getCount();
-			while (cursor.moveToNext()) {
-				String id = cursor.getString(0);
-				String blockId = cursor.getString(1);
-				Trip trip = new Trip();
-				trip.id = id;
-				trip.blockId = blockId;
-				tripIdToTrips.put(trip.id, trip);
+		cur = database.rawQuery(String.format(
+				"select route_id, name from route where route_id in (%s)",
+				join(routeIds.keySet(), ",")), null);
+		while (cur.moveToNext()) {
+			String routeId = cur.getString(0);
+			String name = cur.getString(1);
+			routeIds.put(routeId, name);
+		}
+		Map<String[],Set<String>> regular = new HashMap<String[],Set<String>>();
+		Map<String[],Set<String>> reverse = new HashMap<String[],Set<String>>();
+		for (String[] pair : pairs) {
+			Set<String> reg = new HashSet<String>();
+			Set<String> rev = new HashSet<String>();
+			regular.put(pair, reg);
+			reverse.put(pair, rev);
+			if(pairToTimes.get(pair)==null) {
+				continue;
 			}
-			cursor.close();
+			for (Map.Entry<String, List<ConnectionInterval>> e : pairToTimes
+					.get(pair).entrySet()) {
+				List<ConnectionInterval> value = e.getValue();
+				if(value.size()!=2) {
+					continue;
+				}
+				ConnectionInterval a = value.get(0);
+				ConnectionInterval b = value.get(1);
+				if(a.sourceId.equals(pair[0])) {
+					if(a.sequence<b.sequence) {
+						reg.add(e.getKey());
+					} else {
+						Collections.reverse(value);
+						rev.add(e.getKey());
+					}
+				} else {
+					if(a.sequence < b.sequence) {
+						rev.add(e.getKey());
+					} else {
+						Collections.reverse(value);
+						reg.add(e.getKey());
+					}
+				}
+			}
 		}
 		Schedule s = new Schedule();
+		s.routeIdToName = routeIds;
 		s.departId = departStationId;
 		s.arriveId = arriveStationId;
 		s.transfers = pairs;
@@ -205,30 +258,34 @@ public class ScheduleDao {
 		s.stopIdToName = idToName;
 		s.start = startDate;
 		s.end = endDate;
+		s.inOrder = regular;
+		s.reverseOrder = reverse;
 		s.userEnd = end;
 		s.userStart = start;
 		return s;
 	}
-	
+
 	public void name(List<Favorite> favs) {
 		Set<String> ids = new HashSet<String>();
-		for(Favorite f : favs) {
+		for (Favorite f : favs) {
 			ids.add(f.sourceId);
 			ids.add(f.targetId);
 		}
-		if(ids.isEmpty()) {
+		if (ids.isEmpty()) {
 			return;
 		}
-		Cursor cursor = database.rawQuery(String.format("select stop_id,name from stop where stop_id in (%s)",ScheduleDao.join(ids, ",")),null);
-		
-		Map<String,String> kk = new HashMap<String,String>();
-		while(cursor.moveToNext()) {
+		Cursor cursor = database.rawQuery(String.format(
+				"select stop_id,name from stop where stop_id in (%s)",
+				ScheduleDao.join(ids, ",")), null);
+
+		Map<String, String> kk = new HashMap<String, String>();
+		while (cursor.moveToNext()) {
 			String id = cursor.getString(0);
 			String name = cursor.getString(1);
 			name = StationAdapter.makePretty(name);
-			kk.put(id,name);
+			kk.put(id, name);
 		}
-		for(Favorite f : favs) {
+		for (Favorite f : favs) {
 			f.sourceName = kk.get(f.sourceId);
 			f.targetName = kk.get(f.targetId);
 		}
@@ -257,5 +314,17 @@ public class ScheduleDao {
 		return buffer.toString();
 	}
 
-	static DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+	public static DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+
+	public Double getFair(String departId, String arriveId) {
+		Cursor c = database.rawQuery(
+				"select adult from fares where source=? and target=?",
+				new String[] { departId, arriveId });
+		Double val = null;
+		while (c.moveToNext()) {
+			val = c.getDouble(0);
+		}
+		c.close();
+		return val;
+	}
 }

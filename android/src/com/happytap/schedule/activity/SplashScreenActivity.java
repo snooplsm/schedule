@@ -1,5 +1,7 @@
 package com.happytap.schedule.activity;
 
+import java.io.File;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,6 +17,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
@@ -42,9 +47,9 @@ import com.googlecode.android.widgets.DateSlider.DateSlider;
 import com.googlecode.android.widgets.DateSlider.DateSlider.OnDateSetListener;
 import com.googlecode.android.widgets.DateSlider.DefaultDateSlider;
 import com.happytap.schedule.database.DatabaseHelper;
-import com.happytap.schedule.database.ScheduleDao;
 import com.happytap.schedule.database.DatabaseHelper.InstallDatabaseMeter;
 import com.happytap.schedule.database.PreferencesDao;
+import com.happytap.schedule.database.ScheduleDao;
 import com.happytap.schedule.domain.Favorite;
 import com.happytap.schedule.provider.PreferencesDatabaseProvider;
 import com.happytap.schedule.provider.SQLiteDatabaseProvider;
@@ -56,6 +61,7 @@ import com.njtransit.rail.R;
 public class SplashScreenActivity extends ScheduleActivity {
 	
 	private static final int CHANGE_DATE_DIALOG=1970;
+	private static final int RETRY=1;
 	
 	public static SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy");
 	public static SimpleDateFormat LONG_DATE = new SimpleDateFormat("MMMM d, yyyy");
@@ -141,46 +147,84 @@ public class SplashScreenActivity extends ScheduleActivity {
 	@Inject
 	Injector injector;
 	
-	private AsyncTask<Void,Message,Void> loadingTask = new AsyncTask<Void,Message,Void>() {
+	private AsyncTask<Void,Float,Void> loadingTask = newLoadingTask();
+	
+	private AsyncTask<Void,Float,Void> newLoadingTask() {
+		return new AsyncTask<Void,Float,Void>() {
 
-		@Override
-		protected Void doInBackground(Void... params) {			
-			databaseHelper.setInstallMeter(new InstallDatabaseMeter() {
+			boolean error = false;
+			@Override
+			protected Void doInBackground(Void... params) {			
+				error = false;
+				databaseHelper.setInstallMeter(new InstallDatabaseMeter() {
 
-				@Override
-				public void onBeforeCopy() {
-					// TODO Auto-generated method stub
+					@Override
+					public void onBeforeCopy() {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onFinishedCopying() {
+
+					}
+
+					@Override
+					public void onPercentCopied(long copySize, float percent,
+							long totalBytesCopied) {
+						publishProgress(percent);
+					}
+									
+
+					@Override
+					public void onSizeToBeCopiedCalculated(long copySize) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onError(File database, Exception e) {
+						error = true;
+						
+						try {
+							SharedPreferences prefs = getApplicationContext().getSharedPreferences("database_info",
+									Context.MODE_PRIVATE);
+							prefs.edit().clear().commit();
+							database.delete();
+						} catch (Exception ex) {
+							
+						}
+					}
 					
-				}
-
-				@Override
-				public void onFinishedCopying() {
-
-				}
-
-				@Override
-				public void onPercentCopied(long copySize, float percent,
-						long totalBytesCopied) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onSizeToBeCopiedCalculated(long copySize) {
-					// TODO Auto-generated method stub
-					
-				}
+				});
+				try {
+					databaseHelper.getReadableDatabase();
+					provider.get();
+					preferencesProvider.get();
+				} catch (Exception e) {
+					error = true;
+				}			
 				
-			});
-			provider.get();
-			preferencesProvider.get();
-			return null;
-		}
-		 
-		protected void onPostExecute(Void result) {
-			splashContainer.setVisibility(View.GONE);
+				return null;
+			}
+			 
+			private DecimalFormat df = new DecimalFormat("0.0%");
+			
+			@Override
+			protected void onProgressUpdate(Float... values) {
+				percentage.setText(df.format(values[0]));
+			}
+			
+			protected void onPostExecute(Void result) {
+				if(!error) {
+					splashContainer.setVisibility(View.GONE);
+				} else {
+					percentage.setText("Something has gone horribly wrong.  Is your disk full?  Uninstall and reinstall.");
+					showDialog(RETRY);
+				}
+			};
 		};
-	};
+	}
 	
 
 	private OnLongClickListener longClickStationListener = new OnLongClickListener() {
@@ -258,6 +302,9 @@ public class SplashScreenActivity extends ScheduleActivity {
 
 	@InjectView(R.id.reverse)
 	private ImageView reverse;
+	
+	@InjectView(R.id.percentage)
+	private TextView percentage;
 	
 	@InjectView(R.id.favs)
 	private ImageView favs;
@@ -380,10 +427,24 @@ public class SplashScreenActivity extends ScheduleActivity {
 		
 	}
 	
+	public int getVersion() {
+		try {
+			PackageInfo info = getApplicationContext().getPackageManager().getPackageInfo(
+					getApplicationContext().getPackageName(), 0);
+			return info.versionCode;
+		} catch (NameNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	private void showScheduleEnd(boolean toast) {
 		Long min = preferences.getLong("minimumCalendarDate", 0);
 		Long max = preferences.getLong("maximumCalendarDate",0);
-		if(min!=0 && max!=0) {
+		SharedPreferences prefs = getApplicationContext().getSharedPreferences("database_info",
+				Context.MODE_PRIVATE);
+		int lastVersion = prefs.getInt(DatabaseHelper.DATABASE_VERSION, -1);
+		int version = getVersion();
+		if(lastVersion==version && min!=0 && max!=0) {
 			long diff = max - System.currentTimeMillis();
 			if(diff<=0) {
 				if(toast)
@@ -467,6 +528,22 @@ public class SplashScreenActivity extends ScheduleActivity {
 				}
 				
 			},userDefinedDate);
+		}
+		if(id==RETRY) {
+			AlertDialog d = new AlertDialog.Builder(this).setTitle("Error Copying Database").setMessage("Please ensure you have roughly 13mb of disk available.").setCancelable(true)
+					.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+				           public void onClick(DialogInterface dialog, int id) {
+				        	   loadingTask = newLoadingTask();
+				        	   loadingTask.execute();
+				        	   dismissDialog(RETRY);
+				           }
+				       })
+				       .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				           public void onClick(DialogInterface dialog, int id) {
+				        	   dismissDialog(RETRY);
+				           }
+				       }).create();
+			return d;
 		}
 		return super.onCreateDialog(id);
 	}

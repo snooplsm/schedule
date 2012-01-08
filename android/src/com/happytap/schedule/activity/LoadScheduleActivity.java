@@ -1,5 +1,6 @@
 package com.happytap.schedule.activity;
 
+import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import roboguice.activity.RoboActivity;
@@ -20,13 +21,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.ads.Ad;
-import com.google.ads.AdListener;
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
 import com.google.ads.AdView;
-import com.google.ads.AdRequest.ErrorCode;
 import com.google.inject.Inject;
+import com.happytap.schedule.database.ScheduleDao;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.service.ScheduleService;
 import com.njtransit.rail.R;
@@ -49,11 +46,17 @@ public class LoadScheduleActivity extends RoboActivity {
 	@InjectView(R.id.arrivalText)
 	private TextView arrivalText;
 	
+	@InjectView(R.id.fare)
+	private TextView fareText;
+	
 	@InjectView(R.id.ad_layout)
 	LinearLayout adLayout;
 	
 	@InjectView(R.id.ad_fodder)
 	View adFodder;
+	
+	@Inject
+	ScheduleDao dao;
 	
 	
 	public static final String DEPARTURE_STATION = "departure_station";
@@ -65,10 +68,19 @@ public class LoadScheduleActivity extends RoboActivity {
 	
 	private AdView adView;
 	
+private static DecimalFormat df = new DecimalFormat("$0.00");
+	
 	private AsyncTask<Void,Void,Void> task = new AsyncTask<Void,Void,Void>() {
-
+		
+		Double fare;
+	
+		
 		@Override
 		protected Void doInBackground(Void... arg0) {
+			String departId = getIntent().getStringExtra(StationToStationActivity.DEPARTURE_ID);
+			String arriveId = getIntent().getStringExtra(StationToStationActivity.ARRIVAL_ID);
+			fare = dao.getFair(departId,arriveId);
+			publishProgress();
 			while(!isCancelled()) {
 				publishProgress();
 				try {
@@ -99,6 +111,10 @@ public class LoadScheduleActivity extends RoboActivity {
 				reverse = !reverse;
 				dotdotdot.setText("..");
 			}
+			if(fare!=null) {
+				fareText.setVisibility(View.VISIBLE);
+				fareText.setText("Fare: " + df.format(fare));
+			}
 			dotdotdot.refreshDrawableState();
 		}		
 	};
@@ -106,8 +122,9 @@ public class LoadScheduleActivity extends RoboActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {		
 		super.onCreate(savedInstanceState);		
-		setContentView(R.layout.loading);
+		setContentView(R.layout.loading);		
 		doBindService();
+		fareText.setVisibility(View.INVISIBLE);
 		departureText.setText(getIntent().getStringExtra(DEPARTURE_STATION));
 		arrivalText.setText(getIntent().getStringExtra(ARRIVAL_STATION));
 		final View orAd =  getLayoutInflater().inflate(R.layout.our_ad, null);

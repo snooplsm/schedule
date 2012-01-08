@@ -8,6 +8,8 @@ import java.util.Map;
 
 import roboguice.util.Strings;
 import android.content.Context;
+import android.text.SpannableStringBuilder;
+import android.text.style.SuperscriptSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +40,7 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 		start.setTime(schedule.start);
 		isToday = DateUtils.isToday(start);
 		if (isToday) {
-			limit.set(Calendar.HOUR_OF_DAY, 7);
+			limit.set(Calendar.HOUR_OF_DAY, 9);
 			limit.set(Calendar.MINUTE, 0);
 		} else {
 			limit.add(Calendar.DAY_OF_YEAR, 0);
@@ -56,7 +58,6 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 			@Override
 			public void populateItem(int index,
 					StationToStation stationToStation, int total) {
-				System.out.println(stationToStation);
 				if (!isToday) {
 					if (!stationToStation.departTime.before(limit)) {
 						add(stationToStation);
@@ -115,17 +116,26 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 			textView.setText(time(sts2));
 			duration.setText(duration(sts2));
 			connections.setVisibility(View.VISIBLE);
-			if(sts2.schedule.transfers.length>1) {
+			if (sts2.schedule.transfers.length > 1) {
 				populateConnections(connections, sts2);
 			} else {
-				connections.setVisibility(View.GONE);
+				populateExtraInfo(connections,sts2);				
 			}
+			TextView tomorrow = (TextView) v.findViewById(R.id.time_descriptor);
+			tomorrow(tomorrow, sts);
+			TrainStatus status = trainStatuses.get(sts.blockId);
+			if (status == null) {
+				onNoTrainStatus(v, sts);
+				return v;
+			}
+			trainStatus(v, sts, status);
 		} else {
 			connections.setVisibility(View.GONE);
 			textView.setText(time(sts));
 			duration.setText(duration(sts));
 			TextView tomorrow = (TextView) v.findViewById(R.id.time_descriptor);
 			tomorrow(tomorrow, sts);
+			
 			TrainStatus status = trainStatuses.get(sts.blockId);
 			if (status == null) {
 				onNoTrainStatus(v, sts);
@@ -136,18 +146,34 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 		return v;
 	}
 
+	private void populateExtraInfo(TextView connections, StationInterval sts) {
+		StringBuilder b = new StringBuilder();
+		if(sts.routeId!=null) {
+			b.append(sts.schedule.routeIdToName.get(sts.routeId));
+			b.append(" ");
+		}
+		if(sts.blockId!=null) {
+			b.append("#").append(sts.blockId);
+		}
+		connections.setText(b);
+	}
+
 	private void populateConnections(TextView connections, StationInterval sts2) {
 		StringBuilder b = new StringBuilder();
 		boolean added = false;
+		String lastTripId = null;
+		String nextTripId = null;
 		while (sts2.hasNext()) {
 			boolean isTransfer = sts2.isTransfer();
-			if (isTransfer) {
+			nextTripId = sts2.next().tripId;
+			if (isTransfer || (sts2.tripId!=null && sts2.tripId.equals(lastTripId))) {
 				// String arrive = time.format(sts2.getArriveTime().getTime())
 				// .toLowerCase();
 				// arrive = arrive.substring(0, arrive.length() - 2);
 				// b.append(sts2.schedule.stopIdToName.get(sts2.arriveId));
 				// b.append(" ");
 				added = false;
+
 			} else {
 				added = true;
 				String depart = time.format(sts2.getDepartTime().getTime())
@@ -163,45 +189,61 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 				b.append("↝");
 
 				b.append(" ");
-				String arrive = time.format(sts2.getArriveTime().getTime())
-						.toLowerCase();
-				arrive = arrive.substring(0, arrive.length() - 1).replace(" ",
-						"");
-				b.append("(");
-				b.append(arrive);
-				b.append(")");
-				b.append(" ");
-				b.append(sts2.schedule.stopIdToName.get(sts2.arriveId));
+				if (!(sts2.tripId!=null & sts2.tripId.equals(nextTripId))) {
+					String arrive = time.format(sts2.getArriveTime().getTime())
+							.toLowerCase();
+					arrive = arrive.substring(0, arrive.length() - 1).replace(
+							" ", "");
+					b.append("(");
+					b.append(arrive);
+					b.append(")");
+					b.append(" ");
+					b.append(sts2.schedule.stopIdToName.get(sts2.arriveId));
+					
+					if(sts2.blockId!=null) {
+						b.append(" #");
+						b.append(sts2.blockId);
+					}
+						
+					
+				}
 			}
 
 			if (sts2.hasNext()) {
+				lastTripId = sts2.tripId;
 				sts2 = sts2.next();
 				if (added) {
 					b.append(" ");
-					if (sts2.isTransfer()) {
-						b.append("↻\n");
+					if (sts2.tripId!=null && sts2.tripId.equals(lastTripId)) {
+
 					} else {
-						b.append("↝");
-						b.append(" ");
+						if (sts2.isTransfer()) {
+							b.append("↻\n");
+						} else {
+							b.append("↝\n");
+						}
 					}
-					
+
 				}
 
 			} else {
 				break;
 			}
 		}
-		String depart = time.format(sts2.getDepartTime().getTime())
-				.toLowerCase();
-		depart = depart.substring(0, depart.length() - 1).replace(" ", "");
-		b.append("(");
-		b.append(depart);
-		b.append(")");
-		b.append(" ");
-		b.append(sts2.schedule.stopIdToName.get(sts2.departId));
-		b.append(" ");
-		b.append("↝");
-		b.append(" ");
+
+		if (sts2.tripId!=null && !sts2.tripId.equals(lastTripId)) {
+			String depart = time.format(sts2.getDepartTime().getTime())
+					.toLowerCase();
+			depart = depart.substring(0, depart.length() - 1).replace(" ", "");
+			b.append("(");
+			b.append(depart);
+			b.append(")");
+			b.append(" ");
+			b.append(sts2.schedule.stopIdToName.get(sts2.departId));
+			b.append(" ");
+			b.append("↝");
+			b.append(" ");
+		}
 		b.append("(");
 		String arrive = time.format(sts2.getArriveTime().getTime())
 				.toLowerCase();
@@ -209,6 +251,9 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 		b.append(arrive);
 		b.append(") ");
 		b.append(sts2.schedule.stopIdToName.get(sts2.arriveId));
+		if(sts2.blockId!=null) {
+			b.append(" #").append(sts2.blockId);
+		}
 		connections.setText(b.toString());
 	}
 
@@ -303,21 +348,31 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 		}
 	}
 
-	public static String time(StationToStation sts) {
+	public static CharSequence time(StationToStation sts) {
 		String depart = time.format(sts.getDepartTime().getTime());
 		String arrive = time.format(sts.getArriveTime().getTime());
-		return String.format("%s - %s", depart, arrive).toLowerCase();
+		String orig = String.format("%s - %s #%s", depart, arrive, sts.blockId).toLowerCase();
+		SpannableStringBuilder ssb = new SpannableStringBuilder(orig);
+		int pound = orig.indexOf("#");
+		if(pound>=0) {
+			ssb.setSpan(new SuperscriptSpan(), pound, orig.length(), 0);
+		}
+		return ssb;
 	}
 
-	public static String time(StationInterval sts) {
+	public static CharSequence time(StationInterval sts) {
 		String depart = time.format(sts.getDepartTime().getTime());
 		StationInterval sts2 = sts;
 		while (sts2.hasNext()) {
 			// TODO: optimize by just jumping to the end...
 			sts2 = sts2.next();
 		}
+		if (sts2 == null || sts2.getArriveTime() == null) {
+		}
 		String arrive = time.format(sts2.getArriveTime().getTime());
-		return String.format("%s - %s", depart, arrive).toLowerCase();
+		String orig = String.format("%s - %s", depart,arrive).toLowerCase();
+		SpannableStringBuilder ssb = new SpannableStringBuilder(orig);
+		return ssb;
 	}
 
 	private Map<String, TrainStatus> trainStatuses = new HashMap<String, TrainStatus>();

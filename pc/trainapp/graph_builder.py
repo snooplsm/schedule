@@ -7,6 +7,17 @@ import os
 import shutil
 import math
 
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+def findDopple(dopples,a):
+	if a in dopples:
+		return dopples[a]
+	return a
+
 def draw(G,name):
 	k = open(name,"wb")
 	k.write(
@@ -58,7 +69,7 @@ def polymap(minLat,minLon,maxLat,maxLon,stations,walks,joinedRoutes=None,showSta
 		 // Label specific
 		 var span = this.span_ = document.createElement('span');
 		 span.style.cssText = 'position: relative; left: -50%; top: -8px; ' +
-		                      'white-space: nowrap; font:9px arial,sans-serif; background-color: white; '
+		                      'white-space: nowrap; font:9px arial,sans-serviceReader; background-color: white; '
 
 		 var div = this.div_ = document.createElement('div');
 		 div.appendChild(span);
@@ -223,6 +234,7 @@ def buildGraph(agencies) :
 	G = networkx.DiGraph()
 	H = networkx.DiGraph()
 	trips = {}
+	routeInfo  = {}
 	alltimes = {}
 	mintimes = {}
 	avgtimes = {}
@@ -231,6 +243,7 @@ def buildGraph(agencies) :
 	stopRoutes = {}
 	stations = {}
 	routes = {}
+	doppleGanger = {}
 	walks = []
 	transferedges = {}
 	routeToTrips = {}
@@ -267,6 +280,25 @@ def buildGraph(agencies) :
 				maxLon = stopLon			
 			stop = {"id":stopId,"name":stopName,"lon":stopLon,"lat":stopLat}
 			stations[stopId] = stop
+		for stationA in stations:
+			for stationB in stations:
+				if stationA!=stationB and distance(stations[stationA],stations[stationB])==0:
+					aId = stationA
+					bId = stationB					
+					doppleGanger[aId] = bId	
+					print stations[stationA]["name"], stations[stationB]["name"]
+		dopples = {}
+		print len(doppleGanger)
+		while len(doppleGanger)>0:
+			for k in doppleGanger:
+				dopples[k] = doppleGanger[k]
+				del doppleGanger[k]
+				del doppleGanger[dopples[k]]
+				del stations[k]
+				break
+		for k in dopples:
+			print k,dopples[k]
+		raw_input("u mad?")
 		routesReader = csv.reader(open(folder+"/routes.txt","rb"))
 		headers = {}
 		for row in routesReader:
@@ -275,10 +307,17 @@ def buildGraph(agencies) :
 			break
 		routeIdPos = headers["route_id"]
 		routeNamePos = headers["route_long_name"]
+		routeShortNamePos = headers["route_short_name"]		
 		for row in routesReader:
 			name = row[routeNamePos]
 			routeId = row[routeIdPos]
+			routeShortName = row[routeShortNamePos]
+			if len(routeShortName)!=0:
+				name = routeShortName
 			routes[routeId] = {"label":name,"id":routeId}
+			c.execute("INSERT INTO route(route_id,name) values(?,?)",(routeId,name))
+			c.close()
+		conn.commit()
 		serviceReader = csv.reader(open(folder+"/calendar_dates.txt","rb"))
 		headers = {}
 		for row in serviceReader:
@@ -303,8 +342,7 @@ def buildGraph(agencies) :
 				headers[row[i].lower().split(" ")[0]] = i
 			break
 		blockPos = -1
-		if "block_id" in headers:
-			blockPos = headers["block_id"]		
+		blockPos = headers["block_id"] if "block_id" in headers else None
 		routePos = headers["route_id"]
 		directionPos = headers["direction_id"] if "direction_id" in headers else None
 		shapePos = headers["shape_id"]
@@ -317,12 +355,15 @@ def buildGraph(agencies) :
 			direction = None
 			if directionPos!=None:
 				direction = row[directionPos]
+			if blockPos!=None:
+				trip['block_id'] = row[blockPos]
 			trip['id'] = tripId
 			trip['direction'] = direction
 			serviceId = prepend+row[servicePos].split(" ")[0]
 			routeId = prepend+row[routePos].split(" ")[0]
 			trip['service_id'] = serviceId
 			trip['route_id'] = routeId
+			routeInfo[routeId] = {}
 			trips[tripId] = trip
 		stopReader = csv.reader(open(folder+"/stop_times.txt","rb"))
 		headers = {}
@@ -338,9 +379,17 @@ def buildGraph(agencies) :
 #		print "stop times"
 		for row in stopReader:
 			stop = {}
-			stopId = prepend+row[stopPos]
-			tripId = prepend+row[tripIdPos]
-			sequence = row[sequencePos]
+			stopId = findDopple(dopples,prepend+row[stopPos])
+			tripId = prepend+row[tripIdPos]			
+			sequence = int(row[sequencePos])
+			if stopId not in routeInfo[trips[tripId]["route_id"]]:
+				routeInfo[trips[tripId]["route_id"]][stopId] = {}
+				routeInfo[trips[tripId]["route_id"]][stopId]["min"] = 5000
+				routeInfo[trips[tripId]["route_id"]][stopId]["max"] = -1				
+			mink = int(routeInfo[trips[tripId]["route_id"]][stopId]["min"])
+			maxk = int(routeInfo[trips[tripId]["route_id"]][stopId]["max"])
+			routeInfo[trips[tripId]["route_id"]][stopId]["min"] = min(mink,sequence)
+			routeInfo[trips[tripId]["route_id"]][stopId]["max"] = max(maxk,sequence)
 			stop['id'] = stopId
 			arriveTime = row[arrivePos]
 			departTime = row[departPos]
@@ -428,6 +477,36 @@ def buildGraph(agencies) :
 				lhour = target['depart'].split(":")[0]
 			source = target
 			#				G.add_edge(source,target,{"direction":trips[tripId]['direction'],"route":trips[tripId]['route_id']})
+	# for routeId in routeInfo:
+	# 	raw_input("u mad bro?")
+	# 	mins = {}
+	# 	maxs = {}
+	# 	good = []
+	# 	allnodes = set()
+	# 	trips = routeToTrips[routeId]
+	# 	actualroute = []
+	# 	longest = []
+	# 	for trip in trips:
+	# 		stops = tripToStops[trip["id"]]
+	# 		if len(stops) > len(longest):
+	# 			longest = stops
+	# 		for stop in stops:
+	# 			stopId = stop["id"]
+	# 			allnodes.add(stopId)
+	# 	if len(longest)==len(allnodes):
+	# 		for node in longest:
+	# 			actualroute.append(node["id"])
+	# 	else:
+	# 		takencareof = []
+	# 		for node in longest:				
+	# 			for node in longest:
+	# 				takencareof.append(node["id"])
+	# 		print "intersection",set(takencareof) & allnodes
+	# 		print "longest", len(takencareof), "all",len(allnodes)
+	# 	print "allnodes",allnodes		
+	# 	print "actualroute",actualroute
+		
+			
 #	print "trips"
 #	networkx.readwrite.gml.write_gml(G,"before_stations.gml")
 	# for routeId in routeToTrips:
@@ -456,8 +535,8 @@ def buildGraph(agencies) :
 			if "min_transfer_time" in headers:
 				minTransferTimePos = headers["min_transfer_time"]
 			for row in transferReader:
-				fromStopId = prepend+row[fromStopIdPos]
-				toStopId = prepend+row[toStopIdPos]
+				fromStopId = findDopple(dopples,prepend+row[fromStopIdPos])
+				toStopId = findDopple(dopples,prepend+row[toStopIdPos])
 #				print fromStopId,toStopId
 				transferType = row[transferTypePos]
 				minTransferTime = 0
@@ -496,7 +575,7 @@ def buildGraph(agencies) :
 					if fromId in stopRoutes and toId in stopRoutes:
 						routeIntersection = list(set(stopRoutes[fromId]) & set(stopRoutes[toId]))
 	#				print routeIntersection
-					if dist < 250 and G.has_edge(fromId,toId)==False and len(routeIntersection)==0:				
+					if dist>0 and dist < 250 and G.has_edge(fromId,toId)==False and len(routeIntersection)==0:				
 						count+=1
 #						print dist, station["name"], "walkable to", station2["name"]						
 						G.add_edge(fromId,toId)
@@ -528,24 +607,24 @@ def buildGraph(agencies) :
 		print "alright"
 		for b in alltimes[a]:
 			print "here"
-			min = sys.maxint
-			max = 0
+			miny = sys.maxint
+			maxy = 0
 			total = 0.0
 			for time in alltimes[a][b]:
 				total = total + time
-				if min>time:
-					min = time		
-				if time>max:
-					max = time
+				if miny>time:
+					miny = time		
+				if time>maxy:
+					maxy = time
 			if a not in mintimes:
 				mintimes[a] = {}
-			mintimes[a][b] = min
+			mintimes[a][b] = miny
 			if a not in avgtimes:
 				avgtimes[a] = {}		
 			avgtimes[a][b] = total / float(len(alltimes[a][b]))
 			if a not in maxtimes:
 				maxtimes[a] = {}
-			maxtimes[a][b] = max
+			maxtimes[a][b] = maxy
 			#print mintimes[key], avgtimes[key]
 			G[a][b]['weight'] = mintimes[a][b]
 #			G[a][b] = avgtimes[key]
@@ -618,7 +697,7 @@ def buildGraph(agencies) :
 			if ahour>=24:
 				day = ahour / 24 + 1
 			arriveTime = datetime(1970,1,day,ahour%24,amin,asec)
-			c.execute("INSERT INTO nested_trip(lft,rgt,trip_id,service_id,stop_id,depart,arrive) values(?,?,?,?,?,?,?)",(id+1,len(tripToStops[tripId]),tripId,trip["service_id"],stop["id"],stop["depart"],stop["arrive"]))
+			c.execute("INSERT INTO nested_trip(lft,rgt,trip_id,service_id,stop_id,depart,arrive,block_id,route_id) values(?,?,?,?,?,?,?,?,?)",(id+1,len(tripToStops[tripId]),tripId,trip["service_id"],stop["id"],stop["depart"],stop["arrive"],trip["block_id"],trip["route_id"]))
 			c.close()
 			lastStation = stop
 		conn.commit()
@@ -746,10 +825,17 @@ c.execute("""CREATE TABLE nested_trip (
 		trip_id VARCHAR(20) NOT NULL,
         stop_id VARCHAR(20) NOT NULL,
 		service_id VARCHAR(20) NOT NULL,
+		route_id VARCHAR(20) NOT NULL,
 		depart VARCHAR(10),
 		arrive VARCHAR(10),
+		block_id VARCHAR(10),
         lft INT NOT NULL,
         rgt INT NOT NULL
+);""")
+c.execute("""CREATE TABLE route (
+		route_id VARCHAR(20) NOT NULL,
+		name VARCHAR(100),
+		color integer
 );""")
 c.execute("""CREATE TABLE schedule_path (
 		source VARCHAR(20) NOT NULL,
@@ -808,11 +894,31 @@ c.execute("""CREATE TABLE agency_transfer_edge (
 		target varchar(20) NOT NULL,
 		duration integer
 );""")
+c.execute("""CREATE TABLE IF NOT EXISTS fares (
+		source VARCHAR(20) NOT NULL,
+        target VARCHAR(20) NOT NULL,
+		adult real,
+		child real,
+		senior real,
+		disabled real,
+		weekly real,
+		ten_trip real,
+		monthly real,
+		student_monthly real
+);""")
 
 
 conn.commit()
 c.close()
 results = [buildGraph([("gtfs/njtransit","")])]
+conn2 = sqlite3.connect("fares.db")
+conn.row_factory = dict_factory
+c2 = conn2.cursor()
+c2.execute("select * from fares")
+for r in c2.fetchall():
+	c.execute("INSERT INTO fares(source,target,adult,child,senior,disabled,weekly,ten_trip,monthly,student_monthly) values(:source,:target,:adult,:child,:senior,:disabled,:weekly,:ten_trip,:monthly,:student_monthly)",r)
+	c.close()
+	conn.commit()
 # ,buildGraph([("gtfs/septa","s")]),buildGraph([("gtfs/lirr","l")]),buildGraph([("gtfs/metro-north","m")])]
 agencywalks = []
 D = networkx.DiGraph()

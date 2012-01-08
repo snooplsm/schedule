@@ -30,6 +30,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private Context context;
 	private InstallDatabaseMeter installMeter;
+	
+	private SQLiteDatabase cached;
 
 	@Inject
 	SharedPreferences preferences;
@@ -44,11 +46,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		void onFinishedCopying();
 
+		void onError(File database, Exception e);
+
 	}
 
 	private static final String NAME = "database.sqlite";
 	private static final int VERSION = 1;
-	private static final String DATABASE_VERSION = "database_version";
+	public static final String DATABASE_VERSION = "database_version";
 
 	private boolean useExternalStorage() {
 		boolean mExternalStorageAvailable = false;
@@ -79,7 +83,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	@Override
-	public synchronized SQLiteDatabase getReadableDatabase() {
+	public synchronized SQLiteDatabase getReadableDatabase()  {
+		if(cached!=null && cached.isOpen()) {
+			return cached;
+		}
 		SharedPreferences prefs = context.getSharedPreferences("database_info",
 				Context.MODE_PRIVATE);
 		final File database;
@@ -89,6 +96,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			database = new File(folder, NAME);
 			context.getDatabasePath(NAME).delete();
 		} else {
+			try {
+				File folder = externalStorageDatabaseFolder();
+				File db = new File(folder, NAME);
+				db.delete();
+			} catch (Exception e) {
+				
+			}
 			database = context.getDatabasePath(NAME);
 		}
 		int lastVersion = prefs.getInt(DATABASE_VERSION, -1);
@@ -102,11 +116,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			}
 		}
 		if (!useExternalStorage()) {
-			return super.getReadableDatabase();
+			try {
+				SQLiteDatabase db = SQLiteDatabase.openDatabase(database.getPath(), null, SQLiteDatabase.OPEN_READONLY);
+				Cursor c = db.rawQuery("select count(*) from stop", null);
+				if(!c.moveToNext()) {
+					installMeter.onError(database, null);
+					c.close();
+				}else {
+					if(c.getInt(0)<0) {
+						installMeter.onError(database, null);
+						c.close();
+					} else {
+						c.close();
+					}
+				}
+				
+				return cached = db;
+			} catch (Exception e) {
+				installMeter.onError(database,e);
+			}
+			
 		} else {
-			return SQLiteDatabase.openDatabase(database.getPath(), null,
-					SQLiteDatabase.OPEN_READONLY);
+			try {
+				SQLiteDatabase db = SQLiteDatabase.openDatabase(database.getPath(), null,
+						SQLiteDatabase.OPEN_READONLY);
+				Cursor c = db.rawQuery("select count(*) from stop", null);
+				if(!c.moveToNext()) {
+					installMeter.onError(database, null);
+				}else {
+					if(c.getInt(0)<0) {
+						installMeter.onError(database, null);
+					}
+				}
+				c.close();
+				return cached = db;
+			} catch (Exception e) {
+				installMeter.onError(database, e);
+			}
 		}
+		throw new RuntimeException(new DatabaseException());
 	}
 
 	private void copyDatabaseTo(File database) throws IOException {
@@ -204,20 +252,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 		db.setTransactionSuccessful();
 		db.endTransaction();
+		db.rawQuery("CREATE INDEX abc ON nested_trip(trip_id,stop_id,lft);", null);
 		Cursor c = db
 				.rawQuery(
-						"select min(calendar_date), max(calendar_date) from service",
+						"select min(date), max(date) from service",
 						null);
 		if (c.moveToNext()) {
 			Calendar min = Calendar.getInstance();
-			min.setTimeInMillis(c.getLong(0));
 			Calendar max = Calendar.getInstance();
-			max.setTimeInMillis(c.getLong(1));
-			preferences.edit().putLong("minimumCalendarDate", c.getLong(0))
-					.putLong("maximumCalendarDate", c.getLong(1)).putBoolean("usesCalendar", false).commit();
+			try {
+			min.setTime(ScheduleDao.dateFormat.parse(c.getString(0)));
+			max.setTime(ScheduleDao.dateFormat.parse(c.getString(1)));
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			preferences.edit().putLong("minimumCalendarDate", min.getTimeInMillis())
+					.putLong("maximumCalendarDate", max.getTimeInMillis()).putBoolean("usesCalendar", false).commit();
 		}
 		c.close();
-
+		if(db!=null && db.isOpen()) {
+			cached = db;
+		}
 		try {
 			installMeter.onFinishedCopying();
 		} catch (Exception e) {

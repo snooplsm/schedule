@@ -62,6 +62,8 @@ public class App {
 	
 	public static void main(String... args) {
 		try {
+			System.out.println(Float.parseFloat("1.2261943e-7"));
+			System.exit(1);
 			System.out.println(sdf.parse("00:01:00"));
 			System.out.println(sdf.parse("24:01:00"));
 			System.out.println(sdf.parse("25:01:00"));
