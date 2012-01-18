@@ -165,14 +165,14 @@ public class StationToStationActivity extends ScheduleActivity implements
 					String[] abbreviatedNames = getResources().getStringArray(
 							R.array.abbreviated_names);
 					String start = stationId + ",";
-					String abbreviatedName = null;
+					String[] abbreviatedName = null;
 					for (String name : abbreviatedNames) {
 						if (name.startsWith(start)) {
-							abbreviatedName = name.split(",")[1];
+							abbreviatedName = name.split(",");
 							break;
 						}
 					}
-					if (abbreviatedName != null) {
+					if (abbreviatedName != null && abbreviatedName.length > 1) {
 						vision.startDepartures(abbreviatedName);
 					}
 				} catch (IOException e) {

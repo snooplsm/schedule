@@ -152,8 +152,8 @@
 		<item>31,RL</item>
 		<item>134,RF</item>
 		<item>135,CW</item>
-		<item>38174,TS</item>
-		<item>38187,SE</item>
+		<item>38174,TS,SE</item>
+		<item>38187,SE,TS</item>
 		<item>136,RT</item>
 		<item>137,XG</item>
 		<item>138,SM</item>

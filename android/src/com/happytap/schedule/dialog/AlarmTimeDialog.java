@@ -46,8 +46,5 @@ public class AlarmTimeDialog extends Dialog {
 			}
 			
 		});
-		for(int i = 0; i < timeView.getChildCount()-1; i++) {
-			
-		}
 	}
 }
