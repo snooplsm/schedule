@@ -36,7 +36,7 @@ public class DateTimeSlider extends DateSlider {
 		super(context, l, calendar);
 	}
 	
-	public static int MINUTEINTERVAL = 15;
+	public static int MINUTEINTERVAL = 1;
 	
 	/**
 	 * Create the month, day and the timescroller and feed them with their labelers
@@ -64,7 +64,7 @@ public class DateTimeSlider extends DateSlider {
 		
 		// create the minute scroller and assign its labeler and add it to the layout
 		ScrollLayout mTimeScroller = (ScrollLayout) inflater.inflate(R.layout.scroller, null);
-		mTimeScroller.setLabeler(timeLabeler, mTime.getTimeInMillis(),80,60);
+		mTimeScroller.setLabeler(timeLabeler, mTime.getTimeInMillis(),90,60);
 		mLayout.addView(mTimeScroller, 2,lp);
 		mScrollerList.add(mTimeScroller);
 		
@@ -206,7 +206,7 @@ public class DateTimeSlider extends DateSlider {
 			c.set(year, month, day, hour, minute, 0);
 			c.set(Calendar.MILLISECOND, 0);
 			long startTime = c.getTimeInMillis();
-			return new TimeObject(String.format("%tR", c), startTime, endTime);
+			return new TimeObject(String.format("%tI:%tM", c,c)+Character.toLowerCase(String.format("%Tp",c).charAt(0)), startTime, endTime);
 		}
 	};
 	

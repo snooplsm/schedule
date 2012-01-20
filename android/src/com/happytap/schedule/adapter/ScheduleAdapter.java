@@ -8,6 +8,8 @@ import java.util.Map;
 
 import roboguice.util.Strings;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.text.SpannableStringBuilder;
 import android.text.style.SuperscriptSpan;
 import android.view.LayoutInflater;
@@ -104,7 +106,17 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 					Context.LAYOUT_INFLATER_SERVICE);
 			v = vi.inflate(R.layout.station_to_station_item, null);
 		}
+		
+		
 		StationToStation sts = getItem(position);
+		
+		if(sts.tripId!=null && tripIdForAlarm!=null && sts.tripId.equals(tripIdForAlarm)) {
+			ColorDrawable cd = new ColorDrawable(getContext().getResources().getColor(R.color.get_stations));
+			cd.setAlpha(200);
+			v.setBackgroundDrawable(cd);
+		} else {
+			v.setBackgroundColor(Color.WHITE);
+		}
 		TextView textView = (TextView) v.findViewById(R.id.time);
 		TextView duration = (TextView) v.findViewById(R.id.duration);
 		TextView departsIn = (TextView) v.findViewById(R.id.away);
@@ -380,6 +392,16 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 	private Map<String, TrainStatus> reversedTrainStatuses;
 
 	private Map<String, TrainStatus> normalTrainStatuses = trainStatuses;
+	
+	private String tripIdForAlarm;
+
+	public String getTripIdForAlarm() {
+		return tripIdForAlarm;
+	}
+
+	public void setTripIdForAlarm(String tripIdForAlarm) {
+		this.tripIdForAlarm = tripIdForAlarm;
+	}
 
 	public final void onStatus(TrainStatus status) {
 		trainStatuses.put(status.getTrain(), status);

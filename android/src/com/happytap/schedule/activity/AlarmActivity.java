@@ -1,5 +1,7 @@
 package com.happytap.schedule.activity;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
@@ -36,6 +38,9 @@ public class AlarmActivity extends ScheduleActivity {
 
 			@Override
 			public void onClick(View arg0) {
+				String ns = Context.NOTIFICATION_SERVICE;
+				NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+				mNotificationManager.cancel(1);
 				finish();
 			}
 			

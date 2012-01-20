@@ -8,9 +8,12 @@ import java.util.Calendar;
 import roboguice.inject.InjectView;
 import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -38,9 +41,10 @@ import com.google.ads.AdRequest.ErrorCode;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
 import com.google.inject.Inject;
+import com.googlecode.android.widgets.DateSlider.DateSlider;
+import com.googlecode.android.widgets.DateSlider.DateSlider.OnDateSetListener;
+import com.googlecode.android.widgets.DateSlider.DateTimeSlider;
 import com.happytap.schedule.adapter.ScheduleAdapter;
-import com.happytap.schedule.dialog.AlarmTimeDialog;
-import com.happytap.schedule.dialog.AlarmTimeDialog.AlarmTimeListener;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.StationToStation;
 import com.happytap.schedule.domain.TrainStatus;
@@ -65,16 +69,16 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	@InjectView(R.id.departureText)
 	TextView departureText;
-	
+
 	@InjectView(R.id.arrivalText)
 	TextView arrivalText;
-	
+
 	@InjectView(R.id.reverse)
 	ImageView reverse;
-	
+
 	@InjectView(R.id.departure)
 	View departureView;
-	
+
 	@Inject
 	AlarmManager alarmManager;
 
@@ -87,25 +91,29 @@ public class StationToStationActivity extends ScheduleActivity implements
 	public static final String DEPARTURE_STATION = "departure_station";
 	public static final String ARRIVAL_STATION = "arrival_station";
 	public static final String DEPARTURE_ID = "departure_id";
+	public static final String ALARM_TRIP_ID = "alarm_trip_id";
 	public static final String ARRIVAL_ID = "arrival_id";
 	public static final String DEPARTURE_DATE_START = "departure_date_start";
 	public static final String DEPARTURE_DATE_END = "departure_date_end";
-	
+
 	private String departureStopId;
 	private String arrivalStopId;
 
 	private AsyncTask<Void, TrainStatus, Void> departureVisionTask;
-	
+
 	private boolean useDepartureVision() {
 		Calendar start = Calendar.getInstance();
 		start.setTime(schedule.start);
-		return getSharedPreferences(getApplication().getPackageName()+"_preferences", Context.MODE_PRIVATE).getBoolean("useDepartureVision", true) && DateUtils.isToday(start);
+		return getSharedPreferences(
+				getApplication().getPackageName() + "_preferences",
+				Context.MODE_PRIVATE).getBoolean("useDepartureVision", true)
+				&& DateUtils.isToday(start);
 	}
 
 	boolean paused;
-	
+
 	private AsyncTask<Void, Integer, Void> last;
-	
+
 	protected void onResume() {
 		super.onResume();
 		paused = false;
@@ -113,37 +121,38 @@ public class StationToStationActivity extends ScheduleActivity implements
 			@Override
 			protected Void doInBackground(Void... params) {
 				try {
-					while(!isCancelled()) {
+					while (!isCancelled()) {
 						Calendar c = Calendar.getInstance();
 						c.add(Calendar.MINUTE, 1);
 						c.set(Calendar.SECOND, 0);
-						long diff = c.getTimeInMillis()-System.currentTimeMillis();
-						if(diff<=0) {
+						long diff = c.getTimeInMillis()
+								- System.currentTimeMillis();
+						if (diff <= 0) {
 							diff = 20000;
 						}
 						Thread.sleep(diff);
 						publishProgress(1);
 					}
 				} catch (Exception e) {
-					
+
 				}
 				return null;
 			}
-			
+
 			@Override
 			protected void onProgressUpdate(Integer... values) {
 				listView.invalidate();
 			}
 		};
 		listView.invalidate();
-		if(!useDepartureVision()) {
+		if (!useDepartureVision()) {
 			return;
 		}
 		departureVisionTask = newDepartureVisionTask();
 		departureVisionTask.execute();
 	}
-	
-	private AsyncTask<Void,TrainStatus,Void> newDepartureVisionTask() {
+
+	private AsyncTask<Void, TrainStatus, Void> newDepartureVisionTask() {
 		return new AsyncTask<Void, TrainStatus, Void>() {
 
 			private DepartureVision vision;
@@ -196,19 +205,19 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	protected void onPause() {
 		super.onPause();
-		if(last!=null) {
+		if (last != null) {
 			last.cancel(false);
 		}
-		if(!useDepartureVision()) {
+		if (!useDepartureVision()) {
 			return;
 		}
 		departureVisionTask.cancel(true);
 	}
 
 	MenuItem shareItem;
-	
+
 	MenuItem rate;
-	
+
 	MenuItem email;
 
 	@Override
@@ -222,13 +231,21 @@ public class StationToStationActivity extends ScheduleActivity implements
 		email.setIcon(android.R.drawable.ic_menu_send);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		if(listView!=null && listView.getAdapter()!=null && listView.getAdapter().getCount()>0) {
+		if (listView != null && listView.getAdapter() != null
+				&& listView.getAdapter().getCount() > 0) {
 			rate.setVisible(true);
 			shareItem.setVisible(true);
+			ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
+			if(adapter.getTripIdForAlarm()!=null) {
+				clearAlarm.setVisible(true);
+			} else {
+				clearAlarm.setVisible(false);
+			}
 		} else {
+			
 			shareItem.setVisible(false);
 			rate.setVisible(false);
 		}
@@ -269,8 +286,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 				}
 				b.append('\n');
 			}
-			shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, b
-					.toString());
+			shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,
+					b.toString());
 			startActivity(Intent.createChooser(shareIntent, "Share"));
 			return true;
 		}
@@ -295,20 +312,26 @@ public class StationToStationActivity extends ScheduleActivity implements
 			showDialog(DIALOG_DEPART);
 			return true;
 		}
-		if(item.equals(rate)) {
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName()));
+		if (item.equals(rate)) {
+			Intent intent = new Intent(Intent.ACTION_VIEW,
+					Uri.parse("market://details?id=" + getPackageName()));
 			startActivity(intent);
 			return true;
 		}
-		if(item.equals(email)) {
+		if (item.equals(email)) {
 			Intent i = new Intent(Intent.ACTION_SEND);
 			i.setType("plain/text");
-			i.putExtra(Intent.EXTRA_EMAIL, new String[] {"njtransitrail-feedback@wmwm.us"});
-			StringBuilder b= new StringBuilder("NJTransit Rail Feedback " + getIntent().getStringExtra(DEPARTURE_STATION) + " : " + getIntent().getStringExtra(ARRIVAL_STATION));
+			i.putExtra(Intent.EXTRA_EMAIL,
+					new String[] { "njtransitrail-feedback@wmwm.us" });
+			StringBuilder b = new StringBuilder("NJTransit Rail Feedback "
+					+ getIntent().getStringExtra(DEPARTURE_STATION) + " : "
+					+ getIntent().getStringExtra(ARRIVAL_STATION));
 			try {
-				b.append(" version:" + getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+				b.append(" version:"
+						+ getPackageManager().getPackageInfo(getPackageName(),
+								0).versionName);
 			} catch (Exception e) {
-				
+
 			}
 			i.putExtra(Intent.EXTRA_SUBJECT, b.toString());
 			i.putExtra(Intent.EXTRA_TEXT, "");
@@ -327,9 +350,9 @@ public class StationToStationActivity extends ScheduleActivity implements
 		adView = new AdView(this, AdSize.BANNER,
 				getString(R.string.publisherId));
 		AdRequest req = new AdRequest();
-		final View orAd =  getLayoutInflater().inflate(R.layout.our_ad, null);
-		int rand = 0 + (int)(Math.random()*3);
-		if(rand==1) {
+		final View orAd = getLayoutInflater().inflate(R.layout.our_ad, null);
+		int rand = 0 + (int) (Math.random() * 3);
+		if (rand == 1) {
 			adLayout.addView(orAd);
 		}
 		adLayout.addView(adView);
@@ -338,56 +361,59 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 			@Override
 			public void onDismissScreen(Ad arg0) {
-				
+
 			}
 
 			@Override
 			public void onFailedToReceiveAd(Ad arg0, ErrorCode arg1) {
-				
+
 			}
 
 			@Override
 			public void onLeaveApplication(Ad arg0) {
-				
+
 			}
 
 			@Override
 			public void onPresentScreen(Ad arg0) {
-				
+
 			}
 
 			@Override
 			public void onReceiveAd(Ad arg0) {
 				int index = adLayout.indexOfChild(orAd);
-				if(index>=0) {
+				if (index >= 0) {
 					adLayout.removeViewAt(index);
 				}
 			}
-			
+
 		});
 		adFodder.setVisibility(View.GONE);
 
 		schedule = (Schedule) getIntent().getSerializableExtra(SCHEDULE);
 		ScheduleAdapter adapter;
 		listView.setAdapter(adapter = new ScheduleAdapter(this, schedule));
+		if (getIntent().hasExtra(ALARM_TRIP_ID)) {
+			adapter.setTripIdForAlarm(getIntent().getStringExtra(ALARM_TRIP_ID));
+		}
 		registerForContextMenu(listView);
 		listView.setOnItemLongClickListener(this);
 		listView.setOnItemClickListener(this);
 		listView.setItemsCanFocus(true);
 		int index = adapter.findIndexOfCurrent();
-		if(index>0) {
-			listView.setSelectionFromTop(index-1, 0);
+		if (index > 0) {
+			listView.setSelectionFromTop(index - 1, 0);
 		}
-		
+
 		departureStopId = getIntent().getStringExtra(DEPARTURE_ID);
 		arrivalStopId = getIntent().getStringExtra(ARRIVAL_ID);
 		departureText.setText(getIntent().getStringExtra(DEPARTURE_STATION));
 		arrivalText.setText(getIntent().getStringExtra(ARRIVAL_STATION));
-		
+
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.reload);
 		reverse.setImageDrawable(svg.createPictureDrawable());
 		departureView.setOnClickListener(this);
-		
+
 	}
 
 	private static final int DIALOG_ARRIVE = 1;
@@ -396,21 +422,51 @@ public class StationToStationActivity extends ScheduleActivity implements
 	@Override
 	protected Dialog onCreateDialog(final int id) {
 		final StationToStation sts = getAdapter().getItem(currentItemPosition);
-		Calendar alarm = id==DIALOG_DEPART ? sts.departTime : sts.arriveTime;
+		Calendar alarm = id == DIALOG_DEPART ? sts.departTime : sts.arriveTime;
 		final Calendar alarmTime = Calendar.getInstance();
 		alarmTime.setTimeInMillis(alarm.getTimeInMillis());
-		AlarmTimeDialog d = 
-		new AlarmTimeDialog(this, new AlarmTimeListener() {
+		final DateTimeSlider tpd = new DateTimeSlider(this,
+				new OnDateSetListener() {
 
+					@Override
+					public void onDateSet(DateSlider view, Calendar selectedDate) {
+						doAlarm(id == DIALOG_DEPART ? AlarmActivity.TYPE_DEPART
+								: AlarmActivity.TYPE_ARRIVE, selectedDate, sts);
+						removeDialog(id);
+					}
+
+				}, alarmTime) {
 			@Override
-			public void onMinutesBefore(int mins) {				
-				alarmTime.add(Calendar.MINUTE, -mins);
-				doAlarm(id==DIALOG_DEPART ? AlarmActivity.TYPE_DEPART : AlarmActivity.TYPE_ARRIVE, alarmTime);
+			protected void setTitle() {
+				setTitle(id == DIALOG_DEPART ? ("Set depart alarm " + ScheduleAdapter.time
+						.format(sts.departTime.getTime()))
+						: ("Arrive alarm " + ScheduleAdapter.time
+								.format(sts.arriveTime.getTime())));
 			}
-			
+
+			public String getTodayText() {
+				return "Revert";
+			}
+
+			public android.view.View.OnClickListener newTodayListener() {
+				return new android.view.View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						setTime(alarmTime);
+
+					}
+				};
+
+			}
+		};
+		tpd.setOnCancelListener(new OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				removeDialog(id);
+			}
 		});
-		d.setTitle(id==DIALOG_DEPART ? ("Set depart alarm " + ScheduleAdapter.time.format(sts.departTime.getTime())) : ("Arrive alarm " + ScheduleAdapter.time.format(sts.arriveTime.getTime()))); 
-		return d;
+		return tpd;
 	}
 
 	private Schedule schedule;
@@ -438,6 +494,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 	MenuItem alarmDepart;
 	MenuItem alarmArrive;
 	MenuItem share;
+	MenuItem clearAlarm;
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -446,28 +503,94 @@ public class StationToStationActivity extends ScheduleActivity implements
 		alarmDepart = menu.add("Add Depart Alarm");
 		alarmArrive = menu.add("Add Arrive Alarm");
 		final StationToStation sts = getAdapter().getItem(currentItemPosition);
-		if(sts.arriveTime.before(Calendar.getInstance())) {
+		if (sts.arriveTime.before(Calendar.getInstance())) {
 			alarmArrive.setVisible(false);
 		}
-		if(sts.departTime.before(Calendar.getInstance())) {
+		if (sts.departTime.before(Calendar.getInstance())) {
 			alarmDepart.setVisible(false);
 		}
 		share = menu.add("Share");
 		share.setIcon(getResources().getDrawable(
 				android.R.drawable.ic_menu_share));
+		clearAlarm = menu.add("Clear Alarm");
+		clearAlarm.setIcon(R.drawable.ic_menu_alarms);
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
-	void doAlarm(String type, Calendar time) {
-		Intent intent = new Intent(this, AlarmActivity.class);
-		intent.putExtra(AlarmActivity.TYPE, AlarmActivity.TYPE_ARRIVE);
-		if (AlarmActivity.TYPE_ARRIVE.equals(type)) {
-			intent.putExtra(AlarmActivity.TIME, time);
-		} else {
-			intent.putExtra(AlarmActivity.TIME, time);
-		}
-		PendingIntent pi = PendingIntent.getActivity(this, 1, intent, 0);
-		alarmManager.set(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), pi);
+	void doAlarm(final String type, final Calendar time,
+			final StationToStation sts) {
+		new AsyncTask<Void, Void, Void>() {
+
+			protected void onPreExecute() {
+				ScheduleAdapter adapter = (ScheduleAdapter) listView
+						.getAdapter();
+				adapter.setTripIdForAlarm(sts.tripId);
+				listView.invalidateViews();
+			};
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				time.clear(Calendar.SECOND);
+				time.clear(Calendar.MILLISECOND);
+				Intent intent = new Intent(StationToStationActivity.this,
+						AlarmActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+				intent.putExtra(AlarmActivity.TYPE, AlarmActivity.TYPE_ARRIVE);
+				if (AlarmActivity.TYPE_ARRIVE.equals(type)) {
+					intent.putExtra(AlarmActivity.TIME, time);
+				} else {
+					intent.putExtra(AlarmActivity.TIME, time);
+				}
+				PendingIntent pi = PendingIntent.getActivity(
+						StationToStationActivity.this, 1, intent, 0);
+				String ns = Context.NOTIFICATION_SERVICE;
+				NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+				long diff = time.getTimeInMillis() - System.currentTimeMillis();
+				int hours = (int) (diff / 3600000);
+				int mins = (int) (diff % 3600000 / 60000);
+				int seconds = (int) (diff % 60000 / 1000);
+				String tickerText = "alarm goes off in ";
+				if (hours > 0) {
+					tickerText += String.valueOf(hours);
+					tickerText += "h";
+				}
+				if (mins > 0) {
+					tickerText += String.valueOf(mins);
+					tickerText += "m";
+				}
+				if (seconds > 0) {
+					tickerText += String.valueOf(seconds);
+					tickerText += "s";
+				}
+				long when = System.currentTimeMillis();
+				Notification notification = new Notification(
+						R.drawable.stat_notify_alarm, tickerText, when);
+				notification.flags = notification.flags
+						| Notification.FLAG_ONGOING_EVENT;
+				Context context = getApplicationContext();
+				CharSequence contentTitle = getString(R.string.app_name);
+				CharSequence contentText = "alarm "
+						+ android.text.format.DateFormat.getTimeFormat(
+								StationToStationActivity.this).format(
+								time.getTime()) + " train #" + sts.blockId;
+				Intent notificationIntent = new Intent(
+						StationToStationActivity.this,
+						StationToStationActivity.class);
+				notificationIntent.putExtras(getIntent().getExtras());
+				PendingIntent contentIntent = PendingIntent
+						.getActivity(StationToStationActivity.this, 0,
+								notificationIntent, 0);
+
+				notification.setLatestEventInfo(context, contentTitle,
+						contentText, contentIntent);
+				mNotificationManager.notify(1, notification);
+				alarmManager.cancel(pi);
+				alarmManager.set(AlarmManager.RTC_WAKEUP,
+						time.getTimeInMillis(), pi);
+				return null;
+			}
+		}.execute();
+
 	}
 
 	@Override
@@ -487,10 +610,10 @@ public class StationToStationActivity extends ScheduleActivity implements
 	@Override
 	public void onClick(View arg0) {
 		boolean departureVision = useDepartureVision();
-		if(departureVision) {
+		if (departureVision) {
 			departureVisionTask.cancel(true);
 		}
-		if(schedule.transfers.length==1) {
+		if (schedule.transfers.length == 1) {
 			CharSequence temp = departureText.getText();
 			departureText.setText(arrivalText.getText());
 			arrivalText.setText(temp);
@@ -499,32 +622,35 @@ public class StationToStationActivity extends ScheduleActivity implements
 			arrivalStopId = temp2;
 			getAdapter().reverse();
 			int index = getAdapter().findIndexOfCurrent();
-			if(index>0) {
-				listView.setSelectionFromTop(index-1, 0);
+			if (index > 0) {
+				listView.setSelectionFromTop(index - 1, 0);
 			}
-			if(departureVision) {
+			if (departureVision) {
 				departureVisionTask = newDepartureVisionTask();
 				departureVisionTask.execute();
 			}
 			return;
 		}
-		Intent intent = new Intent(StationToStationActivity.this, LoadScheduleActivity.class);
-		intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION, arrivalText.getText());
-		intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION, departureText.getText());		
+		Intent intent = new Intent(StationToStationActivity.this,
+				LoadScheduleActivity.class);
+		intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION,
+				arrivalText.getText());
+		intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION,
+				departureText.getText());
 		Calendar c = Calendar.getInstance();
 		c.setTime(schedule.start);
 		intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_START, c);
 		intent.putExtra(LoadScheduleActivity.DEPARTURE_ID, arrivalStopId);
 		intent.putExtra(LoadScheduleActivity.ARRIVAL_ID, departureStopId);
-		if(DateUtils.isToday(c)) {
+		if (DateUtils.isToday(c)) {
 			Calendar tom = Calendar.getInstance();
 			tom.setTimeInMillis(c.getTimeInMillis());
-			tom.add(Calendar.DAY_OF_YEAR,1);
+			tom.add(Calendar.DAY_OF_YEAR, 1);
 			intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_END, tom);
 		} else {
 			intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_END, c);
 		}
 		startActivity(intent);
-		
+
 	}
 }
