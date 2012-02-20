@@ -39,6 +39,8 @@ public class Schedule implements Serializable {
 	public Map<String[], List<StationInterval>> stationIntervals;
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+	
+	private Map<String,StationInterval> goodStations = new HashMap<String, StationInterval>();
 
 	void traverse(List<? extends StationToStation> stationToStations,
 			ScheduleTraverser traverser) {
@@ -120,7 +122,6 @@ public class Schedule implements Serializable {
 		double mean = sum / (double) size;
 		double std = Math.sqrt(sum / (double) size);
 		double norm = std * 6 + mean +.5*mean;
-		
 		for (int i = 0; i < nsize; i++) {
 			StationInterval s = (StationInterval) stationToStations.get(i);
 			int duration = cache.get(s);
@@ -129,6 +130,7 @@ public class Schedule implements Serializable {
 				canAdd = false;
 			}
 			if (canAdd) {
+				goodStations.put(s.tripId, s);
 				traverser.populateItem(i, s, size);
 			}
 		}
@@ -208,6 +210,8 @@ public class Schedule implements Serializable {
 							Calendar departTime = convert(date, depart);
 							// System.out.println(depart + " - " + arrive);
 							StationInterval si = new StationInterval();
+							si.departSequence = a.sequence;
+							si.arriveSequence = b.sequence;
 							si.departId = pair[0];
 							si.arriveId = pair[1];
 							si.arriveTime = arriveTime;
@@ -277,6 +281,10 @@ public class Schedule implements Serializable {
 		}
 	}
 
+	public StationInterval getStationIntervalForTripId(String tripId) {
+		return goodStations.get(tripId);
+	}
+	
 	private Calendar convert(Date date, Date dateTime) {
 		Calendar caldate = Calendar.getInstance();
 		caldate.setTime(date);

@@ -23,9 +23,6 @@ graph
 16 [label="Princeton Shuttle"];
 11--16
 11 [label="Northeast Corridor"];
-19 [label="Meadowlands Rail Line"];
-11--19
-11 [label="Northeast Corridor"];
 18 [label="Riverline Light Rail"];
 11--18
 11 [label="Northeast Corridor"];
@@ -55,9 +52,6 @@ graph
 10 [label="MNRG"];
 14 [label="Newark Light Rail"];
 10--14
-10 [label="MNRG"];
-19 [label="Meadowlands Rail Line"];
-10--19
 10 [label="MNRG"];
 3 [label="Montclair-Boonton Line"];
 10--3
@@ -89,9 +83,6 @@ graph
 17 [label="Raritan Valley Line"];
 13--17
 13 [label="North Jersey Coast Line"];
-19 [label="Meadowlands Rail Line"];
-13--19
-13 [label="North Jersey Coast Line"];
 3 [label="Montclair-Boonton Line"];
 13--3
 13 [label="North Jersey Coast Line"];
@@ -122,9 +113,6 @@ graph
 17 [label="Raritan Valley Line"];
 12--17
 12 [label="North Jersey Coast Line"];
-19 [label="Meadowlands Rail Line"];
-12--19
-12 [label="North Jersey Coast Line"];
 4 [label="Montclair-Boonton Line"];
 12--4
 12 [label="North Jersey Coast Line"];
@@ -142,9 +130,6 @@ graph
 15 [label="Pascack Valley Line"];
 17 [label="Raritan Valley Line"];
 15--17
-15 [label="Pascack Valley Line"];
-19 [label="Meadowlands Rail Line"];
-15--19
 15 [label="Pascack Valley Line"];
 3 [label="Montclair-Boonton Line"];
 15--3
@@ -182,9 +167,6 @@ graph
 8 [label="Morris & Essex Line"];
 14--8
 17 [label="Raritan Valley Line"];
-19 [label="Meadowlands Rail Line"];
-17--19
-17 [label="Raritan Valley Line"];
 3 [label="Montclair-Boonton Line"];
 17--3
 17 [label="Raritan Valley Line"];
@@ -208,27 +190,6 @@ graph
 16 [label="Princeton Shuttle"];
 1 [label="Princeton Shuttle"];
 16--1
-19 [label="Meadowlands Rail Line"];
-3 [label="Montclair-Boonton Line"];
-19--3
-19 [label="Meadowlands Rail Line"];
-5 [label="Hudson-Bergen Light Rail"];
-19--5
-19 [label="Meadowlands Rail Line"];
-4 [label="Montclair-Boonton Line"];
-19--4
-19 [label="Meadowlands Rail Line"];
-7 [label="Port Jervis Line"];
-19--7
-19 [label="Meadowlands Rail Line"];
-6 [label="Main/Bergen County Line"];
-19--6
-19 [label="Meadowlands Rail Line"];
-9 [label="Gladstone Branch"];
-19--9
-19 [label="Meadowlands Rail Line"];
-8 [label="Morris & Essex Line"];
-19--8
 3 [label="Montclair-Boonton Line"];
 5 [label="Hudson-Bergen Light Rail"];
 3--5

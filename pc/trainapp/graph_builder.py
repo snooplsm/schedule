@@ -298,7 +298,6 @@ def buildGraph(agencies) :
 				break
 		for k in dopples:
 			print k,dopples[k]
-		raw_input("u mad?")
 		routesReader = csv.reader(open(folder+"/routes.txt","rb"))
 		headers = {}
 		for row in routesReader:
@@ -674,13 +673,17 @@ def buildGraph(agencies) :
 		conn.commit()
 				
 	polymap(minLat,minLon,maxLat,maxLon,stations,walks,None,True)
-#	print "trips storage"
+#	print "trips storage"	
+	tripCount = {}
 	for tripId in tripToStops:
 		trip = trips[tripId]
+		ids = set()
 		firstStation = tripToStops[tripId][0]
 		lastStation = firstStation
+		ids.add(lastStation["id"])
 		for id in range(len(tripToStops[tripId])):       
-			stop = tripToStops[tripId][id]			
+			stop = tripToStops[tripId][id]
+			ids.add(stop["id"])			
 			depart = stop['depart'].split(":")
 			arrive = stop['arrive'].split(":")
 			
@@ -701,22 +704,24 @@ def buildGraph(agencies) :
 			c.close()
 			lastStation = stop
 		conn.commit()
-#	c.execute("select rgt from nested_trip ")
-	#print G["148"]["32905"]['min_weight'],G["148"]["32905"]['avg_weight']
-	#print "PRINCETON->NEWARK", G["125"]["107"]['min_weight'],G["125"]["107"]['avg_weight'],G["125"]["107"]['max_weight']
-#	print "all pairs shortest path"
+		for id in ids:
+			for ids2 in ids:
+				if(id!=ids2):
+					if id not in tripCount:
+						tripCount[id] = {}
+					if ids2 not in tripCount[id]:
+						tripCount[id][ids2] = {"count":1,"trip":[tripId]}
+					else:
+						tripCount[id][ids2]["count"] = tripCount[id][ids2]["count"]+1
+						tripCount[id][ids2]["trip"].append(tripId)
+	for id in tripCount:
+		for ids2 in tripCount[id]:
+			count = tripCount[id][ids2]["count"]
+			tripId = tripCount[id][ids2]["trip"]
+			if count <= 4:
+				print stations[id]["name"],stations[ids2]["name"],count,tripId
 	patharray = [networkx.algorithms.shortest_paths.weighted.all_pairs_dijkstra_path(G),networkx.algorithms.shortest_paths.unweighted.all_pairs_shortest_path(G)]
-# 	for source in paths:
-# 		for target in paths[source]:
-# 			#nodes = ",".join(map((lambda x: prepend+x),paths[source][target][1:len(paths[source][target])-1]))
-# 			nodes = ",".join(paths[source][target][1:len(paths[source][target])-1])
-# #			if source=="n103" and target=="n32906":
-# #				print "how?",paths[source][target]
-# #				k = raw_input("?")
-# 			if len(paths[source][target])!=0:
-# 				c.execute("INSERT INTO shortest_path(source,target,nodes) values(?,?,?)",(source,target,nodes))
-# 				c.close()
-# 		conn.commit()
+
 	for level in range(0,len(patharray)):
 		paths = patharray[level]
 		for stationA in stations:

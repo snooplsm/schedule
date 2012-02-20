@@ -10,7 +10,6 @@
     -->
     <style name="OrangeTheme" parent="@android:style/Theme.Light">
         <item name="android:listSeparatorTextViewStyle">@style/listSeparatorTextViewStyle</item>
-        <item name="android:listViewStyle">@style/listViewStyle</item>
     </style>
 
     <style name="listSeparatorTextViewStyle" parent="@android:attr/listSeparatorTextViewStyle">
@@ -26,11 +25,6 @@
         <item name="android:shadowDy">1</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="listViewStyle" parent="@android:attr/listViewStyle">
-        <item name="android:background">@android:color/white</item>
-        <item name="android:divider">@drawable/divider</item>
     </style>
 
     <style name="tabHostStyle">

@@ -1,6 +1,7 @@
 package com.happytap.schedule.database;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +29,6 @@ import com.happytap.schedule.domain.Favorite;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.Service;
 import com.happytap.schedule.domain.StopTime;
-import com.happytap.schedule.domain.Trip;
 import com.njtransit.rail.R;
 
 @Singleton
@@ -48,6 +48,42 @@ public class ScheduleDao {
 
 	private static DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
+	public TripInfo getStationTimesForTripId(String tripId, int departSequence, int arriveSequence) {
+		Cursor c = database.rawQuery("select stop_id,depart,arrive,route_id from nested_trip where trip_id=? and lft between ? and ? order by lft asc", new String[]{tripId, String.valueOf(departSequence), String.valueOf(arriveSequence)});
+		TripInfo info = new TripInfo();
+		info.stops = new ArrayList<TripInfo.Stop>(c.getCount());
+		Map<String,TripInfo.Stop> whatis = new HashMap<String,TripInfo.Stop>();
+		while(c.moveToNext()) {
+			String stopId = c.getString(0);
+			String departure = c.getString(1);
+			String arrive = c.getString(2);
+			String routeId = c.getString(3);
+			info.routeId = routeId;
+			TripInfo.Stop stop = new TripInfo.Stop();
+			whatis.put(stopId, stop);		
+			try {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(timeFormat.parse(departure));
+				stop.depart = cal;
+				cal = Calendar.getInstance();
+				cal.setTime(timeFormat.parse(arrive));
+				stop.arrive = cal;
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
+			}
+			info.stops.add(stop);
+		}
+		c.close();
+		c = database.rawQuery(String.format("select stop_id,name from stop where stop_id in (%s)",join(whatis.keySet(),",")),null);
+		while(c.moveToNext()) {
+			String id = c.getString(0);
+			String name =c.getString(1);
+			whatis.get(id).name = StationAdapter.makePretty(name);
+		}
+		c.close();
+		return info;
+	}
+	
 	private Long clearExtraFields(Date d) {
 		Calendar c = Calendar.getInstance();
 		c.clear();

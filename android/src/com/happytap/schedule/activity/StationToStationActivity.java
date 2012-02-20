@@ -48,6 +48,7 @@ import com.happytap.schedule.adapter.ScheduleAdapter;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.StationToStation;
 import com.happytap.schedule.domain.TrainStatus;
+import com.happytap.schedule.provider.CurrentScheduleProvider;
 import com.happytap.schedule.service.DepartureVision;
 import com.happytap.schedule.service.DepartureVision.TrainStatusListener;
 import com.happytap.schedule.util.date.DateUtils;
@@ -60,6 +61,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	@InjectView(android.R.id.list)
 	ListView listView;
+	
+	ScheduleAdapter adapter;
 
 	@InjectView(R.id.ad_layout)
 	LinearLayout adLayout;
@@ -67,6 +70,9 @@ public class StationToStationActivity extends ScheduleActivity implements
 	@InjectView(R.id.ad_fodder)
 	View adFodder;
 
+	@Inject
+	CurrentScheduleProvider scheduleProvider;
+	
 	@InjectView(R.id.departureText)
 	TextView departureText;
 
@@ -141,10 +147,10 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 			@Override
 			protected void onProgressUpdate(Integer... values) {
-				listView.invalidate();
+				adapter.notifyDataSetChanged();
 			}
 		};
-		listView.invalidate();
+		adapter.notifyDataSetChanged();
 		if (!useDepartureVision()) {
 			return;
 		}
@@ -343,6 +349,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		setTheme(android.R.style.Theme_Light_NoTitleBar);
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.station_to_station);
@@ -390,8 +397,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		});
 		adFodder.setVisibility(View.GONE);
 
-		schedule = (Schedule) getIntent().getSerializableExtra(SCHEDULE);
-		ScheduleAdapter adapter;
+		schedule = scheduleProvider.get();
 		listView.setAdapter(adapter = new ScheduleAdapter(this, schedule));
 		if (getIntent().hasExtra(ALARM_TRIP_ID)) {
 			adapter.setTripIdForAlarm(getIntent().getStringExtra(ALARM_TRIP_ID));
@@ -399,7 +405,6 @@ public class StationToStationActivity extends ScheduleActivity implements
 		registerForContextMenu(listView);
 		listView.setOnItemLongClickListener(this);
 		listView.setOnItemClickListener(this);
-		listView.setItemsCanFocus(true);
 		int index = adapter.findIndexOfCurrent();
 		if (index > 0) {
 			listView.setSelectionFromTop(index - 1, 0);
@@ -425,6 +430,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		Calendar alarm = id == DIALOG_DEPART ? sts.departTime : sts.arriveTime;
 		final Calendar alarmTime = Calendar.getInstance();
 		alarmTime.setTimeInMillis(alarm.getTimeInMillis());
+		alarmTime.add(Calendar.MINUTE,-1);
 		final DateTimeSlider tpd = new DateTimeSlider(this,
 				new OnDateSetListener() {
 
@@ -480,6 +486,15 @@ public class StationToStationActivity extends ScheduleActivity implements
 	private int currentItemPosition;
 	private String currentItemDescription;
 
+	@Override
+	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+		ScheduleAdapter adapter = (ScheduleAdapter) listView
+				.getAdapter();
+		StationToStation sts = adapter.getItem(position);
+		Intent intent = new Intent(this, TripActivity.class).putExtra("tripId", sts.tripId).putExtra("departId", departureStopId).putExtra("arriveId", arrivalStopId);
+		startActivityFromChild(this, intent, 0);		
+	}
+	
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view,
 			int position, long id) {
@@ -602,10 +617,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		return (ScheduleAdapter) listView.getAdapter();
 	}
 
-	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		// TODO Auto-generated method stub
-	}
+	
 
 	@Override
 	public void onClick(View arg0) {

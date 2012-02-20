@@ -25,6 +25,7 @@ import com.google.ads.AdView;
 import com.google.inject.Inject;
 import com.happytap.schedule.database.ScheduleDao;
 import com.happytap.schedule.domain.Schedule;
+import com.happytap.schedule.provider.CurrentScheduleProvider;
 import com.happytap.schedule.service.ScheduleService;
 import com.njtransit.rail.R;
 
@@ -57,6 +58,9 @@ public class LoadScheduleActivity extends RoboActivity {
 	
 	@Inject
 	ScheduleDao dao;
+	
+	@Inject
+	CurrentScheduleProvider scheduleProvider;
 	
 	
 	public static final String DEPARTURE_STATION = "departure_station";
@@ -167,7 +171,8 @@ private static DecimalFormat df = new DecimalFormat("$0.00");
                 		intent.putExtra(ARRIVAL_STATION, getIntent().getStringExtra(StationToStationActivity.ARRIVAL_STATION));
                 		intent.putExtra(DEPARTURE_ID, getIntent().getStringExtra(StationToStationActivity.DEPARTURE_ID));
                 		intent.putExtra(ARRIVAL_ID, getIntent().getStringExtra(StationToStationActivity.ARRIVAL_ID));
-                		intent.putExtra(StationToStationActivity.SCHEDULE, (Schedule)obj);
+                		Schedule schedule = (Schedule)obj;
+                		scheduleProvider.schedule = schedule;
                 		startActivity(intent);
                 		finish();
         			};

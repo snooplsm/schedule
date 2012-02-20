@@ -113,9 +113,9 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 		if(sts.tripId!=null && tripIdForAlarm!=null && sts.tripId.equals(tripIdForAlarm)) {
 			ColorDrawable cd = new ColorDrawable(getContext().getResources().getColor(R.color.get_stations));
 			cd.setAlpha(200);
-			v.setBackgroundDrawable(cd);
+			//v.setBackgroundDrawable(cd);
 		} else {
-			v.setBackgroundColor(Color.WHITE);
+			//v.setBackgroundColor(Color.WHITE);
 		}
 		TextView textView = (TextView) v.findViewById(R.id.time);
 		TextView duration = (TextView) v.findViewById(R.id.duration);

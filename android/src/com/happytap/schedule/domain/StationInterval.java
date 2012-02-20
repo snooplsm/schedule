@@ -12,6 +12,9 @@ public class StationInterval extends StationToStation {
 	public int level;
 
 	public int transferDuration;
+	
+	public int arriveSequence;
+	public int departSequence;
 
 	public Schedule schedule;
 
