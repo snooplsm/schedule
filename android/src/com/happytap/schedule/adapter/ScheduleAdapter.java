@@ -8,6 +8,7 @@ import java.util.Map;
 
 import roboguice.util.Strings;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.SpannableStringBuilder;
@@ -109,13 +110,14 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 		
 		
 		StationToStation sts = getItem(position);
-		
+		int l = v.getLeft();
+		int r = v.getRight();
+		int t = v.getTop();
+		int b = v.getBottom();
 		if(sts.tripId!=null && tripIdForAlarm!=null && sts.tripId.equals(tripIdForAlarm)) {
-			ColorDrawable cd = new ColorDrawable(getContext().getResources().getColor(R.color.get_stations));
-			cd.setAlpha(200);
-			//v.setBackgroundDrawable(cd);
+			v.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.alarm_background));
 		} else {
-			//v.setBackgroundColor(Color.WHITE);
+			v.setBackgroundDrawable(getContext().getResources().getDrawable(android.R.drawable.list_selector_background));
 		}
 		TextView textView = (TextView) v.findViewById(R.id.time);
 		TextView duration = (TextView) v.findViewById(R.id.duration);

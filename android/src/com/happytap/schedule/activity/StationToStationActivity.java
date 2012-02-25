@@ -7,6 +7,7 @@ import java.util.Calendar;
 
 import roboguice.inject.InjectView;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -16,9 +17,11 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -45,12 +48,21 @@ import com.googlecode.android.widgets.DateSlider.DateSlider;
 import com.googlecode.android.widgets.DateSlider.DateSlider.OnDateSetListener;
 import com.googlecode.android.widgets.DateSlider.DateTimeSlider;
 import com.happytap.schedule.adapter.ScheduleAdapter;
+import com.happytap.schedule.database.PreferencesDao;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.StationToStation;
 import com.happytap.schedule.domain.TrainStatus;
 import com.happytap.schedule.provider.CurrentScheduleProvider;
+import com.happytap.schedule.service.BillingService;
+import com.happytap.schedule.service.BillingService.RequestPurchase;
+import com.happytap.schedule.service.BillingService.RestoreTransactions;
+import com.happytap.schedule.service.Consts.PurchaseState;
+import com.happytap.schedule.service.Consts.ResponseCode;
 import com.happytap.schedule.service.DepartureVision;
 import com.happytap.schedule.service.DepartureVision.TrainStatusListener;
+import com.happytap.schedule.service.PurchaseDatabase;
+import com.happytap.schedule.service.PurchaseObserver;
+import com.happytap.schedule.service.ResponseHandler;
 import com.happytap.schedule.util.date.DateUtils;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
@@ -61,7 +73,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	@InjectView(android.R.id.list)
 	ListView listView;
-	
+
 	ScheduleAdapter adapter;
 
 	@InjectView(R.id.ad_layout)
@@ -69,10 +81,17 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	@InjectView(R.id.ad_fodder)
 	View adFodder;
+	
+	Handler mHandler = new Handler();;
 
 	@Inject
 	CurrentScheduleProvider scheduleProvider;
 	
+	@Inject
+	PreferencesDao prefs;
+	
+	private BillingService mBillingService;
+
 	@InjectView(R.id.departureText)
 	TextView departureText;
 
@@ -225,6 +244,59 @@ public class StationToStationActivity extends ScheduleActivity implements
 	MenuItem rate;
 
 	MenuItem email;
+	
+	private boolean purchasedAdFree = false;
+	
+	private class SchedulePurchaseObserver extends PurchaseObserver {
+		public SchedulePurchaseObserver(Handler handler) {
+			super(StationToStationActivity.this,handler);
+		}
+
+		@Override
+		public void onBillingSupported(boolean supported) {
+			// TODO Auto-generated method stub
+			if(supported) {
+				restoreDatabase();
+			}
+			
+		}
+
+		private void restoreDatabase() {
+			mBillingService.restoreTransactions();	
+		}
+
+		@Override
+		public void onPurchaseStateChange(PurchaseState purchaseState,
+				String itemId, int quantity, long purchaseTime,
+				String developerPayload) {
+			// TODO Auto-generated method stub
+			if("remove_ads".equals(itemId)) {
+				if(purchaseState==PurchaseState.PURCHASED) {
+					purchasedAdFree = true;
+				}
+				if(purchaseState==PurchaseState.CANCELED) {
+					purchasedAdFree = false;
+				}
+				if(purchaseState==PurchaseState.REFUNDED) {
+					purchasedAdFree = false;
+				}
+				prefs.savePurchasedAdFree(purchasedAdFree);
+			}
+		}
+
+		@Override
+		public void onRequestPurchaseResponse(RequestPurchase request,
+				ResponseCode responseCode) {
+			System.out.println("what");
+		}
+
+		@Override
+		public void onRestoreTransactionsResponse(RestoreTransactions request,
+				ResponseCode responseCode) {
+			System.out.println("foo");
+			
+		}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -235,9 +307,50 @@ public class StationToStationActivity extends ScheduleActivity implements
 		rate.setIcon(R.drawable.ic_menu_star);
 		email = menu.add("Email us");
 		email.setIcon(android.R.drawable.ic_menu_send);
+		purchases = menu.add("Remove Ads");
 		return true;
 	}
+	
+    private String mPayloadContents = null;
 
+    private void showPayloadEditDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        final View view = View.inflate(this, R.layout.edit_payload, null);
+        final TextView payloadText = (TextView) view.findViewById(R.id.payload_text);
+        if (mPayloadContents != null) {
+            payloadText.setText(mPayloadContents);
+        }
+
+        dialog.setView(view);
+        dialog.setPositiveButton(
+                R.string.edit_payload_accept,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPayloadContents = payloadText.getText().toString();
+                    }
+                });
+        
+        dialog.setNegativeButton(
+                R.string.edit_payload_clear,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (dialog != null) {
+                            mPayloadContents = null;
+                            dialog.cancel();
+                        }
+                    }
+                });
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+                if (dialog != null) {
+                    dialog.cancel();
+                }
+            }
+        });
+        dialog.show();
+    }
+
+	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		if (listView != null && listView.getAdapter() != null
@@ -245,11 +358,14 @@ public class StationToStationActivity extends ScheduleActivity implements
 			rate.setVisible(true);
 			shareItem.setVisible(true);
 			ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
-			if(adapter.getTripIdForAlarm()!=null) {
-				clearAlarm.setVisible(true);
-			} else {
-				clearAlarm.setVisible(false);
+			if (clearAlarm != null) {
+				if (adapter.getTripIdForAlarm() != null) {
+					clearAlarm.setVisible(true);
+				} else {
+					clearAlarm.setVisible(false);
+				}
 			}
+			purchases.setVisible(true);
 		} else {
 			
 			shareItem.setVisible(false);
@@ -344,8 +460,54 @@ public class StationToStationActivity extends ScheduleActivity implements
 			startActivity(i);
 			return true;
 		}
+		if (item.equals(clearAlarm)) {
+			getAdapter().setTripIdForAlarm(null);
+			String ns = Context.NOTIFICATION_SERVICE;
+			NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+			mNotificationManager.cancel(1);
+			Intent intent = new Intent(StationToStationActivity.this,
+					AlarmActivity.class);
+			PendingIntent pi = PendingIntent.getActivity(
+					StationToStationActivity.this, 1, intent, 0);
+			alarmManager.cancel(pi);
+			adapter.notifyDataSetChanged();
+		}
+		if(item.equals(purchases)) {
+			showPayloadEditDialog();
+		}
 		return false;
 	}
+	
+    private void initializeOwnedItems() {
+        new Thread(new Runnable() {
+            public void run() {
+                doInitializeOwnedItems();
+            }
+        }).start();
+    }
+    
+    private void doInitializeOwnedItems() {
+        Cursor cursor = mPurchaseDatabase.queryAllPurchasedItems();
+        if (cursor == null) {
+            return;
+        }
+
+        try {
+            int productIdCol = cursor.getColumnIndexOrThrow(
+                    PurchaseDatabase.PURCHASED_PRODUCT_ID_COL);
+            while (cursor.moveToNext()) {
+                String productId = cursor.getString(productIdCol);
+                if(productId.equals("remove_ads")) {
+                	purchasedAdFree = true;
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+    }
+	
+	private PurchaseDatabase mPurchaseDatabase;
+	private SchedulePurchaseObserver mPurchaseObserver;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -353,12 +515,16 @@ public class StationToStationActivity extends ScheduleActivity implements
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.station_to_station);
-
+		mBillingService = new BillingService();
+		mBillingService.setContext(this);
+		mPurchaseDatabase = new PurchaseDatabase(this);
+		mPurchaseObserver = new SchedulePurchaseObserver(mHandler);
+        ResponseHandler.register(mPurchaseObserver);
 		adView = new AdView(this, AdSize.BANNER,
 				getString(R.string.publisherId));
 		AdRequest req = new AdRequest();
 		final View orAd = getLayoutInflater().inflate(R.layout.our_ad, null);
-		int rand = 0 + (int) (Math.random() * 3);
+		int rand = 1;
 		if (rand == 1) {
 			adLayout.addView(orAd);
 		}
@@ -418,19 +584,34 @@ public class StationToStationActivity extends ScheduleActivity implements
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.reload);
 		reverse.setImageDrawable(svg.createPictureDrawable());
 		departureView.setOnClickListener(this);
-
+		mPurchaseDatabase.queryAllPurchasedItems();
+		mBillingService.checkBillingSupported();
 	}
 
 	private static final int DIALOG_ARRIVE = 1;
 	private static final int DIALOG_DEPART = 2;
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+        ResponseHandler.register(mPurchaseObserver);
+        initializeOwnedItems();
+	}
 
+	@Override
+	protected void onStop() {
+		super.onStop();
+        ResponseHandler.unregister(mPurchaseObserver);
+	}
+	
+	
 	@Override
 	protected Dialog onCreateDialog(final int id) {
 		final StationToStation sts = getAdapter().getItem(currentItemPosition);
 		Calendar alarm = id == DIALOG_DEPART ? sts.departTime : sts.arriveTime;
 		final Calendar alarmTime = Calendar.getInstance();
 		alarmTime.setTimeInMillis(alarm.getTimeInMillis());
-		alarmTime.add(Calendar.MINUTE,-1);
+		alarmTime.add(Calendar.MINUTE, -1);
 		final DateTimeSlider tpd = new DateTimeSlider(this,
 				new OnDateSetListener() {
 
@@ -479,22 +660,27 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	@Override
 	protected void onDestroy() {
-		adView.destroy();
 		super.onDestroy();
+		adView.destroy();		
+        mPurchaseDatabase.close();
+        mBillingService.unbind();
 	}
 
 	private int currentItemPosition;
 	private String currentItemDescription;
 
 	@Override
-	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-		ScheduleAdapter adapter = (ScheduleAdapter) listView
-				.getAdapter();
+	public void onItemClick(AdapterView<?> adapterView, View view,
+			int position, long id) {
+		ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
 		StationToStation sts = adapter.getItem(position);
-		Intent intent = new Intent(this, TripActivity.class).putExtra("tripId", sts.tripId).putExtra("departId", departureStopId).putExtra("arriveId", arrivalStopId);
-		startActivityFromChild(this, intent, 0);		
+		Intent intent = new Intent(this, TripActivity.class)
+				.putExtra("tripId", sts.tripId)
+				.putExtra("departId", departureStopId)
+				.putExtra("arriveId", arrivalStopId);
+		startActivityFromChild(this, intent, 0);
 	}
-	
+
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view,
 			int position, long id) {
@@ -510,6 +696,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 	MenuItem alarmArrive;
 	MenuItem share;
 	MenuItem clearAlarm;
+	MenuItem purchases;
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -529,6 +716,11 @@ public class StationToStationActivity extends ScheduleActivity implements
 				android.R.drawable.ic_menu_share));
 		clearAlarm = menu.add("Clear Alarm");
 		clearAlarm.setIcon(R.drawable.ic_menu_alarms);
+		if (adapter.getTripIdForAlarm() != null) {
+			clearAlarm.setVisible(true);
+		} else {
+			clearAlarm.setVisible(false);
+		}		
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
@@ -616,8 +808,6 @@ public class StationToStationActivity extends ScheduleActivity implements
 	private ScheduleAdapter getAdapter() {
 		return (ScheduleAdapter) listView.getAdapter();
 	}
-
-	
 
 	@Override
 	public void onClick(View arg0) {

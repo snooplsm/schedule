@@ -63,5 +63,26 @@ public class PreferencesDao {
 		return favs;
 
 	}
+
+	public void savePurchasedAdFree(boolean purchasedAdFree) {
+		Cursor cursor = database.rawQuery("select value from purchases where key=?", new String[]{"remove_ads"});
+		ContentValues cv = new ContentValues(2);
+		cv.put("key", "remove_ads");
+		cv.put("value", purchasedAdFree ? 1 : 0);
+		if(cursor.moveToNext()) {
+			cursor.close();
+			database.insert("purchases", null, cv);
+		} else {
+			database.update("purchases", cv, "key=?", new String[] {"remove_ads"});
+		}		
+	}
+	
+	public boolean hasPurchasedAdFree() {
+		Cursor cursor = database.rawQuery("select value from purchases where key=?", new String[]{"remove_ads"});
+		if(cursor.moveToNext()) {
+			return cursor.getInt(0)!=0;
+		}
+		return false;
+	}
 	
 }

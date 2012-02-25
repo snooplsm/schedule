@@ -24,7 +24,9 @@
 			android:layout_centerInParent="true"
 			android:textSize="20dip"
 			android:textColor="@color/lgrey_start"
-			android:text="A HappyTap App"/>
+			android:lines="2"
+			android:text="Remove ads for $1.99\n
+Less than a latte"/>
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"

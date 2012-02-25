@@ -1,201 +1,214 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string
-		name="chat_room">#njtrail</string>
-	<string
-		name="chat_server">irc.freenode.net</string>
-	<string
-		name="app_name">NJTransit Rail</string>
-	<string
-		name="establishment">NJTransit</string>
-	<string
-		name="departure_text">Departure Station</string>
-	<string
-		name="arrival_text">Arrival Station</string>
-	<string
-		name="dateSliderTitle">Selected date</string>
-	<string
-		name="publisherId">a14cbf2b9d15c90</string>
-	<string-array
-		name="abbreviated_names">
-		<item>37169,AM</item>
-		<item>2,AB</item>
-		<item>3,AZ</item>
-		<item>4,AH</item>
-		<item>5,AS</item>
-		<item>6,AN</item>
-		<item>8,AP</item>
-		<item>9,AO</item>
-		<item>10,AC</item>
-		<item>11,AV</item>
-		<item>12,BI</item>
-		<item>13,BH</item>
-		<item>14,MC</item>
-		<item>15,BS</item>
-		<item>17,BY</item>
-		<item>18,BV</item>
-		<item>19,BM</item>
-		<item>20,BN</item>
-		<item>21,BK</item>
-		<item>22,BB</item>
-		<item>23,BU</item>
-		<item>24,BW</item>
-		<item>25,BF</item>
-		<item>26,CB</item>
-		<item>27,CM</item>
-		<item>28,CY</item>
-		<item>29,IF</item>
-		<item>30,CN</item>
-		<item>32,XC</item>
-		<item>33,DL</item>
-		<item>34,DV</item>
-		<item>35,DO</item>
-		<item>36,DN</item>
-		<item>37,EO</item>
-		<item>38,ED</item>
-		<item>39,EH</item>
-		<item>40,EL</item>
-		<item>41,EZ</item>
-		<item>42,EN</item>
-		<item>43,EX</item>
-		<item>44,FW</item>
-		<item>45,FH</item>
-		<item>46,GD</item>
-		<item>47,GW</item>
-		<item>48,GI</item>
-		<item>49,GL</item>
-		<item>50,GG</item>
-		<item>51,GK</item>
-		<item>52,RS</item>
-		<item>54,HQ</item>
-		<item>32905,HL</item>
-		<item>55,HN</item>
-		<item>57,RM</item>
-		<item>58,HW</item>
-		<item>59,HZ</item>
-		<item>60,HG</item>
-		<item>61,HI</item>
-		<item>62,HD</item>
-		<item>64,UF</item>
-		<item>63,HB</item>
-		<item>32906,JA</item>
-		<item>66,KG</item>
-		<item>67,HP</item>
-		<item>68,ON</item>
-		<item>69,LP</item>
-		<item>70,LI</item>
-		<item>71,LW</item>
-		<item>72,FA</item>
-		<item>73,LS</item>
-		<item>74,LB</item>
-		<item>75,LN</item>
-		<item>76,LY</item>
-		<item>77,MA</item>
-		<item>78,MZ</item>
-		<item>79,SQ</item>
-		<item>81,MW</item>
-		<item>83,MP</item>
-		<item>84,MU</item>
-		<item>85,MI</item>
-		<item>86,MD</item>
-		<item>87,MB</item>
-		<item>88,GO</item>
-		<item>31696,MK</item>
-		<item>89,HS</item>
-		<item>90,ZM</item>
-		<item>91,MX</item>
-		<item>92,MR</item>
-		<item>39472,HV</item>
-		<item>93,OL</item>
-		<item>94,TB</item>
-		<item>95,MS</item>
-		<item>96,ML</item>
-		<item>97,MT</item>
-		<item>98,MV</item>
-		<item>99,MH</item>
-		<item>100,NN</item>
-		<item>101,NT</item>
-		<item>102,NE</item>
-		<item>110,NH</item>
-		<item>103,NB</item>
-		<item>104,NV</item>
-		<item>105,NY</item>
-		<item>37953,NA</item>
-		<item>106,ND</item>
-		<item>107,NP</item>
-		<item>108,OR</item>
-		<item>109,NZ</item>
-		<item>111,OD</item>
-		<item>112,OG</item>
-		<item>113,OS</item>
-		<item>114,PV</item>
-		<item>115,PS</item>
-		<item>116,RN</item>
-		<item>117,PC</item>
-		<item>118,PQ</item>
-		<item>119,PE</item>
-		<item>1,PH</item>
-		<item>120,PF</item>
-		<item>121,PL</item>
-		<item>122,PP</item>
-		<item>123,PO</item>
-		<item>124,PR</item>
-		<item>125,PJ</item>
-		<item>126,FZ</item>
-		<item>127,RH</item>
-		<item>128,RY</item>
-		<item>38417,17</item>
-		<item>129,RA</item>
-		<item>130,RB</item>
-		<item>131,RW</item>
-		<item>132,RG</item>
-		<item>31,RL</item>
-		<item>134,RF</item>
-		<item>135,CW</item>
-		<item>38174,TS,SE</item>
-		<item>38187,SE,TS</item>
-		<item>136,RT</item>
-		<item>137,XG</item>
-		<item>138,SM</item>
-		<item>139,CH</item>
-		<item>140,SO</item>
-		<item>141,LA</item>
-		<item>142,SV</item>
-		<item>143,SG</item>
-		<item>144,SF</item>
-		<item>145,ST</item>
-		<item>146,TE</item>
-		<item>147,TO</item>
-		<item>148,TR</item>
-		<item>149,TC</item>
-		<item>38105,US</item>
-		<item>150,UM</item>
-		<item>151,WK</item>
-		<item>152,WA</item>
-		<item>153,WG</item>
-		<item>154,WT</item>
-		<item>39635,23</item>
-		<item>155,WF</item>
-		<item>156,WW</item>
-		<item>157,WH</item>
-		<item>160,WR</item>
-		<item>158,WB</item>
-		<item>159,WL</item>
-	</string-array>
-	<string-array
-		name="replacement_names">
-		<item>125,Princeton Junction</item>
-		<item>148,Trenton</item>
-		<item>38291,Trenton - Riverline</item>
-		<item>38174,Secaucus</item>
-		<item>38187,Secaucus</item>
-		<item>19,Bloomfield</item>
-		<item>32906,Jersey Ave</item>
-		<item>37953,Newark Airport</item>
-	</string-array>
-	<string-array
-		name="connections">
-			<!-- <item>105,126,38187|38174</item> <item>105,46,38187|38174</item>
+
+    <string name="chat_room">#njtrail</string>
+    <string name="chat_server">irc.freenode.net</string>
+    <string name="app_name">NJTransit Rail</string>
+    <string name="billing_not_supported_title">Can\'t make purchases</string>
+    <string name="billing_not_supported_message">The Market billing
+     service is not available at this time.  You can continue to use this app but you
+     won\'t be able to make purchases.</string>
+    <string name="cannot_connect_title">Can\'t connect to Market</string>
+    <string name="cannot_connect_message">This app cannot connect to Market.
+     Your version of Market may be out of date.
+     You can continue to use this app but you
+     won\'t be able to make purchases.</string>
+    <string name="restoring_transactions">Restoring transactions</string>
+    <string name="learn_more">Learn more</string>
+    <string formatted="false" name="help_url">http://market.android.com/support/bin/answer.py?answer=1050566&amp;hl=%lang%&amp;dl=%region%</string>
+    <string name="buy">Buy</string>
+    <string name="select_item">Select an item</string>
+    <string name="edit_payload">Edit Payload</string>
+    <string name="edit_payload_title">Edit the developer payload associated with this purchase</string>
+    <string name="edit_payload_accept">Set</string>
+    <string name="edit_payload_clear">No Payload</string>
+    <string name="items_for_sale">Items for sale</string>
+    <string name="items_you_own">Items you own</string>
+    <string name="recent_transactions">Recent activity</string>
+    <string name="establishment">NJTransit</string>
+    <string name="departure_text">Departure Station</string>
+    <string name="arrival_text">Arrival Station</string>
+    <string name="dateSliderTitle">Selected date</string>
+    <string name="publisherId">a14cbf2b9d15c90</string>
+
+    <string-array name="abbreviated_names">
+        <item>37169,AM</item>
+        <item>2,AB</item>
+        <item>3,AZ</item>
+        <item>4,AH</item>
+        <item>5,AS</item>
+        <item>6,AN</item>
+        <item>8,AP</item>
+        <item>9,AO</item>
+        <item>10,AC</item>
+        <item>11,AV</item>
+        <item>12,BI</item>
+        <item>13,BH</item>
+        <item>14,MC</item>
+        <item>15,BS</item>
+        <item>17,BY</item>
+        <item>18,BV</item>
+        <item>19,BM</item>
+        <item>20,BN</item>
+        <item>21,BK</item>
+        <item>22,BB</item>
+        <item>23,BU</item>
+        <item>24,BW</item>
+        <item>25,BF</item>
+        <item>26,CB</item>
+        <item>27,CM</item>
+        <item>28,CY</item>
+        <item>29,IF</item>
+        <item>30,CN</item>
+        <item>32,XC</item>
+        <item>33,DL</item>
+        <item>34,DV</item>
+        <item>35,DO</item>
+        <item>36,DN</item>
+        <item>37,EO</item>
+        <item>38,ED</item>
+        <item>39,EH</item>
+        <item>40,EL</item>
+        <item>41,EZ</item>
+        <item>42,EN</item>
+        <item>43,EX</item>
+        <item>44,FW</item>
+        <item>45,FH</item>
+        <item>46,GD</item>
+        <item>47,GW</item>
+        <item>48,GI</item>
+        <item>49,GL</item>
+        <item>50,GG</item>
+        <item>51,GK</item>
+        <item>52,RS</item>
+        <item>54,HQ</item>
+        <item>32905,HL</item>
+        <item>55,HN</item>
+        <item>57,RM</item>
+        <item>58,HW</item>
+        <item>59,HZ</item>
+        <item>60,HG</item>
+        <item>61,HI</item>
+        <item>62,HD</item>
+        <item>64,UF</item>
+        <item>63,HB</item>
+        <item>32906,JA</item>
+        <item>66,KG</item>
+        <item>67,HP</item>
+        <item>68,ON</item>
+        <item>69,LP</item>
+        <item>70,LI</item>
+        <item>71,LW</item>
+        <item>72,FA</item>
+        <item>73,LS</item>
+        <item>74,LB</item>
+        <item>75,LN</item>
+        <item>76,LY</item>
+        <item>77,MA</item>
+        <item>78,MZ</item>
+        <item>79,SQ</item>
+        <item>81,MW</item>
+        <item>83,MP</item>
+        <item>84,MU</item>
+        <item>85,MI</item>
+        <item>86,MD</item>
+        <item>87,MB</item>
+        <item>88,GO</item>
+        <item>31696,MK</item>
+        <item>89,HS</item>
+        <item>90,ZM</item>
+        <item>91,MX</item>
+        <item>92,MR</item>
+        <item>39472,HV</item>
+        <item>93,OL</item>
+        <item>94,TB</item>
+        <item>95,MS</item>
+        <item>96,ML</item>
+        <item>97,MT</item>
+        <item>98,MV</item>
+        <item>99,MH</item>
+        <item>100,NN</item>
+        <item>101,NT</item>
+        <item>102,NE</item>
+        <item>110,NH</item>
+        <item>103,NB</item>
+        <item>104,NV</item>
+        <item>105,NY</item>
+        <item>37953,NA</item>
+        <item>106,ND</item>
+        <item>107,NP</item>
+        <item>108,OR</item>
+        <item>109,NZ</item>
+        <item>111,OD</item>
+        <item>112,OG</item>
+        <item>113,OS</item>
+        <item>114,PV</item>
+        <item>115,PS</item>
+        <item>116,RN</item>
+        <item>117,PC</item>
+        <item>118,PQ</item>
+        <item>119,PE</item>
+        <item>1,PH</item>
+        <item>120,PF</item>
+        <item>121,PL</item>
+        <item>122,PP</item>
+        <item>123,PO</item>
+        <item>124,PR</item>
+        <item>125,PJ</item>
+        <item>126,FZ</item>
+        <item>127,RH</item>
+        <item>128,RY</item>
+        <item>38417,17</item>
+        <item>129,RA</item>
+        <item>130,RB</item>
+        <item>131,RW</item>
+        <item>132,RG</item>
+        <item>31,RL</item>
+        <item>134,RF</item>
+        <item>135,CW</item>
+        <item>38174,TS,SE</item>
+        <item>38187,SE,TS</item>
+        <item>136,RT</item>
+        <item>137,XG</item>
+        <item>138,SM</item>
+        <item>139,CH</item>
+        <item>140,SO</item>
+        <item>141,LA</item>
+        <item>142,SV</item>
+        <item>143,SG</item>
+        <item>144,SF</item>
+        <item>145,ST</item>
+        <item>146,TE</item>
+        <item>147,TO</item>
+        <item>148,TR</item>
+        <item>149,TC</item>
+        <item>38105,US</item>
+        <item>150,UM</item>
+        <item>151,WK</item>
+        <item>152,WA</item>
+        <item>153,WG</item>
+        <item>154,WT</item>
+        <item>39635,23</item>
+        <item>155,WF</item>
+        <item>156,WW</item>
+        <item>157,WH</item>
+        <item>160,WR</item>
+        <item>158,WB</item>
+        <item>159,WL</item>
+    </string-array>
+    <string-array name="replacement_names">
+        <item>125,Princeton Junction</item>
+        <item>148,Trenton</item>
+        <item>38291,Trenton - Riverline</item>
+        <item>38174,Secaucus</item>
+        <item>38187,Secaucus</item>
+        <item>19,Bloomfield</item>
+        <item>32906,Jersey Ave</item>
+        <item>37953,Newark Airport</item>
+    </string-array>
+    <string-array name="connections">
+        <!--
+            <item>105,126,38187|38174</item> <item>105,46,38187|38174</item>
 			<item>105,121,38187|38174</item> <item>105,25,38187|38174</item>
 			<item>105,51,38187|38174</item> <item>105,66,38187|38174</item>
 			<item>105,75,38187|38174</item> <item>105,33,38187|38174</item>
@@ -218,9 +231,10 @@
 			<item>105,102,107</item> <item>105,120,107</item> <item>105,36,107</item>
 			<item>105,21,107</item> <item>105,24,107</item> <item>105,138,107</item>
 			<item>105,129,107</item> <item>105,108,107</item> <item>105,157,107</item>
-			<item>105,68,107</item> <item>105,6,107</item> <item>105,60,107</item> -->
-	</string-array>
-	<string
-		name="application_url">http://bit.ly/njtransit-rail</string>
+			<item>105,68,107</item> <item>105,6,107</item> <item>105,60,107</item>
+        -->
+    </string-array>
+
+    <string name="application_url">http://bit.ly/njtransit-rail</string>
 
 </resources>

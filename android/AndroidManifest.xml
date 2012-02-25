@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
     package="com.njtransit.rail"
-    android:versionCode="2012021901"
-    android:versionName="2012-02-19" >
+    android:versionCode="2012022302"
+    android:versionName="2012-02-23a" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- <uses-permission android:name="com.android.vending.BILLING" /> -->
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
         android:debuggable="false"
@@ -72,7 +72,7 @@
             android:name="com.google.ads.AdActivity" />
 
         <service android:name="com.happytap.schedule.service.ScheduleService" />
-<!--         <service android:name="com.happytap.schedule.service.BillingService" />
+        <service android:name="com.happytap.schedule.service.BillingService" />
 
         <receiver android:name="com.happytap.schedule.service.BillingReceiver" >
             <intent-filter >
@@ -80,7 +80,7 @@
                 <action android:name="com.android.vending.billing.RESPONSE_CODE" />
                 <action android:name="com.android.vending.billing.PURCHASE_STATE_CHANGED" />
             </intent-filter>
-        </receiver> -->
+        </receiver>
     </application>
 
 </manifest>

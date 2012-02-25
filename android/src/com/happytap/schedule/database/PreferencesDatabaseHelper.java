@@ -11,7 +11,7 @@ import com.google.inject.Singleton;
 public class PreferencesDatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String NAME = "preferences.sqlite";
-	private static final int VERSION = 1;
+	private static final int VERSION = 2;
 
 	@Inject
 	public PreferencesDatabaseHelper(Context context) {
@@ -21,11 +21,14 @@ public class PreferencesDatabaseHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("create table history(depart_id varchar(50), depart_name varchar(50), arrive_id varchar(50), arrive_name varchar(50), occurrences integer)");
+		db.execSQL("create table purchases(key varchar(100), value integer)");
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+		if(oldVersion<2) {
+			db.execSQL("create table purchases(key varchar(100), value integer)");	
+		}
 	}
 
 }

@@ -1,76 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:minHeight="?android:attr/listPreferredItemHeight"
-	android:layout_height="wrap_content"
-	android:background="@android:drawable/list_selector_background"
-	android:paddingBottom="6dip"
-	android:paddingTop="6dip"
-	android:paddingLeft="10dip"
-	android:paddingRight="10dip"
-	android:orientation="vertical"
-	android:gravity="center_vertical"
-	style="@style/listItemStyle">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:drawable/list_selector_background"
+    android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:orientation="vertical" >
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"
+        android:paddingTop="6dip" >
 
-	<LinearLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-		<TextView
-			android:id="@+id/time"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="@style/TextViewStyleCheckinListItemLineMessage"
-			android:text="10:38am - 11:43am"
-			android:maxLines="1"
-			android:ellipsize="end"
-			android:textSize="16dip"/>
-		<TextView
-			android:id="@+id/time_descriptor"
-			android:text=""
-			android:layout_height="wrap_content"
-			android:textAppearance="@style/TextViewStyleCheckinListItemLineAddress"
-			android:layout_width="fill_parent"
-			android:gravity="right"
-			/>
-	</LinearLayout>
-		<LinearLayout
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-		<TextView
-			android:id="@+id/connections"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="@style/TextViewStyleCheckinListItemConn"
-			android:text="Roebling ↝ Trenton - Riverline ↝ Trenton ↝ New York Penn Station"
-			android:textSize="11dip"/>
-	</LinearLayout>
-	<LinearLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-		<TextView
-			android:id="@+id/duration"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:gravity="left|center_vertical"
-			android:textAppearance="@style/TextViewStyleCheckinListItemLineAddress"
-			android:text="110 minutes"
-			android:paddingRight="3dip"/>
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="10:38am - 11:43am"
+            android:textAppearance="@style/TextViewStyleCheckinListItemLineMessage"
+            android:textSize="16dip" />
 
-		<TextView
-			android:id="@+id/away"
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:gravity="right|center_vertical"
-			android:textColor="@color/red_light"
-			android:text="departs in 33 minutes"
-			android:padding="3dip"
-			android:textSize="14dip"/>
-			
-	</LinearLayout>
+        <TextView
+            android:id="@+id/time_descriptor"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text=""
+            android:textAppearance="@style/TextViewStyleCheckinListItemLineAddress" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip" >
+
+        <TextView
+            android:id="@+id/connections"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Roebling ↝ Trenton - Riverline ↝ Trenton ↝ New York Penn Station"
+            android:textAppearance="@style/TextViewStyleCheckinListItemConn"
+            android:textSize="11dip" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="6dip"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip" >
+
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left|center_vertical"
+            android:paddingRight="3dip"
+            android:text="110 minutes"
+            android:textAppearance="@style/TextViewStyleCheckinListItemLineAddress" />
+
+        <TextView
+            android:id="@+id/away"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right|center_vertical"
+            android:padding="3dip"
+            android:text="departs in 33 minutes"
+            android:textColor="@color/red_light"
+            android:textSize="14dip" />
+    </LinearLayout>
 
 </LinearLayout>
