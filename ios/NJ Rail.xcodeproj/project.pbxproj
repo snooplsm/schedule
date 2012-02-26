@@ -1,0 +1,534 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D52A342014F363C80098990D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D52A341F14F363C80098990D /* UIKit.framework */; };
+		D52A342214F363C80098990D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D52A342114F363C80098990D /* Foundation.framework */; };
+		D52A342414F363C80098990D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D52A342314F363C80098990D /* CoreGraphics.framework */; };
+		D52A342A14F363C80098990D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D52A342814F363C80098990D /* InfoPlist.strings */; };
+		D52A342C14F363C80098990D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D52A342B14F363C80098990D /* main.m */; };
+		D52A343014F363C80098990D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D52A342F14F363C80098990D /* AppDelegate.m */; };
+		D52A343314F363C80098990D /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D52A343114F363C80098990D /* MainStoryboard_iPhone.storyboard */; };
+		D52A343614F363C80098990D /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D52A343414F363C80098990D /* MainStoryboard_iPad.storyboard */; };
+		D52A343914F363C80098990D /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D52A343814F363C80098990D /* ViewController.m */; };
+		D52A344114F363C80098990D /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D52A344014F363C80098990D /* SenTestingKit.framework */; };
+		D52A344214F363C80098990D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D52A341F14F363C80098990D /* UIKit.framework */; };
+		D52A344314F363C80098990D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D52A342114F363C80098990D /* Foundation.framework */; };
+		D52A344B14F363C80098990D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D52A344914F363C80098990D /* InfoPlist.strings */; };
+		D52A344E14F363C80098990D /* NJ_RailTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D52A344D14F363C80098990D /* NJ_RailTests.m */; };
+		D52A345814F36C4D0098990D /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = D52A345714F36C4D0098990D /* background.png */; };
+		D52A345A14F36D790098990D /* switch.png in Resources */ = {isa = PBXBuildFile; fileRef = D52A345914F36D790098990D /* switch.png */; };
+		D52A345E14F370650098990D /* upper.png in Resources */ = {isa = PBXBuildFile; fileRef = D52A345D14F370650098990D /* upper.png */; };
+		D52A346014F371740098990D /* schedule.png in Resources */ = {isa = PBXBuildFile; fileRef = D52A345F14F371740098990D /* schedule.png */; };
+		D52A346414F404270098990D /* Station.m in Sources */ = {isa = PBXBuildFile; fileRef = D52A346214F404270098990D /* Station.m */; };
+		D52A350F14F4581E0098990D /* agency.txt in Resources */ = {isa = PBXBuildFile; fileRef = D52A350814F4581E0098990D /* agency.txt */; };
+		D52A351014F4581E0098990D /* calendar_dates.txt in Resources */ = {isa = PBXBuildFile; fileRef = D52A350914F4581E0098990D /* calendar_dates.txt */; };
+		D52A351114F4581E0098990D /* routes.txt in Resources */ = {isa = PBXBuildFile; fileRef = D52A350A14F4581E0098990D /* routes.txt */; };
+		D52A351214F4581E0098990D /* shapes.txt in Resources */ = {isa = PBXBuildFile; fileRef = D52A350B14F4581E0098990D /* shapes.txt */; };
+		D52A351314F4581E0098990D /* stop_times.txt in Resources */ = {isa = PBXBuildFile; fileRef = D52A350C14F4581E0098990D /* stop_times.txt */; };
+		D52A351414F4581E0098990D /* stops.txt in Resources */ = {isa = PBXBuildFile; fileRef = D52A350D14F4581E0098990D /* stops.txt */; };
+		D52A351514F4581E0098990D /* trips.txt in Resources */ = {isa = PBXBuildFile; fileRef = D52A350E14F4581E0098990D /* trips.txt */; };
+		D52A351714F47FE00098990D /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D52A351614F47FE00098990D /* libsqlite3.0.dylib */; };
+		D52A351914F47FEE0098990D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D52A351814F47FEE0098990D /* libsqlite3.dylib */; };
+		D5470C9B14F987D00047F796 /* Trips.m in Sources */ = {isa = PBXBuildFile; fileRef = D5470C9914F987D00047F796 /* Trips.m */; };
+		D5470C9F14F9D6CC0047F796 /* Trip.m in Sources */ = {isa = PBXBuildFile; fileRef = D5470C9E14F9D6CC0047F796 /* Trip.m */; };
+		D594CCC014F8852700B2CBC9 /* tables.db in Resources */ = {isa = PBXBuildFile; fileRef = D594CCBF14F8852700B2CBC9 /* tables.db */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D52A344414F363C80098990D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D52A341214F363C80098990D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D52A341A14F363C80098990D;
+			remoteInfo = "NJ Rail";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		D52A341B14F363C80098990D /* NJ Rail.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NJ Rail.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D52A341F14F363C80098990D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		D52A342114F363C80098990D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		D52A342314F363C80098990D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		D52A342714F363C80098990D /* NJ Rail-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NJ Rail-Info.plist"; sourceTree = "<group>"; };
+		D52A342914F363C80098990D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		D52A342B14F363C80098990D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D52A342D14F363C80098990D /* NJ Rail-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NJ Rail-Prefix.pch"; sourceTree = "<group>"; };
+		D52A342E14F363C80098990D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		D52A342F14F363C80098990D /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		D52A343214F363C80098990D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		D52A343514F363C80098990D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		D52A343714F363C80098990D /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		D52A343814F363C80098990D /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		D52A343F14F363C80098990D /* NJ RailTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NJ RailTests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D52A344014F363C80098990D /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		D52A344814F363C80098990D /* NJ RailTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NJ RailTests-Info.plist"; sourceTree = "<group>"; };
+		D52A344A14F363C80098990D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		D52A344C14F363C80098990D /* NJ_RailTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NJ_RailTests.h; sourceTree = "<group>"; };
+		D52A344D14F363C80098990D /* NJ_RailTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NJ_RailTests.m; sourceTree = "<group>"; };
+		D52A345714F36C4D0098990D /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
+		D52A345914F36D790098990D /* switch.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = switch.png; sourceTree = "<group>"; };
+		D52A345D14F370650098990D /* upper.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = upper.png; sourceTree = "<group>"; };
+		D52A345F14F371740098990D /* schedule.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = schedule.png; sourceTree = "<group>"; };
+		D52A346114F404270098990D /* Station.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Station.h; sourceTree = "<group>"; };
+		D52A346214F404270098990D /* Station.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Station.m; sourceTree = "<group>"; };
+		D52A350814F4581E0098990D /* agency.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = agency.txt; path = "NJ Rail/rail_data/agency.txt"; sourceTree = "<group>"; };
+		D52A350914F4581E0098990D /* calendar_dates.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = calendar_dates.txt; path = "NJ Rail/rail_data/calendar_dates.txt"; sourceTree = "<group>"; };
+		D52A350A14F4581E0098990D /* routes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = routes.txt; path = "NJ Rail/rail_data/routes.txt"; sourceTree = "<group>"; };
+		D52A350B14F4581E0098990D /* shapes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = shapes.txt; path = "NJ Rail/rail_data/shapes.txt"; sourceTree = "<group>"; };
+		D52A350C14F4581E0098990D /* stop_times.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = stop_times.txt; path = "NJ Rail/rail_data/stop_times.txt"; sourceTree = "<group>"; };
+		D52A350D14F4581E0098990D /* stops.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = stops.txt; path = "NJ Rail/rail_data/stops.txt"; sourceTree = "<group>"; };
+		D52A350E14F4581E0098990D /* trips.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = trips.txt; path = "NJ Rail/rail_data/trips.txt"; sourceTree = "<group>"; };
+		D52A351614F47FE00098990D /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		D52A351814F47FEE0098990D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		D5470C9814F987D00047F796 /* Trips.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Trips.h; sourceTree = "<group>"; };
+		D5470C9914F987D00047F796 /* Trips.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Trips.m; sourceTree = "<group>"; };
+		D5470C9D14F9D6CC0047F796 /* Trip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Trip.h; sourceTree = "<group>"; };
+		D5470C9E14F9D6CC0047F796 /* Trip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Trip.m; sourceTree = "<group>"; };
+		D594CCBF14F8852700B2CBC9 /* tables.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = tables.db; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D52A341814F363C80098990D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D52A351914F47FEE0098990D /* libsqlite3.dylib in Frameworks */,
+				D52A351714F47FE00098990D /* libsqlite3.0.dylib in Frameworks */,
+				D52A342014F363C80098990D /* UIKit.framework in Frameworks */,
+				D52A342214F363C80098990D /* Foundation.framework in Frameworks */,
+				D52A342414F363C80098990D /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D52A343B14F363C80098990D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D52A344114F363C80098990D /* SenTestingKit.framework in Frameworks */,
+				D52A344214F363C80098990D /* UIKit.framework in Frameworks */,
+				D52A344314F363C80098990D /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D52A341014F363C80098990D = {
+			isa = PBXGroup;
+			children = (
+				D52A351814F47FEE0098990D /* libsqlite3.dylib */,
+				D52A350E14F4581E0098990D /* trips.txt */,
+				D52A350D14F4581E0098990D /* stops.txt */,
+				D52A350814F4581E0098990D /* agency.txt */,
+				D52A350B14F4581E0098990D /* shapes.txt */,
+				D52A350C14F4581E0098990D /* stop_times.txt */,
+				D52A350A14F4581E0098990D /* routes.txt */,
+				D52A350914F4581E0098990D /* calendar_dates.txt */,
+				D52A351614F47FE00098990D /* libsqlite3.0.dylib */,
+				D52A342514F363C80098990D /* NJ Rail */,
+				D52A344614F363C80098990D /* NJ RailTests */,
+				D52A341E14F363C80098990D /* Frameworks */,
+				D52A341C14F363C80098990D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D52A341C14F363C80098990D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D52A341B14F363C80098990D /* NJ Rail.app */,
+				D52A343F14F363C80098990D /* NJ RailTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D52A341E14F363C80098990D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D52A341F14F363C80098990D /* UIKit.framework */,
+				D52A342114F363C80098990D /* Foundation.framework */,
+				D52A342314F363C80098990D /* CoreGraphics.framework */,
+				D52A344014F363C80098990D /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D52A342514F363C80098990D /* NJ Rail */ = {
+			isa = PBXGroup;
+			children = (
+				D52A345F14F371740098990D /* schedule.png */,
+				D594CCBF14F8852700B2CBC9 /* tables.db */,
+				D52A345D14F370650098990D /* upper.png */,
+				D52A345914F36D790098990D /* switch.png */,
+				D52A345714F36C4D0098990D /* background.png */,
+				D52A342E14F363C80098990D /* AppDelegate.h */,
+				D52A346214F404270098990D /* Station.m */,
+				D52A346114F404270098990D /* Station.h */,
+				D5470C9D14F9D6CC0047F796 /* Trip.h */,
+				D5470C9E14F9D6CC0047F796 /* Trip.m */,
+				D52A342F14F363C80098990D /* AppDelegate.m */,
+				D52A343114F363C80098990D /* MainStoryboard_iPhone.storyboard */,
+				D5470C9814F987D00047F796 /* Trips.h */,
+				D5470C9914F987D00047F796 /* Trips.m */,
+				D52A343414F363C80098990D /* MainStoryboard_iPad.storyboard */,
+				D52A343714F363C80098990D /* ViewController.h */,
+				D52A343814F363C80098990D /* ViewController.m */,
+				D52A342614F363C80098990D /* Supporting Files */,
+			);
+			path = "NJ Rail";
+			sourceTree = "<group>";
+		};
+		D52A342614F363C80098990D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D52A342714F363C80098990D /* NJ Rail-Info.plist */,
+				D52A342814F363C80098990D /* InfoPlist.strings */,
+				D52A342B14F363C80098990D /* main.m */,
+				D52A342D14F363C80098990D /* NJ Rail-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D52A344614F363C80098990D /* NJ RailTests */ = {
+			isa = PBXGroup;
+			children = (
+				D52A344C14F363C80098990D /* NJ_RailTests.h */,
+				D52A344D14F363C80098990D /* NJ_RailTests.m */,
+				D52A344714F363C80098990D /* Supporting Files */,
+			);
+			path = "NJ RailTests";
+			sourceTree = "<group>";
+		};
+		D52A344714F363C80098990D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D52A344814F363C80098990D /* NJ RailTests-Info.plist */,
+				D52A344914F363C80098990D /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D52A341A14F363C80098990D /* NJ Rail */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D52A345114F363C80098990D /* Build configuration list for PBXNativeTarget "NJ Rail" */;
+			buildPhases = (
+				D52A341714F363C80098990D /* Sources */,
+				D52A341814F363C80098990D /* Frameworks */,
+				D52A341914F363C80098990D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "NJ Rail";
+			productName = "NJ Rail";
+			productReference = D52A341B14F363C80098990D /* NJ Rail.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D52A343E14F363C80098990D /* NJ RailTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D52A345414F363C80098990D /* Build configuration list for PBXNativeTarget "NJ RailTests" */;
+			buildPhases = (
+				D52A343A14F363C80098990D /* Sources */,
+				D52A343B14F363C80098990D /* Frameworks */,
+				D52A343C14F363C80098990D /* Resources */,
+				D52A343D14F363C80098990D /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D52A344514F363C80098990D /* PBXTargetDependency */,
+			);
+			name = "NJ RailTests";
+			productName = "NJ RailTests";
+			productReference = D52A343F14F363C80098990D /* NJ RailTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D52A341214F363C80098990D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = D52A341514F363C80098990D /* Build configuration list for PBXProject "NJ Rail" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = D52A341014F363C80098990D;
+			productRefGroup = D52A341C14F363C80098990D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D52A341A14F363C80098990D /* NJ Rail */,
+				D52A343E14F363C80098990D /* NJ RailTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D52A341914F363C80098990D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D52A342A14F363C80098990D /* InfoPlist.strings in Resources */,
+				D52A343314F363C80098990D /* MainStoryboard_iPhone.storyboard in Resources */,
+				D52A343614F363C80098990D /* MainStoryboard_iPad.storyboard in Resources */,
+				D52A345814F36C4D0098990D /* background.png in Resources */,
+				D52A345A14F36D790098990D /* switch.png in Resources */,
+				D52A345E14F370650098990D /* upper.png in Resources */,
+				D52A346014F371740098990D /* schedule.png in Resources */,
+				D52A350F14F4581E0098990D /* agency.txt in Resources */,
+				D52A351014F4581E0098990D /* calendar_dates.txt in Resources */,
+				D52A351114F4581E0098990D /* routes.txt in Resources */,
+				D52A351214F4581E0098990D /* shapes.txt in Resources */,
+				D52A351314F4581E0098990D /* stop_times.txt in Resources */,
+				D52A351414F4581E0098990D /* stops.txt in Resources */,
+				D52A351514F4581E0098990D /* trips.txt in Resources */,
+				D594CCC014F8852700B2CBC9 /* tables.db in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D52A343C14F363C80098990D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D52A344B14F363C80098990D /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D52A343D14F363C80098990D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D52A341714F363C80098990D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D52A342C14F363C80098990D /* main.m in Sources */,
+				D52A343014F363C80098990D /* AppDelegate.m in Sources */,
+				D52A343914F363C80098990D /* ViewController.m in Sources */,
+				D52A346414F404270098990D /* Station.m in Sources */,
+				D5470C9B14F987D00047F796 /* Trips.m in Sources */,
+				D5470C9F14F9D6CC0047F796 /* Trip.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D52A343A14F363C80098990D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D52A344E14F363C80098990D /* NJ_RailTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D52A344514F363C80098990D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D52A341A14F363C80098990D /* NJ Rail */;
+			targetProxy = D52A344414F363C80098990D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D52A342814F363C80098990D /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D52A342914F363C80098990D /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		D52A343114F363C80098990D /* MainStoryboard_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D52A343214F363C80098990D /* en */,
+			);
+			name = MainStoryboard_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		D52A343414F363C80098990D /* MainStoryboard_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D52A343514F363C80098990D /* en */,
+			);
+			name = MainStoryboard_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		D52A344914F363C80098990D /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D52A344A14F363C80098990D /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D52A344F14F363C80098990D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D52A345014F363C80098990D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D52A345214F363C80098990D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NJ Rail/NJ Rail-Prefix.pch";
+				INFOPLIST_FILE = "NJ Rail/NJ Rail-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		D52A345314F363C80098990D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NJ Rail/NJ Rail-Prefix.pch";
+				INFOPLIST_FILE = "NJ Rail/NJ Rail-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		D52A345514F363C80098990D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/NJ Rail.app/NJ Rail";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NJ Rail/NJ Rail-Prefix.pch";
+				INFOPLIST_FILE = "NJ RailTests/NJ RailTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		D52A345614F363C80098990D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/NJ Rail.app/NJ Rail";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NJ Rail/NJ Rail-Prefix.pch";
+				INFOPLIST_FILE = "NJ RailTests/NJ RailTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D52A341514F363C80098990D /* Build configuration list for PBXProject "NJ Rail" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D52A344F14F363C80098990D /* Debug */,
+				D52A345014F363C80098990D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D52A345114F363C80098990D /* Build configuration list for PBXNativeTarget "NJ Rail" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D52A345214F363C80098990D /* Debug */,
+				D52A345314F363C80098990D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D52A345414F363C80098990D /* Build configuration list for PBXNativeTarget "NJ RailTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D52A345514F363C80098990D /* Debug */,
+				D52A345614F363C80098990D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D52A341214F363C80098990D /* Project object */;
+}
