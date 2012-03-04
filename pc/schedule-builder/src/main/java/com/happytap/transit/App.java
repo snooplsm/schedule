@@ -61,17 +61,17 @@ public class App {
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 	
 	public static void main(String... args) {
-		try {
-			System.out.println(Float.parseFloat("1.2261943e-7"));
-			System.exit(1);
-			System.out.println(sdf.parse("00:01:00"));
-			System.out.println(sdf.parse("24:01:00"));
-			System.out.println(sdf.parse("25:01:00"));
-			System.exit(1);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			System.out.println(Float.parseFloat("1.2261943e-7"));
+//			System.exit(1);
+//			System.out.println(sdf.parse("00:01:00"));
+//			System.out.println(sdf.parse("24:01:00"));
+//			System.out.println(sdf.parse("25:01:00"));
+//			System.exit(1);
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		File gtfsFolder = new File(args[0]);
 		File outputFolder = new File(args[1]);
 		new App(gtfsFolder, outputFolder).makeSchedule();

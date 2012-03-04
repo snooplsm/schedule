@@ -17,8 +17,10 @@
 package com.happytap.schedule.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -171,6 +173,14 @@ public class BillingService extends Service implements ServiceConnection {
                 Log.e(TAG, method + " received " + responseCode.toString());
             }
         }
+
+		@Override
+		public String toString() {
+			return "BillingRequest [mStartId=" + mStartId + ", mRequestId="
+					+ mRequestId + "]";
+		}
+        
+
     }
 
     /**

@@ -7,7 +7,6 @@ import java.util.Calendar;
 
 import roboguice.inject.InjectView;
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -22,6 +21,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -36,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.ads.Ad;
 import com.google.ads.AdListener;
@@ -48,7 +49,6 @@ import com.googlecode.android.widgets.DateSlider.DateSlider;
 import com.googlecode.android.widgets.DateSlider.DateSlider.OnDateSetListener;
 import com.googlecode.android.widgets.DateSlider.DateTimeSlider;
 import com.happytap.schedule.adapter.ScheduleAdapter;
-import com.happytap.schedule.database.PreferencesDao;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.StationToStation;
 import com.happytap.schedule.domain.TrainStatus;
@@ -81,15 +81,12 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	@InjectView(R.id.ad_fodder)
 	View adFodder;
-	
+
 	Handler mHandler = new Handler();;
 
 	@Inject
 	CurrentScheduleProvider scheduleProvider;
-	
-	@Inject
-	PreferencesDao prefs;
-	
+
 	private BillingService mBillingService;
 
 	@InjectView(R.id.departureText)
@@ -133,6 +130,15 @@ public class StationToStationActivity extends ScheduleActivity implements
 				getApplication().getPackageName() + "_preferences",
 				Context.MODE_PRIVATE).getBoolean("useDepartureVision", true)
 				&& DateUtils.isToday(start);
+	}
+
+	private boolean showAds() {
+		return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("showAds", true);
+	}
+
+	private void setShowAds(boolean show) {
+		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("showAds", show)
+				.commit();
 	}
 
 	boolean paused;
@@ -244,25 +250,25 @@ public class StationToStationActivity extends ScheduleActivity implements
 	MenuItem rate;
 
 	MenuItem email;
-	
+
 	private boolean purchasedAdFree = false;
-	
+
 	private class SchedulePurchaseObserver extends PurchaseObserver {
 		public SchedulePurchaseObserver(Handler handler) {
-			super(StationToStationActivity.this,handler);
+			super(StationToStationActivity.this, handler);
 		}
 
 		@Override
 		public void onBillingSupported(boolean supported) {
 			// TODO Auto-generated method stub
-			if(supported) {
+			if (supported) {
 				restoreDatabase();
 			}
-			
+
 		}
 
 		private void restoreDatabase() {
-			mBillingService.restoreTransactions();	
+			mBillingService.restoreTransactions();
 		}
 
 		@Override
@@ -270,31 +276,31 @@ public class StationToStationActivity extends ScheduleActivity implements
 				String itemId, int quantity, long purchaseTime,
 				String developerPayload) {
 			// TODO Auto-generated method stub
-			if("remove_ads".equals(itemId)) {
-				if(purchaseState==PurchaseState.PURCHASED) {
+			if ("remove.ads".equals(itemId)) {
+				if (purchaseState == PurchaseState.PURCHASED) {
 					purchasedAdFree = true;
 				}
-				if(purchaseState==PurchaseState.CANCELED) {
+				if (purchaseState == PurchaseState.CANCELED) {
 					purchasedAdFree = false;
 				}
-				if(purchaseState==PurchaseState.REFUNDED) {
+				if (purchaseState == PurchaseState.REFUNDED) {
 					purchasedAdFree = false;
 				}
-				prefs.savePurchasedAdFree(purchasedAdFree);
 			}
+			onPurchaseStateChanged();
 		}
 
 		@Override
 		public void onRequestPurchaseResponse(RequestPurchase request,
 				ResponseCode responseCode) {
-			System.out.println("what");
+			System.out.println("what, " + request + ", " + responseCode);
 		}
 
 		@Override
 		public void onRestoreTransactionsResponse(RestoreTransactions request,
 				ResponseCode responseCode) {
-			System.out.println("foo");
-			
+			System.out.println("foo " + request + ", " + responseCode);
+
 		}
 	}
 
@@ -310,47 +316,14 @@ public class StationToStationActivity extends ScheduleActivity implements
 		purchases = menu.add("Remove Ads");
 		return true;
 	}
-	
-    private String mPayloadContents = null;
 
-    private void showPayloadEditDialog() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        final View view = View.inflate(this, R.layout.edit_payload, null);
-        final TextView payloadText = (TextView) view.findViewById(R.id.payload_text);
-        if (mPayloadContents != null) {
-            payloadText.setText(mPayloadContents);
-        }
+	private String mPayloadContents = null;
 
-        dialog.setView(view);
-        dialog.setPositiveButton(
-                R.string.edit_payload_accept,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        mPayloadContents = payloadText.getText().toString();
-                    }
-                });
-        
-        dialog.setNegativeButton(
-                R.string.edit_payload_clear,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (dialog != null) {
-                            mPayloadContents = null;
-                            dialog.cancel();
-                        }
-                    }
-                });
-        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            public void onCancel(DialogInterface dialog) {
-                if (dialog != null) {
-                    dialog.cancel();
-                }
-            }
-        });
-        dialog.show();
-    }
+	private void showPayloadEditDialog() {
+		// mBillingService.ch
+		mBillingService.requestPurchase("remove.ads", null);
+	}
 
-	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		if (listView != null && listView.getAdapter() != null
@@ -365,9 +338,9 @@ public class StationToStationActivity extends ScheduleActivity implements
 					clearAlarm.setVisible(false);
 				}
 			}
-			purchases.setVisible(true);
+			purchases.setVisible(showAds());
 		} else {
-			
+
 			shareItem.setVisible(false);
 			rate.setVisible(false);
 		}
@@ -456,8 +429,13 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 			}
 			i.putExtra(Intent.EXTRA_SUBJECT, b.toString());
-			i.putExtra(Intent.EXTRA_TEXT, "");
-			startActivity(i);
+			i.putExtra(Intent.EXTRA_TEXT, "");			
+			if(getPackageManager().resolveActivity(i, 0)!=null) {
+				startActivity(i);
+			} else {
+				Toast.makeText(this, "Sorry, you do not have an email client on your device.  Email us@wmwm.us", Toast.LENGTH_LONG).show();
+			}
+			
 			return true;
 		}
 		if (item.equals(clearAlarm)) {
@@ -472,40 +450,57 @@ public class StationToStationActivity extends ScheduleActivity implements
 			alarmManager.cancel(pi);
 			adapter.notifyDataSetChanged();
 		}
-		if(item.equals(purchases)) {
+		if (item.equals(purchases)) {
 			showPayloadEditDialog();
 		}
 		return false;
 	}
-	
-    private void initializeOwnedItems() {
-        new Thread(new Runnable() {
-            public void run() {
-                doInitializeOwnedItems();
-            }
-        }).start();
-    }
-    
-    private void doInitializeOwnedItems() {
-        Cursor cursor = mPurchaseDatabase.queryAllPurchasedItems();
-        if (cursor == null) {
-            return;
-        }
 
-        try {
-            int productIdCol = cursor.getColumnIndexOrThrow(
-                    PurchaseDatabase.PURCHASED_PRODUCT_ID_COL);
-            while (cursor.moveToNext()) {
-                String productId = cursor.getString(productIdCol);
-                if(productId.equals("remove_ads")) {
-                	purchasedAdFree = true;
-                }
-            }
-        } finally {
-            cursor.close();
-        }
-    }
-	
+	private void initializeOwnedItems() {
+		new Thread(new Runnable() {
+			public void run() {
+				doInitializeOwnedItems();
+			}
+		}).start();
+	}
+
+	private void doInitializeOwnedItems() {
+		Cursor cursor = mPurchaseDatabase.queryAllPurchasedItems();
+		if (cursor == null) {
+			return;
+		}
+
+		try {
+			int productIdCol = cursor
+					.getColumnIndexOrThrow(PurchaseDatabase.PURCHASED_PRODUCT_ID_COL);
+			while (cursor.moveToNext()) {
+				String productId = cursor.getString(productIdCol);
+				if (productId.equals("remove.ads")) {
+					purchasedAdFree = true;
+				}
+			}
+		} finally {
+			cursor.close();
+		}
+		onPurchaseStateChanged();
+	}
+
+	private void onPurchaseStateChanged() {
+		boolean val = purchasedAdFree;
+		setShowAds(!purchasedAdFree);
+		if(!showAds()) {
+			runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					adLayout.setVisibility(View.GONE);	
+				}
+				
+			});
+			
+		}
+	}
+
 	private PurchaseDatabase mPurchaseDatabase;
 	private SchedulePurchaseObserver mPurchaseObserver;
 
@@ -519,48 +514,57 @@ public class StationToStationActivity extends ScheduleActivity implements
 		mBillingService.setContext(this);
 		mPurchaseDatabase = new PurchaseDatabase(this);
 		mPurchaseObserver = new SchedulePurchaseObserver(mHandler);
-        ResponseHandler.register(mPurchaseObserver);
+		ResponseHandler.register(mPurchaseObserver);
 		adView = new AdView(this, AdSize.BANNER,
 				getString(R.string.publisherId));
-		AdRequest req = new AdRequest();
-		final View orAd = getLayoutInflater().inflate(R.layout.our_ad, null);
-		int rand = 1;
-		if (rand == 1) {
-			adLayout.addView(orAd);
-		}
-		adLayout.addView(adView);
-		adView.loadAd(req);
-		adView.setAdListener(new AdListener() {
-
-			@Override
-			public void onDismissScreen(Ad arg0) {
-
-			}
-
-			@Override
-			public void onFailedToReceiveAd(Ad arg0, ErrorCode arg1) {
-
-			}
-
-			@Override
-			public void onLeaveApplication(Ad arg0) {
-
-			}
-
-			@Override
-			public void onPresentScreen(Ad arg0) {
-
-			}
-
-			@Override
-			public void onReceiveAd(Ad arg0) {
-				int index = adLayout.indexOfChild(orAd);
-				if (index >= 0) {
-					adLayout.removeViewAt(index);
+		if (showAds()) {
+			AdRequest req = new AdRequest();
+			final View orAd = getLayoutInflater()
+					.inflate(R.layout.our_ad, null);
+			orAd.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					showPayloadEditDialog();	
 				}
+			});
+			int rand = 1;
+			if (rand == 1) {
+				adLayout.addView(orAd);
 			}
+			adLayout.addView(adView);
+			adView.loadAd(req);
+			adView.setAdListener(new AdListener() {
 
-		});
+				@Override
+				public void onDismissScreen(Ad arg0) {
+
+				}
+
+				@Override
+				public void onFailedToReceiveAd(Ad arg0, ErrorCode arg1) {
+
+				}
+
+				@Override
+				public void onLeaveApplication(Ad arg0) {
+
+				}
+
+				@Override
+				public void onPresentScreen(Ad arg0) {
+
+				}
+
+				@Override
+				public void onReceiveAd(Ad arg0) {
+					int index = adLayout.indexOfChild(orAd);
+					if (index >= 0) {
+						adLayout.removeViewAt(index);
+					}
+				}
+
+			});
+		}
 		adFodder.setVisibility(View.GONE);
 
 		schedule = scheduleProvider.get();
@@ -590,21 +594,20 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	private static final int DIALOG_ARRIVE = 1;
 	private static final int DIALOG_DEPART = 2;
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
-        ResponseHandler.register(mPurchaseObserver);
-        initializeOwnedItems();
+		ResponseHandler.register(mPurchaseObserver);
+		initializeOwnedItems();
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-        ResponseHandler.unregister(mPurchaseObserver);
+		ResponseHandler.unregister(mPurchaseObserver);
 	}
-	
-	
+
 	@Override
 	protected Dialog onCreateDialog(final int id) {
 		final StationToStation sts = getAdapter().getItem(currentItemPosition);
@@ -661,9 +664,9 @@ public class StationToStationActivity extends ScheduleActivity implements
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		adView.destroy();		
-        mPurchaseDatabase.close();
-        mBillingService.unbind();
+		adView.destroy();
+		mPurchaseDatabase.close();
+		mBillingService.unbind();
 	}
 
 	private int currentItemPosition;
@@ -720,7 +723,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 			clearAlarm.setVisible(true);
 		} else {
 			clearAlarm.setVisible(false);
-		}		
+		}
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 

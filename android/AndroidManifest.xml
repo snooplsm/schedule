@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
     package="com.njtransit.rail"
-    android:versionCode="2012022302"
-    android:versionName="2012-02-23a" >
+    android:versionCode="2012030101"
+    android:versionName="2012-03-01" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -16,14 +16,15 @@
     <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
-        android:debuggable="false"
-        android:icon="@drawable/icon"
+        android:debuggable="true"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:name="com.happytap.schedule.application.ScheduleApplication" >
         <activity
             android:configChanges="keyboard|keyboardHidden"
             android:label="@string/app_name"
             android:name="com.happytap.schedule.activity.SplashScreenActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
             android:screenOrientation="portrait" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
@@ -35,11 +36,13 @@
             android:configChanges="keyboard|keyboardHidden"
             android:label="@string/app_name"
             android:name="com.happytap.schedule.activity.StationListActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:configChanges="keyboard|keyboardHidden|orientation"
             android:label="@string/app_name"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
             android:name="com.happytap.schedule.activity.StationToStationActivity"
             android:screenOrientation="portrait" >
         </activity>
@@ -53,10 +56,12 @@
             android:configChanges="keyboard|keyboardHidden|orientation"
             android:label="@string/app_name"
             android:name="com.happytap.schedule.activity.TripActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.happytap.schedule.activity.LoadScheduleActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
             android:screenOrientation="portrait" >
         </activity>
         <activity

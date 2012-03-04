@@ -17,6 +17,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -131,10 +132,15 @@ private static DecimalFormat df = new DecimalFormat("$0.00");
 		fareText.setVisibility(View.INVISIBLE);
 		departureText.setText(getIntent().getStringExtra(DEPARTURE_STATION));
 		arrivalText.setText(getIntent().getStringExtra(ARRIVAL_STATION));
-		final View orAd =  getLayoutInflater().inflate(R.layout.our_ad, null);
-		adFodder.setVisibility(View.GONE);
 		
-		adLayout.addView(orAd);
+		if(showAds()) {
+			final View orAd =  getLayoutInflater().inflate(R.layout.our_ad, null);
+			adFodder.setVisibility(View.GONE);
+			adLayout.addView(orAd);			
+		} else {
+			adLayout.setVisibility(View.GONE);
+		}
+		
 	}
 	
 	@Override
@@ -149,6 +155,7 @@ private static DecimalFormat df = new DecimalFormat("$0.00");
 	protected void onResume() {
 		super.onResume();
 		task.execute();
+		
 	}
 	
 	@Override
@@ -211,6 +218,15 @@ private static DecimalFormat df = new DecimalFormat("$0.00");
                 ScheduleService.class), mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
     }
+    
+	private boolean showAds() {
+		return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("showAds", true);
+	}
+
+	private void setShowAds(boolean show) {
+		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("showAds", show)
+				.commit();
+	}
 
     void doUnbindService() {
     if (mIsBound) {
