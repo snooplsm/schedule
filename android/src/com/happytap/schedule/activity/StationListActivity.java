@@ -1,7 +1,6 @@
 package com.happytap.schedule.activity;
 
 import roboguice.activity.RoboListActivity;
-import android.R;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,19 +8,20 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.happytap.jumper.JumpDialog;
 import com.happytap.jumper.JumpListener;
 import com.happytap.schedule.adapter.StationAdapter;
+import com.njtransit.rail.R;
 
 public class StationListActivity extends RoboListActivity implements OnItemLongClickListener, OnItemClickListener, JumpListener {
 	
@@ -41,6 +41,7 @@ public class StationListActivity extends RoboListActivity implements OnItemLongC
 	protected Dialog onCreateDialog(int id) {
 		if(id==DIALOG_JUMP) {
 			JumpDialog d = new JumpDialog(this, this);
+			d.setColorStateList(getResources().getColorStateList(R.drawable.color_selector));
 			StationAdapter a = (StationAdapter)getListAdapter();			
 			d.setEnabledCharacters(a.getFirstLetterOfItems());
 			return d;
@@ -52,7 +53,7 @@ public class StationListActivity extends RoboListActivity implements OnItemLongC
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setTheme(R.style.Theme_Light);
+		setTheme(android.R.style.Theme_Light);
 		setListAdapter(injector.getInstance(StationAdapter.class));
 		getListView().setOnItemLongClickListener(this);
 		getListView().setOnItemClickListener(this);

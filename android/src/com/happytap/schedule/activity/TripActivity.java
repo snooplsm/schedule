@@ -1,8 +1,11 @@
 package com.happytap.schedule.activity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import roboguice.inject.InjectView;
 import android.os.Bundle;
@@ -27,6 +30,7 @@ import com.happytap.schedule.database.TripInfo;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.StationInterval;
 import com.happytap.schedule.provider.CurrentScheduleProvider;
+import com.happytap.schedule.service.ThreadHelper;
 import com.njtransit.rail.R;
 
 public class TripActivity extends ScheduleActivity {
@@ -38,6 +42,8 @@ public class TripActivity extends ScheduleActivity {
 
 	private Schedule schedule;
 
+	private long start;
+	
 	@Inject
 	CurrentScheduleProvider provider;
 
@@ -60,6 +66,23 @@ public class TripActivity extends ScheduleActivity {
 
 	@InjectView(R.id.ad_fodder)
 	View adFodder;
+	
+	private TripAdapter adapter;
+	
+	private Future<?> refreshFuture;
+	
+	private Runnable refresh = new Runnable() {
+		@Override
+		public void run() {
+			runOnUiThread(uiRefresh);
+		}
+	};
+	
+	private Runnable uiRefresh = new Runnable() {
+		public void run() {
+			adapter.notifyDataSetChanged();
+		};
+	};
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -141,7 +164,10 @@ public class TripActivity extends ScheduleActivity {
 				}
 				System.out.println(stops);
 			}
-			TripAdapter adapter = new TripAdapter(this, stops);
+			start = getIntent().getLongExtra("start", 0);
+			Calendar startCal = Calendar.getInstance();
+			startCal.setTimeInMillis(start);
+			adapter = new TripAdapter(this, stops,schedule,startCal);
 			listView.setAdapter(adapter);
 			// TripInfo tinfo = dao.getStationTimesForTripId(id);
 			// boolean foundFirst = false;
@@ -194,6 +220,26 @@ public class TripActivity extends ScheduleActivity {
 		departureText.setText(schedule.stopIdToName.get(schedule.departId));
 		arrivalText.setText(schedule.stopIdToName.get(schedule.arriveId));
 
+	}
+	
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		if(refreshFuture!=null) {
+			refreshFuture.cancel(true);
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		if(refreshFuture!=null) {
+			refreshFuture.cancel(true);
+		}
+		refreshFuture = ThreadHelper.getScheduler().scheduleAtFixedRate(refresh, 0, 1, TimeUnit.SECONDS);
 	}
 
 	private boolean showAds() {

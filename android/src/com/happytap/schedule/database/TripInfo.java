@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 
-import com.happytap.schedule.domain.Schedule;
-
 public class TripInfo implements Serializable {
 
 	private static final long serialVersionUID = 1L;

@@ -679,6 +679,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		StationToStation sts = adapter.getItem(position);
 		Intent intent = new Intent(this, TripActivity.class)
 				.putExtra("tripId", sts.tripId)
+				.putExtra("start", sts.departTime.getTimeInMillis())
 				.putExtra("departId", departureStopId)
 				.putExtra("arriveId", arrivalStopId);
 		startActivityFromChild(this, intent, 0);

@@ -32,6 +32,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textColor="#F0FFFFFF"
             android:text="New York Penn Station"
             android:textSize="25dip" />
 
@@ -42,6 +43,7 @@
             android:layout_below="@id/departureText"
             android:gravity="center"
             android:text="to"
+            android:textColor="#F0FFFFFF"
             android:textSize="25dip" />
 
         <TextView
@@ -51,6 +53,7 @@
             android:layout_below="@id/to"
             android:gravity="center"
             android:text="New Brunswick"
+            android:textColor="#F0FFFFFF"
             android:textSize="25dip" />
 
         <TextView
@@ -61,6 +64,7 @@
             android:layout_marginTop="20dip"
             android:gravity="center"
             android:text="Fare: $4.00"
+            android:textColor="#F0FFFFFF"
             android:textSize="20dip" />
 
         <RelativeLayout
@@ -74,6 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:text="Loading"
+                android:textColor="#F0FFFFFF"
                 android:textSize="25dip" />
 
             <TextView
