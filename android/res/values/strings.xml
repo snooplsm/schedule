@@ -1,6 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-
+<string-array name="roboguice_modules">
+    <item>com.happytap.schedule.module.ScheduleModule</item>
+  </string-array>
     <string name="chat_room">#njtrail</string>
     <string name="chat_server">irc.freenode.net</string>
     <string name="app_name">NJTransit Rail</string>
@@ -23,6 +25,7 @@
     <string name="edit_payload_accept">Set</string>
     <string name="edit_payload_clear">No Payload</string>
     <string name="items_for_sale">Items for sale</string>
+    <string formatted="true" name="marketUrl">market://details?id=%s</string>
     <string name="items_you_own">Items you own</string>
     <string name="recent_transactions">Recent activity</string>
     <string name="establishment">NJTransit</string>
@@ -31,6 +34,8 @@
     <string name="dateSliderTitle">Selected date</string>
     <string name="publisherId">a14cbf2b9d15c90</string>
 
+	<item name="paidApp" type="bool">false</item>
+        
     <string-array name="abbreviated_names">
         <item>37169,AM</item>
         <item>2,AB</item>

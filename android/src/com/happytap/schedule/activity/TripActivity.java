@@ -243,6 +243,9 @@ public class TripActivity extends ScheduleActivity {
 	}
 
 	private boolean showAds() {
+		if(getResources().getBoolean(R.bool.paidApp)) {
+			return false;
+		}
 		return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
 				"showAds", true);
 	}

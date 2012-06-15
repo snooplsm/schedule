@@ -86,7 +86,7 @@ public class SplashScreenActivity extends ScheduleActivity {
 
 	@InjectView(R.id.arrivalText)
 	private TextView arrivalText;
-	
+
 	@InjectView(R.id.container)
 	private LinearLayout container;
 
@@ -339,22 +339,22 @@ public class SplashScreenActivity extends ScheduleActivity {
 
 		@Override
 		public void onClick(View v) {
-			View[] views = {departureText,arrivalText};
-			for(View vi : views) {
+			View[] views = { departureText, arrivalText };
+			for (View vi : views) {
 				try {
-					if(vi.getAnimation()!=null) {
-						vi.getAnimation().cancel();
+					if (vi.getAnimation() != null) {
+						// vi.getAnimation().cancel();
 					}
 				} catch (Exception e) {
-					
+
 				}
 			}
-			final AlphaAnimation dAnimation = new AlphaAnimation(1,0);
+			final AlphaAnimation dAnimation = new AlphaAnimation(1, 0);
 			dAnimation.setZAdjustment(Animation.ZORDER_TOP);
 			dAnimation.setDuration(200);
 			dAnimation.setAnimationListener(new AnimationListener() {
 				@Override
-				public void onAnimationEnd(Animation animation) {			
+				public void onAnimationEnd(Animation animation) {
 					CharSequence temp = arrivalText.getText();
 					if (departureStopId != null) {
 						arrivalText.setText(departureText.getText());
@@ -364,37 +364,44 @@ public class SplashScreenActivity extends ScheduleActivity {
 					if (arrivalStopId != null) {
 						departureText.setText(temp);
 					} else {
-						departureText.setText(getString(R.string.departure_text));
+						departureText
+								.setText(getString(R.string.departure_text));
 					}
 					temp = arrivalStopId;
 					SplashScreenActivity.this.arrivalStopId = departureStopId;
 					if (temp != null) {
-						SplashScreenActivity.this.departureStopId = temp.toString();
+						SplashScreenActivity.this.departureStopId = temp
+								.toString();
 					} else {
 						SplashScreenActivity.this.departureStopId = null;
 					}
-					AlphaAnimation bAnimation = new AlphaAnimation(0,1);
+					AlphaAnimation bAnimation = new AlphaAnimation(0, 1);
 					bAnimation.setDuration(500);
-					TranslateAnimation _tAnim = new TranslateAnimation(0, 0, -200, 0);
-				    _tAnim.setInterpolator(new BounceInterpolator());
-				    _tAnim.setDuration(500);
-				    AnimationSet set = new AnimationSet(false);
-				    set.addAnimation(bAnimation);
-				    set.addAnimation(_tAnim);
-				    
+					TranslateAnimation _tAnim = new TranslateAnimation(0, 0,
+							-200, 0);
+					_tAnim.setInterpolator(new BounceInterpolator());
+					_tAnim.setDuration(500);
+					AnimationSet set = new AnimationSet(false);
+					set.addAnimation(bAnimation);
+					set.addAnimation(_tAnim);
+
 					departureText.setVisibility(View.VISIBLE);
 					arrivalText.setVisibility(View.VISIBLE);
 					departureText.startAnimation(set);
 					arrivalText.startAnimation(set);
 				}
-				public void onAnimationRepeat(Animation animation) {};
+
+				public void onAnimationRepeat(Animation animation) {
+				};
+
 				public void onAnimationStart(Animation animation) {
-					
+
 				};
 			});
-			//aAnimation.setDuration(550);
-			//TranslateAnimation translate1 = new TranslateAnimation(0,0,0,d.top-a.top);
-			//translate1.setDuration(5000);
+			// aAnimation.setDuration(550);
+			// TranslateAnimation translate1 = new
+			// TranslateAnimation(0,0,0,d.top-a.top);
+			// translate1.setDuration(5000);
 			// EXECUTE
 			departureText.startAnimation(dAnimation);
 			arrivalText.startAnimation(dAnimation);
@@ -530,18 +537,18 @@ public class SplashScreenActivity extends ScheduleActivity {
 			} else {
 				long days = diff / 86400000;
 				if (toast)
-					Toast.makeText(
-							SplashScreenActivity.this,
-							String.format(
-									"schedule is good for %s days or until changed",
-									days), Toast.LENGTH_LONG).show();
-				if (canShowScheduleExpiration()) {
-					scheduleEnd.setText("valid til "
-							+ LONG_DATE.format(new Date(max)));
-					scheduleEnd.setVisibility(View.VISIBLE);
-				} else {
-					scheduleEnd.setVisibility(View.GONE);
-				}
+					// Toast.makeText(
+					// SplashScreenActivity.this,
+					// String.format(
+					// "schedule is good for %s days or until changed",
+					// days), Toast.LENGTH_LONG).show();
+					if (canShowScheduleExpiration()) {
+						scheduleEnd.setText("valid til "
+								+ LONG_DATE.format(new Date(max)));
+						scheduleEnd.setVisibility(View.VISIBLE);
+					} else {
+						scheduleEnd.setVisibility(View.GONE);
+					}
 			}
 		} else {
 			scheduleEnd.setVisibility(View.GONE);
@@ -552,6 +559,10 @@ public class SplashScreenActivity extends ScheduleActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		getSupportActionBar().setDisplayUseLogoEnabled(false);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.newjersey);
 		splashImage.setImageDrawable(svg.createPictureDrawable());
 		svg = SVGParser.getSVGFromResource(getResources(), R.raw.reload);
@@ -561,9 +572,9 @@ public class SplashScreenActivity extends ScheduleActivity {
 		fixReverseFavs();
 		arrival.setOnClickListener(clickStationListener);
 		departure.setOnClickListener(clickStationListener);
-//		departure.setClipChildren(false);
-//		arrival.setClipChildren(false);
-//		container.setClipChildren(false);
+		// departure.setClipChildren(false);
+		// arrival.setClipChildren(false);
+		// container.setClipChildren(false);
 		reverse.setOnClickListener(reverseListener);
 		favs.setOnClickListener(favsListener);
 		getSchedule.setOnClickListener(getScheduleClickListener);
@@ -649,17 +660,47 @@ public class SplashScreenActivity extends ScheduleActivity {
 		return super.onCreateDialog(id);
 	}
 
+	// @Override
+	// public boolean onCreateOptionsMenu(Menu menu) {
+	// departAt = menu.add("Depart on");
+	// departAt.setIcon(android.R.drawable.ic_menu_month);
+	// share = menu.add("Share");
+	// share.setIcon(android.R.drawable.ic_menu_share);
+	// preferencesItem = menu.add("Preferences");
+	// preferencesItem.setIcon(android.R.drawable.ic_menu_preferences);
+	// about = menu.add("About");
+	// about.setIcon(android.R.drawable.ic_menu_info_details);
+	// return super.onCreateOptionsMenu(menu);
+	// }
+
+	private com.actionbarsherlock.view.MenuItem depart, prefs, abt;
+
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		departAt = menu.add("Depart on");
-		departAt.setIcon(android.R.drawable.ic_menu_month);
-		share = menu.add("Share");
-		share.setIcon(android.R.drawable.ic_menu_share);
-		preferencesItem = menu.add("Preferences");
-		preferencesItem.setIcon(android.R.drawable.ic_menu_preferences);
-		about = menu.add("About");
-		about.setIcon(android.R.drawable.ic_menu_info_details);
-		return super.onCreateOptionsMenu(menu);
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+		depart = menu.add("Depart on").setIcon(R.drawable.ic_time);
+			depart.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		prefs = menu.add("Preferences").setIcon(R.drawable.ic_settings);
+				prefs.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		abt = menu.add("About").setIcon(R.drawable.ic_about);
+				abt.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		return super.onCreateOptionsMenu(menu);		
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(
+			com.actionbarsherlock.view.MenuItem item) {
+		if (item.equals(depart)) {
+			showDialog(CHANGE_DATE_DIALOG);
+		}
+		if (item.equals(prefs)) {
+			Intent intent = new Intent(this, SchedulePreferenceActivity.class);
+			startActivityForResult(intent, 0);
+		}
+		if (item.equals(abt)) {
+			Intent intent = new Intent(this, AboutActivity.class);
+			startActivity(intent);
+		}
+		return true;
 	}
 
 	@Override
@@ -669,33 +710,34 @@ public class SplashScreenActivity extends ScheduleActivity {
 		loadingTask.cancel(false);
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.equals(departAt)) {
-			showDialog(CHANGE_DATE_DIALOG);
-		}
-		if (item.equals(share)) {
-			Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-			shareIntent.setType("text/plain");
-			Resources r = getResources();
-			String url = r.getString(R.string.application_url);
-			String name = r.getString(R.string.app_name);
-			shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, name
-					+ " " + url);
-			shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Get "
-					+ name + " for Android @ " + url);
-			startActivity(Intent.createChooser(shareIntent, "Share"));
-		}
-		if (item.equals(preferencesItem)) {
-			Intent intent = new Intent(this, SchedulePreferenceActivity.class);
-			startActivityForResult(intent, 0);
-		}
-		if (item.equals(about)) {
-			Intent intent = new Intent(this, AboutActivity.class);
-			startActivity(intent);
-		}
-		return true;
-	}
+	//
+	// @Override
+	// public boolean onOptionsItemSelected(MenuItem item) {
+	// if (item.equals(departAt)) {
+	// showDialog(CHANGE_DATE_DIALOG);
+	// }
+	// if (item.equals(share)) {
+	// Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+	// shareIntent.setType("text/plain");
+	// Resources r = getResources();
+	// String url = r.getString(R.string.application_url);
+	// String name = r.getString(R.string.app_name);
+	// shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, name
+	// + " " + url);
+	// shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Get "
+	// + name + " for Android @ " + url);
+	// startActivity(Intent.createChooser(shareIntent, "Share"));
+	// }
+	// if (item.equals(preferencesItem)) {
+	// Intent intent = new Intent(this, SchedulePreferenceActivity.class);
+	// startActivityForResult(intent, 0);
+	// }
+	// if (item.equals(about)) {
+	// Intent intent = new Intent(this, AboutActivity.class);
+	// startActivity(intent);
+	// }
+	// return true;
+	// }
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {

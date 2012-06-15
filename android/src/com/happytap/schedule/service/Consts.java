@@ -65,11 +65,11 @@ public class Consts {
     // Intent actions that we send from the BillingReceiver to the
     // BillingService.  Defined by this application.
     public static final String ACTION_CONFIRM_NOTIFICATION =
-        "com.example.dungeons.CONFIRM_NOTIFICATION";
+            "com.example.subscriptions.CONFIRM_NOTIFICATION";
     public static final String ACTION_GET_PURCHASE_INFORMATION =
-        "com.example.dungeons.GET_PURCHASE_INFORMATION";
+            "com.example.subscriptions.GET_PURCHASE_INFORMATION";
     public static final String ACTION_RESTORE_TRANSACTIONS =
-        "com.example.dungeons.RESTORE_TRANSACTIONS";
+            "com.example.subscriptions.RESTORE_TRANSACTIONS";
 
     // Intent actions that we receive in the BillingReceiver from Market.
     // These are defined by Market and cannot be changed.
@@ -92,6 +92,7 @@ public class Consts {
     public static final String BILLING_REQUEST_API_VERSION = "API_VERSION";
     public static final String BILLING_REQUEST_PACKAGE_NAME = "PACKAGE_NAME";
     public static final String BILLING_REQUEST_ITEM_ID = "ITEM_ID";
+    public static final String BILLING_REQUEST_ITEM_TYPE = "ITEM_TYPE";
     public static final String BILLING_REQUEST_DEVELOPER_PAYLOAD = "DEVELOPER_PAYLOAD";
     public static final String BILLING_REQUEST_NOTIFY_IDS = "NOTIFY_IDS";
     public static final String BILLING_REQUEST_NONCE = "NONCE";
@@ -101,5 +102,9 @@ public class Consts {
     public static final String BILLING_RESPONSE_REQUEST_ID = "REQUEST_ID";
     public static long BILLING_RESPONSE_INVALID_REQUEST_ID = -1;
 
+    // These are the types supported in the IAB v2
+    public static final String ITEM_TYPE_INAPP = "inapp";
+    public static final String ITEM_TYPE_SUBSCRIPTION = "subs";
+    
     public static final boolean DEBUG = false;
 }

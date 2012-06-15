@@ -17,10 +17,8 @@
 package com.happytap.schedule.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -161,7 +159,7 @@ public class BillingService extends Service implements ServiceConnection {
         protected Bundle makeRequestBundle(String method) {
             Bundle request = new Bundle();
             request.putString(Consts.BILLING_REQUEST_METHOD, method);
-            request.putInt(Consts.BILLING_REQUEST_API_VERSION, 1);
+            request.putInt(Consts.BILLING_REQUEST_API_VERSION, 2);
             request.putString(Consts.BILLING_REQUEST_PACKAGE_NAME, getPackageName());
             return request;
         }
@@ -173,20 +171,26 @@ public class BillingService extends Service implements ServiceConnection {
                 Log.e(TAG, method + " received " + responseCode.toString());
             }
         }
-
-		@Override
-		public String toString() {
-			return "BillingRequest [mStartId=" + mStartId + ", mRequestId="
-					+ mRequestId + "]";
-		}
-        
-
     }
 
     /**
      * Wrapper class that checks if in-app billing is supported.
+     *
+     * Note: Support for subscriptions implies support for one-time purchases. However, the opposite
+     * is not true.
+     *
+     * Developers may want to perform two checks if both one-time and subscription products are
+     * available.
      */
     class CheckBillingSupported extends BillingRequest {
+        public String mProductType = null;
+
+        /** Legacy contrustor
+         *
+         * This constructor is provided for legacy purposes. Assumes the calling application will
+         * not be using any features not present in API v1, such as subscriptions.
+         */
+        @Deprecated
         public CheckBillingSupported() {
             // This object is never created as a side effect of starting this
             // service so we pass -1 as the startId to indicate that we should
@@ -194,9 +198,28 @@ public class BillingService extends Service implements ServiceConnection {
             super(-1);
         }
 
+        /** Constructor
+         *
+         * Note: Support for subscriptions implies support for one-time purchases. However, the
+         * opposite is not true.
+         *
+         * Developers may want to perform two checks if both one-time and subscription products are
+         * available.
+         *
+         * @pram itemType Either Consts.ITEM_TYPE_INAPP or Consts.ITEM_TYPE_SUBSCRIPTION, indicating
+         * the type of item support is being checked for.
+         */
+        public CheckBillingSupported(String itemType) {
+            super(-1);
+            mProductType = itemType;
+        }
+        
         @Override
         protected long run() throws RemoteException {
             Bundle request = makeRequestBundle("CHECK_BILLING_SUPPORTED");
+            if (mProductType != null) {
+                request.putString(Consts.BILLING_REQUEST_ITEM_TYPE, mProductType);
+            }
             Bundle response = mService.sendBillingRequest(request);
             int responseCode = response.getInt(Consts.BILLING_RESPONSE_RESPONSE_CODE);
             if (Consts.DEBUG) {
@@ -204,7 +227,7 @@ public class BillingService extends Service implements ServiceConnection {
                         ResponseCode.valueOf(responseCode));
             }
             boolean billingSupported = (responseCode == ResponseCode.RESULT_OK.ordinal());
-            ResponseHandler.checkBillingSupportedResponse(billingSupported);
+            ResponseHandler.checkBillingSupportedResponse(billingSupported, mProductType);
             return Consts.BILLING_RESPONSE_INVALID_REQUEST_ID;
         }
     }
@@ -215,24 +238,52 @@ public class BillingService extends Service implements ServiceConnection {
     public class RequestPurchase extends BillingRequest {
         public final String mProductId;
         public final String mDeveloperPayload;
+        public final String mProductType;
 
+        /** Legacy constructor
+         *
+         * @param itemId  The ID of the item to be purchased. Will be assumed to be a one-time
+         *                purchase.
+         */
+        @Deprecated
         public RequestPurchase(String itemId) {
-            this(itemId, null);
+            this(itemId, null, null);
         }
 
+        /** Legacy constructor
+         *
+         * @param itemId  The ID of the item to be purchased. Will be assumed to be a one-time
+         *                purchase.
+         * @param developerPayload Optional data.
+         */
+        @Deprecated
         public RequestPurchase(String itemId, String developerPayload) {
+            this(itemId, null, developerPayload);
+        }
+
+        /** Constructor
+         *
+         * @param itemId  The ID of the item to be purchased. Will be assumed to be a one-time
+         *                purchase.
+         * @param itemType  Either Consts.ITEM_TYPE_INAPP or Consts.ITEM_TYPE_SUBSCRIPTION,
+         *                  indicating the type of item type support is being checked for.
+         * @param developerPayload Optional data.
+         */
+        public RequestPurchase(String itemId, String itemType, String developerPayload) {
             // This object is never created as a side effect of starting this
             // service so we pass -1 as the startId to indicate that we should
             // not stop this service after executing this request.
             super(-1);
             mProductId = itemId;
             mDeveloperPayload = developerPayload;
+            mProductType = itemType;
         }
 
         @Override
         protected long run() throws RemoteException {
             Bundle request = makeRequestBundle("REQUEST_PURCHASE");
             request.putString(Consts.BILLING_REQUEST_ITEM_ID, mProductId);
+            request.putString(Consts.BILLING_REQUEST_ITEM_TYPE, mProductType);
             // Note that the developer payload is optional.
             if (mDeveloperPayload != null) {
                 request.putString(Consts.BILLING_REQUEST_DEVELOPER_PAYLOAD, mDeveloperPayload);
@@ -366,7 +417,9 @@ public class BillingService extends Service implements ServiceConnection {
 
     @Override
     public void onStart(Intent intent, int startId) {
-        handleCommand(intent, startId);
+    	if(intent!=null) {
+    		handleCommand(intent, startId);
+    	}
     }
 
     /**
@@ -426,11 +479,23 @@ public class BillingService extends Service implements ServiceConnection {
     }
 
     /**
-     * Checks if in-app billing is supported.
+     * Checks if in-app billing is supported. Assumes this is a one-time purchase.
+     *
      * @return true if supported; false otherwise
      */
+    @Deprecated
     public boolean checkBillingSupported() {
         return new CheckBillingSupported().runRequest();
+    }
+
+    /**
+     * Checks if in-app billing is supported.
+     * @pram itemType Either Consts.ITEM_TYPE_INAPP or Consts.ITEM_TYPE_SUBSCRIPTION, indicating the
+     *                type of item support is being checked for.
+     * @return true if supported; false otherwise
+     */
+    public boolean checkBillingSupported(String itemType) {
+        return new CheckBillingSupported(itemType).runRequest();
     }
 
     /**
@@ -439,12 +504,14 @@ public class BillingService extends Service implements ServiceConnection {
      * receives an intent with the action {@link Consts#ACTION_NOTIFY}.
      * Returns false if there was an error trying to connect to Android Market.
      * @param productId an identifier for the item being offered for purchase
+     * @param itemType  Either Consts.ITEM_TYPE_INAPP or Consts.ITEM_TYPE_SUBSCRIPTION, indicating
+     *                  the type of item type support is being checked for.
      * @param developerPayload a payload that is associated with a given
      * purchase, if null, no payload is sent
      * @return false if there was an error connecting to Android Market
      */
-    public boolean requestPurchase(String productId, String developerPayload) {
-        return new RequestPurchase(productId, developerPayload).runRequest();
+    public boolean requestPurchase(String productId, String itemType, String developerPayload) {
+        return new RequestPurchase(productId, itemType, developerPayload).runRequest();
     }
 
     /**
@@ -581,6 +648,7 @@ public class BillingService extends Service implements ServiceConnection {
      * This is called when we are connected to the MarketBillingService.
      * This runs in the main UI thread.
      */
+    @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         if (Consts.DEBUG) {
             Log.d(TAG, "Billing service connected");
@@ -592,6 +660,7 @@ public class BillingService extends Service implements ServiceConnection {
     /**
      * This is called when we are disconnected from the MarketBillingService.
      */
+    @Override
     public void onServiceDisconnected(ComponentName name) {
         Log.w(TAG, "Billing service disconnected");
         mService = null;

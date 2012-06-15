@@ -1,26 +1,30 @@
 package com.happytap.schedule.activity;
 
-import roboguice.activity.RoboPreferenceActivity;
-import roboguice.inject.InjectPreference;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.njtransit.rail.R;
 
-public class SchedulePreferenceActivity extends RoboPreferenceActivity {
-
-	@InjectPreference("showJumper")
-	protected CheckBoxPreference showJumper;
-	
-	@InjectPreference("useDepartureVision")
-	protected CheckBoxPreference useDepartureVision;
+public class SchedulePreferenceActivity extends SherlockPreferenceActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		setTheme(R.style.Theme_Sherlock);
 		super.onCreate(savedInstanceState);
-
+		//PreferenceManager.setDefaultValues(this, R.xml.preference, false);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setTitle("Preferences");
 		addPreferencesFromResource(R.xml.preference);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		if(R.id.abs__home==item.getItemId()) {
+			super.onBackPressed();	return true;		
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 }

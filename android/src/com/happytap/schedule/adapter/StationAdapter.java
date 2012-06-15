@@ -2,6 +2,8 @@ package com.happytap.schedule.adapter;
 
 import java.util.LinkedHashSet;
 
+import roboguice.inject.ContextSingleton;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Typeface;
@@ -16,9 +18,6 @@ import com.njtransit.rail.R;
 
 public class StationAdapter extends SimpleCursorAdapter {
 	
-
-	
-	@Inject
 	public StationAdapter(final Context context, StationDao stationDao) {
 		super(context, android.R.layout.simple_list_item_1, stationDao.getStations(), new String[] {StationDao.NAME}, new int[] {android.R.id.text1});
 		setViewBinder(new ViewBinder() {

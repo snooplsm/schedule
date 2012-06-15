@@ -21,6 +21,7 @@ import com.google.inject.Injector;
 import com.happytap.jumper.JumpDialog;
 import com.happytap.jumper.JumpListener;
 import com.happytap.schedule.adapter.StationAdapter;
+import com.happytap.schedule.database.StationDao;
 import com.njtransit.rail.R;
 
 public class StationListActivity extends RoboListActivity implements OnItemLongClickListener, OnItemClickListener, JumpListener {
@@ -34,6 +35,9 @@ public class StationListActivity extends RoboListActivity implements OnItemLongC
 	
 	@Inject
 	Injector injector;
+	
+	@Inject
+	StationDao stationDao;
 	
 	private static final int DIALOG_JUMP = 1;
 	
@@ -54,7 +58,7 @@ public class StationListActivity extends RoboListActivity implements OnItemLongC
 		super.onCreate(savedInstanceState);
 		
 		setTheme(android.R.style.Theme_Light);
-		setListAdapter(injector.getInstance(StationAdapter.class));
+		setListAdapter(new StationAdapter(this, stationDao));
 		getListView().setOnItemLongClickListener(this);
 		getListView().setOnItemClickListener(this);
 		registerForContextMenu(getListView());

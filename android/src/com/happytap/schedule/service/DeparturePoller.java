@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.TrainStatus;
 
 /**
@@ -18,7 +23,7 @@ import com.happytap.schedule.domain.TrainStatus;
  */
 public class DeparturePoller {
 	
-	public List<TrainStatus> getTrainStatuses(String station) throws IOException {
+	public List<TrainStatus> getTrainStatuses(Schedule schedule, String station) throws IOException {
 		URL url = null;
 		try {
 			url = new URL("http://dv.njtransit.com/mobile/tid-mobile.aspx?sid="+station);
@@ -42,6 +47,8 @@ public class DeparturePoller {
 				data.append(line.toLowerCase());
 			}
 			br.close();
+			Document document = Jsoup.parse(data.toString());
+			
 			int index = data.indexOf("<table");
 			int endIndex = data.indexOf(">",index);		
 			//System.out.println(index);

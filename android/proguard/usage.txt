@@ -1,0 +1,1761 @@
+com.android.vending.billing.IMarketBillingService$Stub:
+    private static final java.lang.String DESCRIPTOR
+    static final int TRANSACTION_sendBillingRequest
+    34:34:public android.os.IBinder asBinder()
+com.android.vending.billing.IMarketBillingService$Stub$Proxy:
+    82:82:public java.lang.String getInterfaceDescriptor()
+com.google.ads.Ad:
+    public abstract boolean isReady()
+    public abstract void loadAd(com.google.ads.AdRequest)
+    public abstract void setAdListener(com.google.ads.AdListener)
+    public abstract void stopLoading()
+com.google.ads.AdActivity:
+    public static final java.lang.String BASE_URL_PARAM
+    public static final java.lang.String HTML_PARAM
+    public static final java.lang.String URL_PARAM
+    public static final java.lang.String INTENT_ACTION_PARAM
+    public static final java.lang.String TYPE_PARAM
+    public static final java.lang.String ORIENTATION_PARAM
+com.google.ads.AdRequest:
+    public static final java.lang.String VERSION
+    public static final java.lang.String LOGTAG
+    public void setGender(com.google.ads.AdRequest$Gender)
+    public void setBirthday(java.lang.String)
+    public void setKeywords(java.util.Set)
+    public void setExtras(java.util.Map)
+    public void addExtra(java.lang.String,java.lang.Object)
+    public void setLocation(android.location.Location)
+    public void setTesting(boolean)
+    public void addTestDevice(java.lang.String)
+    public void setTestDevices(java.util.Set)
+com.google.ads.AdSize:
+    public AdSize(int,int)
+com.google.ads.AdView:
+    public boolean isReady()
+    public void stopLoading()
+com.google.ads.InterstitialAd:
+    private d a
+    public InterstitialAd(android.app.Activity,java.lang.String)
+    public InterstitialAd(android.app.Activity,java.lang.String,boolean)
+    public boolean isReady()
+    public void loadAd(com.google.ads.AdRequest)
+    public void show()
+    public void setAdListener(com.google.ads.AdListener)
+    public void stopLoading()
+com.google.ads.R
+com.google.ads.R$attr
+com.google.ads.R$id
+com.google.ads.R$layout
+com.google.gson.AnonymousAndLocalClassExclusionStrategy
+com.google.gson.BaseMapTypeAdapter
+com.google.gson.Cache
+com.google.gson.CamelCaseSeparatorNamingPolicy
+com.google.gson.CircularReferenceException
+com.google.gson.CompositionFieldNamingPolicy
+com.google.gson.DefaultConstructorAllocator
+com.google.gson.DefaultConstructorAllocator$Null
+com.google.gson.DefaultTypeAdapters
+com.google.gson.DefaultTypeAdapters$1
+com.google.gson.DefaultTypeAdapters$BigDecimalTypeAdapter
+com.google.gson.DefaultTypeAdapters$BigIntegerTypeAdapter
+com.google.gson.DefaultTypeAdapters$BooleanTypeAdapter
+com.google.gson.DefaultTypeAdapters$ByteTypeAdapter
+com.google.gson.DefaultTypeAdapters$CharacterTypeAdapter
+com.google.gson.DefaultTypeAdapters$CollectionTypeAdapter
+com.google.gson.DefaultTypeAdapters$DefaultConstructorCreator
+com.google.gson.DefaultTypeAdapters$DefaultDateTypeAdapter
+com.google.gson.DefaultTypeAdapters$DefaultInetAddressAdapter
+com.google.gson.DefaultTypeAdapters$DefaultJavaSqlDateTypeAdapter
+com.google.gson.DefaultTypeAdapters$DefaultTimeTypeAdapter
+com.google.gson.DefaultTypeAdapters$DefaultTimestampDeserializer
+com.google.gson.DefaultTypeAdapters$DoubleDeserializer
+com.google.gson.DefaultTypeAdapters$DoubleSerializer
+com.google.gson.DefaultTypeAdapters$EnumTypeAdapter
+com.google.gson.DefaultTypeAdapters$FloatDeserializer
+com.google.gson.DefaultTypeAdapters$FloatSerializer
+com.google.gson.DefaultTypeAdapters$GregorianCalendarTypeAdapter
+com.google.gson.DefaultTypeAdapters$IntegerTypeAdapter
+com.google.gson.DefaultTypeAdapters$LocaleTypeAdapter
+com.google.gson.DefaultTypeAdapters$LongDeserializer
+com.google.gson.DefaultTypeAdapters$LongSerializer
+com.google.gson.DefaultTypeAdapters$NumberTypeAdapter
+com.google.gson.DefaultTypeAdapters$ShortTypeAdapter
+com.google.gson.DefaultTypeAdapters$StringBufferTypeAdapter
+com.google.gson.DefaultTypeAdapters$StringBuilderTypeAdapter
+com.google.gson.DefaultTypeAdapters$StringTypeAdapter
+com.google.gson.DefaultTypeAdapters$UriTypeAdapter
+com.google.gson.DefaultTypeAdapters$UrlTypeAdapter
+com.google.gson.DefaultTypeAdapters$UuidTypeAdapter
+com.google.gson.DelegatingJsonElementVisitor
+com.google.gson.DisjunctionExclusionStrategy
+com.google.gson.Escaper
+com.google.gson.ExclusionStrategy
+com.google.gson.ExposeAnnotationDeserializationExclusionStrategy
+com.google.gson.ExposeAnnotationSerializationExclusionStrategy
+com.google.gson.FieldAttributes
+com.google.gson.FieldNamingPolicy
+com.google.gson.FieldNamingStrategy
+com.google.gson.FieldNamingStrategy2
+com.google.gson.FieldNamingStrategy2Adapter
+com.google.gson.Gson
+com.google.gson.GsonBuilder
+com.google.gson.InnerClassExclusionStrategy
+com.google.gson.InstanceCreator
+com.google.gson.JavaFieldNamingPolicy
+com.google.gson.JsonArray
+com.google.gson.JsonArrayDeserializationVisitor
+com.google.gson.JsonDeserializationContext
+com.google.gson.JsonDeserializationContextDefault
+com.google.gson.JsonDeserializationVisitor
+com.google.gson.JsonDeserializer
+com.google.gson.JsonDeserializerExceptionWrapper
+com.google.gson.JsonElement
+com.google.gson.JsonElementVisitor
+com.google.gson.JsonIOException
+com.google.gson.JsonNull
+com.google.gson.JsonObject
+com.google.gson.JsonObjectDeserializationVisitor
+com.google.gson.JsonParseException
+com.google.gson.JsonParser
+com.google.gson.JsonPrimitive
+com.google.gson.JsonSerializationContext
+com.google.gson.JsonSerializationContextDefault
+com.google.gson.JsonSerializationVisitor
+com.google.gson.JsonSerializer
+com.google.gson.JsonStreamParser
+com.google.gson.JsonSyntaxException
+com.google.gson.JsonTreeNavigator
+com.google.gson.LongSerializationPolicy
+com.google.gson.LongSerializationPolicy$1
+com.google.gson.LongSerializationPolicy$DefaultStrategy
+com.google.gson.LongSerializationPolicy$Strategy
+com.google.gson.LongSerializationPolicy$StringStrategy
+com.google.gson.LowerCamelCaseSeparatorNamingPolicy
+com.google.gson.LowerCaseNamingPolicy
+com.google.gson.LruCache
+com.google.gson.MapAsArrayTypeAdapter
+com.google.gson.MapTypeAdapter
+com.google.gson.MappedObjectConstructor
+com.google.gson.MemoryRefStack
+com.google.gson.ModifierBasedExclusionStrategy
+com.google.gson.ModifyFirstLetterNamingPolicy
+com.google.gson.ModifyFirstLetterNamingPolicy$LetterModifier
+com.google.gson.NullExclusionStrategy
+com.google.gson.ObjectConstructor
+com.google.gson.ObjectNavigator
+com.google.gson.ObjectNavigator$Visitor
+com.google.gson.ObjectTypePair
+com.google.gson.Pair
+com.google.gson.ParameterizedTypeHandlerMap
+com.google.gson.Primitives
+com.google.gson.RecursiveFieldNamingPolicy
+com.google.gson.ReflectingFieldNavigator
+com.google.gson.SerializedNameAnnotationInterceptingNamingPolicy
+com.google.gson.Streams
+com.google.gson.Streams$1
+com.google.gson.Streams$AppendableWriter
+com.google.gson.Streams$AppendableWriter$CurrentWrite
+com.google.gson.SyntheticFieldExclusionStrategy
+com.google.gson.UnsafeAllocator
+com.google.gson.UnsafeAllocator$1
+com.google.gson.UnsafeAllocator$2
+com.google.gson.UnsafeAllocator$3
+com.google.gson.UnsafeAllocator$4
+com.google.gson.UpperCamelCaseSeparatorNamingPolicy
+com.google.gson.UpperCaseNamingPolicy
+com.google.gson.VersionConstants
+com.google.gson.VersionExclusionStrategy
+com.google.gson.annotations.Expose
+com.google.gson.annotations.SerializedName
+com.google.gson.annotations.Since
+com.google.gson.annotations.Until
+com.google.gson.internal.$Gson$Preconditions
+com.google.gson.internal.$Gson$Types
+com.google.gson.internal.$Gson$Types$GenericArrayTypeImpl
+com.google.gson.internal.$Gson$Types$ParameterizedTypeImpl
+com.google.gson.internal.$Gson$Types$WildcardTypeImpl
+com.google.gson.reflect.TypeToken
+com.google.gson.stream.JsonReader
+com.google.gson.stream.JsonReader$1
+com.google.gson.stream.JsonScope
+com.google.gson.stream.JsonToken
+com.google.gson.stream.JsonWriter
+com.google.gson.stream.JsonWriter$1
+com.google.gson.stream.MalformedJsonException
+com.google.inject.AbstractModule:
+    75:75:protected com.google.inject.Binder binder()
+    90:90:protected com.google.inject.binder.LinkedBindingBuilder bind(com.google.inject.Key)
+    97:97:protected com.google.inject.binder.AnnotatedBindingBuilder bind(com.google.inject.TypeLiteral)
+    111:111:protected com.google.inject.binder.AnnotatedConstantBindingBuilder bindConstant()
+    118:119:protected void install(com.google.inject.Module)
+    125:126:protected void addError(java.lang.String,java.lang.Object[])
+    132:133:protected void addError(java.lang.Throwable)
+    140:141:protected void addError(com.google.inject.spi.Message)
+    180:181:protected void requireBinding(com.google.inject.Key)
+    192:193:protected void requireBinding(java.lang.Class)
+    200:200:protected com.google.inject.Provider getProvider(com.google.inject.Key)
+    208:208:protected com.google.inject.Provider getProvider(java.lang.Class)
+    217:218:protected void convertToTypes(com.google.inject.matcher.Matcher,com.google.inject.spi.TypeConverter)
+    225:225:protected com.google.inject.Stage currentStage()
+    233:233:protected com.google.inject.MembersInjector getMembersInjector(java.lang.Class)
+    241:241:protected com.google.inject.MembersInjector getMembersInjector(com.google.inject.TypeLiteral)
+com.google.inject.AbstractProcessor:
+    100:100:public java.lang.Boolean visit(com.google.inject.spi.TypeConverterBinding)
+    116:116:public java.lang.Boolean visit(com.google.inject.spi.MembersInjectorLookup)
+    43:43:public java.lang.Object visit(com.google.inject.spi.MembersInjectorLookup)
+    43:43:public java.lang.Object visit(com.google.inject.spi.TypeConverterBinding)
+com.google.inject.Binder:
+    public abstract com.google.inject.binder.AnnotatedBindingBuilder bind(com.google.inject.TypeLiteral)
+    public abstract com.google.inject.binder.AnnotatedConstantBindingBuilder bindConstant()
+    public abstract void requestInjection(com.google.inject.TypeLiteral,java.lang.Object)
+    public abstract com.google.inject.Stage currentStage()
+    public abstract void addError(java.lang.Throwable)
+    public abstract com.google.inject.Provider getProvider(java.lang.Class)
+    public abstract com.google.inject.MembersInjector getMembersInjector(com.google.inject.TypeLiteral)
+    public abstract com.google.inject.MembersInjector getMembersInjector(java.lang.Class)
+    public abstract void convertToTypes(com.google.inject.matcher.Matcher,com.google.inject.spi.TypeConverter)
+    public abstract com.google.inject.Binder skipSources(java.lang.Class[])
+com.google.inject.Binding:
+    public abstract java.lang.Object acceptScopingVisitor(com.google.inject.spi.BindingScopingVisitor)
+com.google.inject.ConfigurationException:
+    private static final long serialVersionUID
+com.google.inject.ConstructionProxy:
+    public abstract java.lang.reflect.Constructor getConstructor()
+com.google.inject.ConstructorBindingImpl:
+    66:67:public com.google.inject.spi.InjectionPoint getConstructor()
+    71:72:public java.util.Set getInjectableMembers()
+    83:83:public java.util.Set getDependencies()
+    90:90:public void applyTo(com.google.inject.Binder)
+com.google.inject.ConstructorInjector:
+    52:52:public com.google.inject.internal.ImmutableSet getInjectableMembers()
+    56:56:com.google.inject.ConstructionProxy getConstructionProxy()
+com.google.inject.CreationException:
+    private static final long serialVersionUID
+com.google.inject.DefaultConstructionProxyFactory$1:
+    92:92:public java.lang.reflect.Constructor getConstructor()
+com.google.inject.DeferredLookups:
+    49:51:public com.google.inject.Provider getProvider(com.google.inject.Key)
+    55:57:public com.google.inject.MembersInjector getMembersInjector(com.google.inject.TypeLiteral)
+com.google.inject.EncounterImpl:
+    107:109:public void addError(java.lang.String,java.lang.Object[])
+    112:114:public void addError(java.lang.Throwable)
+    117:119:public void addError(com.google.inject.spi.Message)
+    122:123:public com.google.inject.Provider getProvider(com.google.inject.Key)
+    127:127:public com.google.inject.Provider getProvider(java.lang.Class)
+    131:132:public com.google.inject.MembersInjector getMembersInjector(com.google.inject.TypeLiteral)
+    136:136:public com.google.inject.MembersInjector getMembersInjector(java.lang.Class)
+com.google.inject.Guice:
+    59:59:public static com.google.inject.Injector createInjector(com.google.inject.Module[])
+    69:69:public static com.google.inject.Injector createInjector(java.lang.Iterable)
+    80:80:public static com.google.inject.Injector createInjector(com.google.inject.Stage,com.google.inject.Module[])
+com.google.inject.Injector:
+    public abstract com.google.inject.MembersInjector getMembersInjector(com.google.inject.TypeLiteral)
+    public abstract com.google.inject.MembersInjector getMembersInjector(java.lang.Class)
+    public abstract com.google.inject.Binding getBinding(com.google.inject.Key)
+    public abstract com.google.inject.Binding getBinding(java.lang.Class)
+    public abstract java.util.List findBindingsByType(com.google.inject.TypeLiteral)
+    public abstract com.google.inject.Provider getProvider(java.lang.Class)
+    public abstract com.google.inject.Injector getParent()
+    public abstract com.google.inject.Injector createChildInjector(java.lang.Iterable)
+    public abstract com.google.inject.Injector createChildInjector(com.google.inject.Module[])
+com.google.inject.InjectorBuilder:
+    85:86:com.google.inject.InjectorBuilder parentInjector(com.google.inject.InjectorImpl)
+com.google.inject.InjectorBuilder$ToolStageInjector:
+    232:232:public com.google.inject.Binding getBinding(com.google.inject.Key)
+    235:235:public com.google.inject.Binding getBinding(java.lang.Class)
+    238:238:public java.util.List findBindingsByType(com.google.inject.TypeLiteral)
+    241:241:public com.google.inject.Injector getParent()
+    244:244:public com.google.inject.Injector createChildInjector(java.lang.Iterable)
+    247:247:public com.google.inject.Injector createChildInjector(com.google.inject.Module[])
+    254:254:public com.google.inject.Provider getProvider(java.lang.Class)
+    258:258:public com.google.inject.MembersInjector getMembersInjector(com.google.inject.TypeLiteral)
+    262:262:public com.google.inject.MembersInjector getMembersInjector(java.lang.Class)
+com.google.inject.InjectorImpl:
+    102:102:public java.util.List findBindingsByType(com.google.inject.TypeLiteral)
+    107:113:public com.google.inject.internal.BindingImpl getBinding(com.google.inject.Key)
+    136:136:public com.google.inject.Binding getBinding(java.lang.Class)
+    140:140:public com.google.inject.Injector getParent()
+    144:144:public com.google.inject.Injector createChildInjector(java.lang.Iterable)
+    151:151:public com.google.inject.Injector createChildInjector(com.google.inject.Module[])
+    63:63:public com.google.inject.Binding getBinding(com.google.inject.Key)
+com.google.inject.InjectorImpl$BindingsMultimap:
+    674:675:java.util.List getAll(com.google.inject.TypeLiteral)
+com.google.inject.InjectorImpl$ConvertedConstantBindingImpl:
+    343:343:public java.lang.Object getValue()
+    351:351:public java.util.Set getDependencies()
+    355:355:public void applyTo(com.google.inject.Binder)
+com.google.inject.InjectorImpl$ProviderBindingImpl:
+    257:257:public void applyTo(com.google.inject.Binder)
+com.google.inject.InjectorShell:
+    61:61:com.google.inject.spi.PrivateElements getPrivateElements()
+com.google.inject.Key:
+    70:74:protected Key(java.lang.Class)
+    89:94:protected Key(java.lang.annotation.Annotation)
+    161:167:java.lang.String getAnnotationName()
+    178:178:com.google.inject.Key providerKey()
+    209:209:static com.google.inject.Key get(java.lang.Class,com.google.inject.Key$AnnotationStrategy)
+    224:224:public static com.google.inject.Key get(java.lang.Class,java.lang.Class)
+    231:231:public static com.google.inject.Key get(java.lang.Class,java.lang.annotation.Annotation)
+    246:246:public static com.google.inject.Key get(java.lang.reflect.Type,java.lang.Class)
+    253:253:public static com.google.inject.Key get(java.lang.reflect.Type,java.lang.annotation.Annotation)
+    268:268:public static com.google.inject.Key get(com.google.inject.TypeLiteral,java.lang.Class)
+    300:300:com.google.inject.Key ofType(com.google.inject.TypeLiteral)
+    329:329:static boolean isMarker(java.lang.Class)
+    352:355:static com.google.inject.Key$AnnotationStrategy strategyFor(java.lang.Class)
+    487:487:static boolean isBindingAnnotation(java.lang.annotation.Annotation)
+com.google.inject.LookupProcessor:
+    38:45:public java.lang.Boolean visit(com.google.inject.spi.MembersInjectorLookup)
+    30:30:public java.lang.Object visit(com.google.inject.spi.MembersInjectorLookup)
+com.google.inject.Lookups:
+    public abstract com.google.inject.Provider getProvider(com.google.inject.Key)
+    public abstract com.google.inject.MembersInjector getMembersInjector(com.google.inject.TypeLiteral)
+com.google.inject.MembersInjectorImpl:
+    55:55:public com.google.inject.internal.ImmutableList getMemberInjectors()
+com.google.inject.OutOfScopeException
+com.google.inject.PrivateBinder:
+    public abstract com.google.inject.binder.AnnotatedElementBuilder expose(java.lang.Class)
+    public abstract com.google.inject.binder.AnnotatedElementBuilder expose(com.google.inject.TypeLiteral)
+    public abstract com.google.inject.PrivateBinder withSource(java.lang.Object)
+    public abstract com.google.inject.PrivateBinder skipSources(java.lang.Class[])
+com.google.inject.PrivateModule:
+    private com.google.inject.PrivateBinder binder
+    92:101:public final synchronized void configure(com.google.inject.Binder)
+    protected abstract void configure()
+    111:112:protected final void expose(com.google.inject.Key)
+    120:120:protected final com.google.inject.binder.AnnotatedElementBuilder expose(java.lang.Class)
+    129:129:protected final com.google.inject.binder.AnnotatedElementBuilder expose(com.google.inject.TypeLiteral)
+    138:138:protected final com.google.inject.PrivateBinder binder()
+    145:146:protected final void bindScope(java.lang.Class,com.google.inject.Scope)
+    152:152:protected final com.google.inject.binder.LinkedBindingBuilder bind(com.google.inject.Key)
+    159:159:protected final com.google.inject.binder.AnnotatedBindingBuilder bind(com.google.inject.TypeLiteral)
+    166:166:protected final com.google.inject.binder.AnnotatedBindingBuilder bind(java.lang.Class)
+    173:173:protected final com.google.inject.binder.AnnotatedConstantBindingBuilder bindConstant()
+    180:181:protected final void install(com.google.inject.Module)
+    187:188:protected final void addError(java.lang.String,java.lang.Object[])
+    194:195:protected final void addError(java.lang.Throwable)
+    201:202:protected final void addError(com.google.inject.spi.Message)
+    208:209:protected final void requestInjection(java.lang.Object)
+    215:216:protected final void requestStaticInjection(java.lang.Class[])
+    233:234:protected final void requireBinding(com.google.inject.Key)
+    240:241:protected final void requireBinding(java.lang.Class)
+    247:247:protected final com.google.inject.Provider getProvider(com.google.inject.Key)
+    254:254:protected final com.google.inject.Provider getProvider(java.lang.Class)
+    262:263:protected final void convertToTypes(com.google.inject.matcher.Matcher,com.google.inject.spi.TypeConverter)
+    269:269:protected final com.google.inject.Stage currentStage()
+    276:276:protected com.google.inject.MembersInjector getMembersInjector(java.lang.Class)
+    283:283:protected com.google.inject.MembersInjector getMembersInjector(com.google.inject.TypeLiteral)
+    291:292:protected void bindListener(com.google.inject.matcher.Matcher,com.google.inject.spi.TypeListener)
+com.google.inject.ProvisionException:
+    private static final long serialVersionUID
+com.google.inject.Reflection
+com.google.inject.Reflection$InvalidConstructor
+com.google.inject.Scope:
+    public abstract java.lang.String toString()
+com.google.inject.TypeConverterBindingProcessor:
+    170:172:public java.lang.Boolean visit(com.google.inject.spi.TypeConverterBinding)
+    39:39:public java.lang.Object visit(com.google.inject.spi.TypeConverterBinding)
+com.google.inject.TypeLiteral:
+    141:141:final com.google.inject.TypeLiteral providerType()
+    315:331:public java.util.List getExceptionTypes(java.lang.reflect.Member)
+com.google.inject.binder.AnnotatedBindingBuilder:
+    public abstract com.google.inject.binder.LinkedBindingBuilder annotatedWith(java.lang.Class)
+    public abstract com.google.inject.binder.LinkedBindingBuilder annotatedWith(java.lang.annotation.Annotation)
+com.google.inject.binder.AnnotatedConstantBindingBuilder
+com.google.inject.binder.AnnotatedElementBuilder:
+    public abstract void annotatedWith(java.lang.Class)
+    public abstract void annotatedWith(java.lang.annotation.Annotation)
+com.google.inject.binder.ConstantBindingBuilder
+com.google.inject.binder.LinkedBindingBuilder:
+    public abstract com.google.inject.binder.ScopedBindingBuilder to(java.lang.Class)
+    public abstract com.google.inject.binder.ScopedBindingBuilder to(com.google.inject.TypeLiteral)
+    public abstract com.google.inject.binder.ScopedBindingBuilder to(com.google.inject.Key)
+    public abstract com.google.inject.binder.ScopedBindingBuilder toProvider(com.google.inject.Key)
+com.google.inject.binder.ScopedBindingBuilder:
+    public abstract void in(com.google.inject.Scope)
+    public abstract void asEagerSingleton()
+com.google.inject.internal.AbstractBindingBuilder:
+    public static final java.lang.String IMPLEMENTATION_ALREADY_SET
+    public static final java.lang.String SINGLE_INSTANCE_AND_SCOPE
+    public static final java.lang.String SCOPE_ALREADY_SET
+    public static final java.lang.String BINDING_TO_NULL
+    public static final java.lang.String CONSTANT_VALUE_ALREADY_SET
+    public static final java.lang.String ANNOTATION_ALREADY_SPECIFIED
+    72:74:protected com.google.inject.internal.BindingImpl annotatedWithInternal(java.lang.Class)
+    80:82:protected com.google.inject.internal.BindingImpl annotatedWithInternal(java.lang.annotation.Annotation)
+    93:96:public void in(com.google.inject.Scope)
+    99:101:public void asEagerSingleton()
+    104:104:protected boolean keyTypeIsSet()
+    114:117:protected void checkNotAnnotated()
+com.google.inject.internal.BindingBuilder:
+    46:47:public com.google.inject.internal.BindingBuilder annotatedWith(java.lang.Class)
+    51:52:public com.google.inject.internal.BindingBuilder annotatedWith(java.lang.annotation.Annotation)
+    56:56:public com.google.inject.internal.BindingBuilder to(java.lang.Class)
+    60:60:public com.google.inject.internal.BindingBuilder to(com.google.inject.TypeLiteral)
+    64:69:public com.google.inject.internal.BindingBuilder to(com.google.inject.Key)
+    38:38:public com.google.inject.binder.LinkedBindingBuilder annotatedWith(java.lang.annotation.Annotation)
+    38:38:public com.google.inject.binder.LinkedBindingBuilder annotatedWith(java.lang.Class)
+    38:38:public com.google.inject.binder.ScopedBindingBuilder toProvider(com.google.inject.Key)
+    38:38:public com.google.inject.binder.ScopedBindingBuilder to(com.google.inject.Key)
+    38:38:public com.google.inject.binder.ScopedBindingBuilder to(com.google.inject.TypeLiteral)
+    38:38:public com.google.inject.binder.ScopedBindingBuilder to(java.lang.Class)
+com.google.inject.internal.BindingImpl:
+    97:97:public java.lang.Object acceptScopingVisitor(com.google.inject.spi.BindingScopingVisitor)
+    105:105:protected com.google.inject.internal.BindingImpl withKey(com.google.inject.Key)
+com.google.inject.internal.BytecodeGen:
+    private static final java.lang.String CGLIB_PACKAGE
+com.google.inject.internal.BytecodeGen$Visibility:
+    214:227:public static com.google.inject.internal.BytecodeGen$Visibility forMember(java.lang.reflect.Member)
+    public abstract com.google.inject.internal.BytecodeGen$Visibility and(com.google.inject.internal.BytecodeGen$Visibility)
+com.google.inject.internal.BytecodeGen$Visibility$1:
+    197:197:public com.google.inject.internal.BytecodeGen$Visibility and(com.google.inject.internal.BytecodeGen$Visibility)
+com.google.inject.internal.BytecodeGen$Visibility$2:
+    209:209:public com.google.inject.internal.BytecodeGen$Visibility and(com.google.inject.internal.BytecodeGen$Visibility)
+com.google.inject.internal.ConstantBindingBuilderImpl:
+    39:40:public ConstantBindingBuilderImpl(com.google.inject.Binder,java.util.List,java.lang.Object)
+    43:44:public com.google.inject.binder.ConstantBindingBuilder annotatedWith(java.lang.Class)
+    48:49:public com.google.inject.binder.ConstantBindingBuilder annotatedWith(java.lang.annotation.Annotation)
+    53:54:public void to(java.lang.String)
+    57:58:public void to(int)
+    61:62:public void to(long)
+    65:66:public void to(boolean)
+    69:70:public void to(double)
+    73:74:public void to(float)
+    77:78:public void to(short)
+    81:82:public void to(char)
+    85:86:public void to(java.lang.Class)
+    89:90:public void to(java.lang.Enum)
+    95:120:private void toConstant(java.lang.Class,java.lang.Object)
+com.google.inject.internal.CustomConcurrentHashMap$Builder:
+    145:149:public com.google.inject.internal.CustomConcurrentHashMap$Builder loadFactor(float)
+    161:165:public com.google.inject.internal.CustomConcurrentHashMap$Builder initialCapacity(int)
+    185:189:public com.google.inject.internal.CustomConcurrentHashMap$Builder concurrencyLevel(int)
+    204:207:public java.util.concurrent.ConcurrentMap buildMap(com.google.inject.internal.CustomConcurrentHashMap$Strategy)
+com.google.inject.internal.CustomConcurrentHashMap$ComputingImpl:
+    static final long serialVersionUID
+com.google.inject.internal.CustomConcurrentHashMap$Impl:
+    static final int MAXIMUM_CAPACITY
+    static final int MAX_SEGMENTS
+    static final int RETRIES_BEFORE_LOCK
+    private static final long serialVersionUID
+    1879:1888:private void writeObject(java.io.ObjectOutputStream)
+    1918:1970:private void readObject(java.io.ObjectInputStream)
+com.google.inject.internal.CustomConcurrentHashMap$Impl$Fields
+com.google.inject.internal.CustomConcurrentHashMap$Impl$HashIterator:
+    1623:1623:public boolean hasMoreElements()
+com.google.inject.internal.CustomConcurrentHashMap$Impl$InternalsImpl:
+    static final long serialVersionUID
+    637:641:public java.lang.Object getEntry(java.lang.Object)
+com.google.inject.internal.CustomConcurrentHashMap$Internals:
+    public abstract java.lang.Object getEntry(java.lang.Object)
+com.google.inject.internal.CustomConcurrentHashMap$SimpleInternalEntry
+com.google.inject.internal.CustomConcurrentHashMap$SimpleStrategy
+com.google.inject.internal.ErrorHandler
+com.google.inject.internal.Errors:
+    private static final java.lang.String CONSTRUCTOR_RULES
+com.google.inject.internal.ExposedBindingImpl:
+    49:49:public java.util.Set getDependencies()
+    61:61:public com.google.inject.internal.ExposedBindingImpl withKey(com.google.inject.Key)
+    73:73:public void applyTo(com.google.inject.Binder)
+    28:28:public com.google.inject.internal.BindingImpl withKey(com.google.inject.Key)
+com.google.inject.internal.ExposureBuilder:
+    39:42:protected void checkNotAnnotated()
+    45:48:public void annotatedWith(java.lang.Class)
+    51:54:public void annotatedWith(java.lang.annotation.Annotation)
+com.google.inject.internal.FinalizablePhantomReference
+com.google.inject.internal.FinalizableReferenceQueue:
+    private static final java.lang.String FINALIZER_CLASS_NAME
+com.google.inject.internal.FinalizableReferenceQueue$DecoupledLoader:
+    private static final java.lang.String LOADING_ERROR
+com.google.inject.internal.Finalizer:
+    private static final java.lang.String FINALIZABLE_REFERENCE
+    76:83:public static java.lang.ref.ReferenceQueue startFinalizer(java.lang.Class,java.lang.Object)
+    92:103:private Finalizer(java.lang.Class,java.lang.Object)
+com.google.inject.internal.Function:
+    public abstract boolean equals(java.lang.Object)
+com.google.inject.internal.Hashing:
+    private static final int MAX_TABLE_SIZE
+    private static final int CUTOFF
+com.google.inject.internal.ImmutableCollection:
+    257:257:java.lang.Object writeReplace()
+com.google.inject.internal.ImmutableCollection$ArrayImmutableCollection
+com.google.inject.internal.ImmutableCollection$ArrayImmutableCollection$1
+com.google.inject.internal.ImmutableCollection$SerializedForm
+com.google.inject.internal.ImmutableEntry:
+    private static final long serialVersionUID
+com.google.inject.internal.ImmutableList:
+    88:88:public static com.google.inject.internal.ImmutableList of(java.lang.Object,java.lang.Object)
+    106:106:public static com.google.inject.internal.ImmutableList of(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)
+    115:115:public static com.google.inject.internal.ImmutableList of(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)
+    168:168:public static com.google.inject.internal.ImmutableList copyOf(java.util.Iterator)
+    public abstract int indexOf(java.lang.Object)
+    public abstract int lastIndexOf(java.lang.Object)
+    597:597:private void readObject(java.io.ObjectInputStream)
+    601:601:java.lang.Object writeReplace()
+    609:609:public static com.google.inject.internal.ImmutableList$Builder builder()
+com.google.inject.internal.ImmutableList$Builder
+com.google.inject.internal.ImmutableList$SerializedForm
+com.google.inject.internal.ImmutableMap:
+    82:82:public static com.google.inject.internal.ImmutableMap of(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)
+    92:92:public static com.google.inject.internal.ImmutableMap of(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)
+    103:103:public static com.google.inject.internal.ImmutableMap of(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)
+    114:114:public static com.google.inject.internal.ImmutableMap of(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)
+    125:125:public static com.google.inject.internal.ImmutableMap$Builder builder()
+    public abstract boolean containsKey(java.lang.Object)
+    public abstract boolean containsValue(java.lang.Object)
+    777:777:java.lang.Object writeReplace()
+com.google.inject.internal.ImmutableMap$Builder:
+    179:182:public com.google.inject.internal.ImmutableMap$Builder putAll(java.util.Map)
+com.google.inject.internal.ImmutableMap$SerializedForm
+com.google.inject.internal.ImmutableSet:
+    141:142:public static com.google.inject.internal.ImmutableSet copyOf(java.util.Iterator)
+    541:541:java.lang.Object writeReplace()
+com.google.inject.internal.ImmutableSet$Builder:
+    602:607:public com.google.inject.internal.ImmutableSet$Builder add(java.lang.Object[])
+    619:628:public com.google.inject.internal.ImmutableSet$Builder addAll(java.lang.Iterable)
+    640:645:public com.google.inject.internal.ImmutableSet$Builder addAll(java.util.Iterator)
+com.google.inject.internal.ImmutableSet$SerializedForm
+com.google.inject.internal.InstanceBindingImpl:
+    71:71:public java.util.Set getDependencies()
+    81:81:public com.google.inject.internal.BindingImpl withKey(com.google.inject.Key)
+    86:87:public void applyTo(com.google.inject.Binder)
+com.google.inject.internal.Iterators:
+    311:312:public static java.util.Enumeration asEnumeration(java.util.Iterator)
+com.google.inject.internal.Iterators$9
+com.google.inject.internal.Join
+com.google.inject.internal.Join$1
+com.google.inject.internal.Join$JoinException
+com.google.inject.internal.LinkedBindingImpl:
+    54:54:public com.google.inject.internal.BindingImpl withKey(com.google.inject.Key)
+    58:59:public void applyTo(com.google.inject.Binder)
+com.google.inject.internal.LinkedProviderBindingImpl:
+    57:57:public com.google.inject.internal.BindingImpl withKey(com.google.inject.Key)
+    61:63:public void applyTo(com.google.inject.Binder)
+com.google.inject.internal.Lists:
+    70:73:public static java.util.ArrayList newArrayList(java.lang.Object[])
+    77:80:static int computeArrayListCapacity(int)
+    120:125:public static java.util.ArrayList newArrayList(java.lang.Object,java.lang.Object[])
+com.google.inject.internal.MapMaker:
+    115:116:public com.google.inject.internal.MapMaker initialCapacity(int)
+    128:129:public com.google.inject.internal.MapMaker loadFactor(float)
+    152:153:public com.google.inject.internal.MapMaker concurrencyLevel(int)
+    175:175:public com.google.inject.internal.MapMaker softKeys()
+    207:207:public com.google.inject.internal.MapMaker softValues()
+    231:240:public com.google.inject.internal.MapMaker expiration(long,java.util.concurrent.TimeUnit)
+    251:251:public java.util.concurrent.ConcurrentMap makeMap()
+com.google.inject.internal.MapMaker$StrategyImpl:
+    private static final long serialVersionUID
+    427:433:MapMaker$StrategyImpl(com.google.inject.internal.MapMaker)
+    657:667:private void writeObject(java.io.ObjectOutputStream)
+    695:703:private void readObject(java.io.ObjectInputStream)
+com.google.inject.internal.MapMaker$StrategyImpl$Fields
+com.google.inject.internal.MapMaker$Strength:
+    abstract com.google.inject.internal.MapMaker$ReferenceEntry copyEntry(java.lang.Object,com.google.inject.internal.MapMaker$ReferenceEntry,com.google.inject.internal.MapMaker$ReferenceEntry)
+com.google.inject.internal.MapMaker$Strength$1:
+    319:320:com.google.inject.internal.MapMaker$ReferenceEntry copyEntry(java.lang.Object,com.google.inject.internal.MapMaker$ReferenceEntry,com.google.inject.internal.MapMaker$ReferenceEntry)
+com.google.inject.internal.MapMaker$Strength$2:
+    348:349:com.google.inject.internal.MapMaker$ReferenceEntry copyEntry(java.lang.Object,com.google.inject.internal.MapMaker$ReferenceEntry,com.google.inject.internal.MapMaker$ReferenceEntry)
+com.google.inject.internal.MapMaker$Strength$3:
+    378:379:com.google.inject.internal.MapMaker$ReferenceEntry copyEntry(java.lang.Object,com.google.inject.internal.MapMaker$ReferenceEntry,com.google.inject.internal.MapMaker$ReferenceEntry)
+com.google.inject.internal.Maps:
+    67:67:public static java.util.TreeMap newTreeMap()
+com.google.inject.internal.MatcherAndConverter:
+    49:49:public java.lang.Object getSource()
+com.google.inject.internal.MoreTypes:
+    142:142:public static java.lang.reflect.Member serializableCopy(java.lang.reflect.Member)
+    361:386:public static java.lang.String memberKey(java.lang.reflect.Member)
+com.google.inject.internal.MoreTypes$1
+com.google.inject.internal.MoreTypes$GenericArrayTypeImpl:
+    private static final long serialVersionUID
+com.google.inject.internal.MoreTypes$MemberImpl:
+    private final java.lang.String memberKey
+    645:652:private MoreTypes$MemberImpl(java.lang.reflect.Member)
+    637:637:MoreTypes$MemberImpl(java.lang.reflect.Member,com.google.inject.internal.MoreTypes$1)
+com.google.inject.internal.MoreTypes$ParameterizedTypeImpl:
+    private static final long serialVersionUID
+com.google.inject.internal.MoreTypes$WildcardTypeImpl:
+    private static final long serialVersionUID
+com.google.inject.internal.Preconditions:
+    224:229:public static java.lang.Object checkNotNull(java.lang.Object,java.lang.String,java.lang.Object[])
+    242:245:public static java.lang.Iterable checkContentsNotNull(java.lang.Iterable)
+    261:264:public static java.lang.Iterable checkContentsNotNull(java.lang.Iterable,java.lang.Object)
+    287:291:public static java.lang.Iterable checkContentsNotNull(java.lang.Iterable,java.lang.String,java.lang.Object[])
+    295:313:private static boolean containsOrIsNull(java.lang.Iterable)
+com.google.inject.internal.PrivateElementsImpl:
+    108:118:public void applyTo(com.google.inject.Binder)
+com.google.inject.internal.ProviderInstanceBindingImpl:
+    65:65:public java.util.Set getDependencies()
+    76:76:public com.google.inject.internal.BindingImpl withKey(com.google.inject.Key)
+    81:83:public void applyTo(com.google.inject.Binder)
+com.google.inject.internal.ProviderMethod:
+    64:64:public com.google.inject.Key getKey()
+    68:68:public java.lang.reflect.Method getMethod()
+    73:73:public java.lang.Object getInstance()
+    111:111:public java.util.Set getDependencies()
+com.google.inject.internal.Scoping:
+    public abstract java.lang.Object acceptVisitor(com.google.inject.spi.BindingScopingVisitor)
+    public abstract void applyTo(com.google.inject.binder.ScopedBindingBuilder)
+com.google.inject.internal.Scoping$1:
+    41:41:public java.lang.Object acceptVisitor(com.google.inject.spi.BindingScopingVisitor)
+    54:54:public void applyTo(com.google.inject.binder.ScopedBindingBuilder)
+com.google.inject.internal.Scoping$2:
+    59:59:public java.lang.Object acceptVisitor(com.google.inject.spi.BindingScopingVisitor)
+    71:72:public void applyTo(com.google.inject.binder.ScopedBindingBuilder)
+com.google.inject.internal.Scoping$3:
+    77:77:public java.lang.Object acceptVisitor(com.google.inject.spi.BindingScopingVisitor)
+    89:90:public void applyTo(com.google.inject.binder.ScopedBindingBuilder)
+com.google.inject.internal.Scoping$4:
+    95:95:public java.lang.Object acceptVisitor(com.google.inject.spi.BindingScopingVisitor)
+    107:108:public void applyTo(com.google.inject.binder.ScopedBindingBuilder)
+com.google.inject.internal.Scoping$5:
+    118:118:public java.lang.Object acceptVisitor(com.google.inject.spi.BindingScopingVisitor)
+    130:131:public void applyTo(com.google.inject.binder.ScopedBindingBuilder)
+com.google.inject.internal.Scoping$6:
+    142:142:public java.lang.Object acceptVisitor(com.google.inject.spi.BindingScopingVisitor)
+    154:155:public void applyTo(com.google.inject.binder.ScopedBindingBuilder)
+com.google.inject.internal.Sets:
+    72:72:public static java.util.LinkedHashSet newLinkedHashSet()
+    115:115:public static java.util.Set newSetFromMap(java.util.Map)
+    190:194:static int hashCodeImpl(java.util.Set)
+com.google.inject.internal.Sets$SetFromMap
+com.google.inject.internal.ToStringBuilder:
+    34:36:public ToStringBuilder(java.lang.String)
+com.google.inject.internal.UniqueAnnotations
+com.google.inject.internal.UniqueAnnotations$1
+com.google.inject.internal.UniqueAnnotations$Internal
+com.google.inject.internal.UntargettedBindingImpl:
+    49:49:public com.google.inject.internal.BindingImpl withKey(com.google.inject.Key)
+    53:54:public void applyTo(com.google.inject.Binder)
+com.google.inject.matcher.AbstractMatcher:
+    29:29:public com.google.inject.matcher.Matcher and(com.google.inject.matcher.Matcher)
+    33:33:public com.google.inject.matcher.Matcher or(com.google.inject.matcher.Matcher)
+com.google.inject.matcher.AbstractMatcher$AndMatcher
+com.google.inject.matcher.AbstractMatcher$OrMatcher
+com.google.inject.matcher.Matcher:
+    public abstract com.google.inject.matcher.Matcher and(com.google.inject.matcher.Matcher)
+    public abstract com.google.inject.matcher.Matcher or(com.google.inject.matcher.Matcher)
+com.google.inject.matcher.Matchers:
+    65:65:public static com.google.inject.matcher.Matcher not(com.google.inject.matcher.Matcher)
+    97:100:private static void checkForRuntimeRetention(java.lang.Class)
+    108:108:public static com.google.inject.matcher.Matcher annotatedWith(java.lang.Class)
+    146:146:public static com.google.inject.matcher.Matcher annotatedWith(java.lang.annotation.Annotation)
+    219:219:public static com.google.inject.matcher.Matcher only(java.lang.Object)
+    290:290:public static com.google.inject.matcher.Matcher inPackage(java.lang.Package)
+    333:333:public static com.google.inject.matcher.Matcher inSubpackage(java.lang.String)
+    370:370:public static com.google.inject.matcher.Matcher returns(com.google.inject.matcher.Matcher)
+    33:33:static void access$200(java.lang.Class)
+com.google.inject.matcher.Matchers$AnnotatedWith
+com.google.inject.matcher.Matchers$AnnotatedWithType
+com.google.inject.matcher.Matchers$Any:
+    private static final long serialVersionUID
+    55:55:public java.lang.Object readResolve()
+com.google.inject.matcher.Matchers$IdenticalTo:
+    private static final long serialVersionUID
+com.google.inject.matcher.Matchers$InPackage
+com.google.inject.matcher.Matchers$InSubpackage
+com.google.inject.matcher.Matchers$Not
+com.google.inject.matcher.Matchers$Only
+com.google.inject.matcher.Matchers$Returns
+com.google.inject.matcher.Matchers$SubclassesOf:
+    private static final long serialVersionUID
+com.google.inject.name.Named
+com.google.inject.name.NamedImpl
+com.google.inject.name.Names
+com.google.inject.spi.BindingScopingVisitor
+com.google.inject.spi.ConstructorBinding:
+    public abstract com.google.inject.spi.InjectionPoint getConstructor()
+    public abstract java.util.Set getInjectableMembers()
+com.google.inject.spi.ConvertedConstantBinding:
+    public abstract java.lang.Object getValue()
+    public abstract com.google.inject.Key getSourceKey()
+    public abstract java.util.Set getDependencies()
+com.google.inject.spi.DefaultBindingScopingVisitor
+com.google.inject.spi.DefaultElementVisitor
+com.google.inject.spi.Dependency:
+    62:66:public static java.util.Set forInjectionPoints(java.util.Set)
+com.google.inject.spi.Element:
+    public abstract void applyTo(com.google.inject.Binder)
+com.google.inject.spi.ElementVisitor:
+    public abstract java.lang.Object visit(com.google.inject.spi.TypeConverterBinding)
+    public abstract java.lang.Object visit(com.google.inject.spi.MembersInjectorLookup)
+com.google.inject.spi.Elements:
+    78:78:public static java.util.List getElements(com.google.inject.Module[])
+    85:85:public static java.util.List getElements(com.google.inject.Stage,com.google.inject.Module[])
+    92:92:public static java.util.List getElements(java.lang.Iterable)
+    110:110:public static com.google.inject.Module getModule(java.lang.Iterable)
+    121:121:static com.google.inject.spi.BindingTargetVisitor getInstanceVisitor()
+com.google.inject.spi.Elements$2
+com.google.inject.spi.Elements$RecordingBinder:
+    195:198:public com.google.inject.MembersInjector getMembersInjector(com.google.inject.TypeLiteral)
+    202:202:public com.google.inject.MembersInjector getMembersInjector(java.lang.Class)
+    237:237:public com.google.inject.Stage currentStage()
+    258:258:public com.google.inject.binder.AnnotatedBindingBuilder bind(com.google.inject.TypeLiteral)
+    266:266:public com.google.inject.binder.AnnotatedConstantBindingBuilder bindConstant()
+    276:276:public com.google.inject.Provider getProvider(java.lang.Class)
+    281:282:public void convertToTypes(com.google.inject.matcher.Matcher,com.google.inject.spi.TypeConverter)
+    290:295:public com.google.inject.spi.Elements$RecordingBinder skipSources(java.lang.Class[])
+    309:309:public com.google.inject.binder.AnnotatedElementBuilder expose(java.lang.Class)
+    313:313:public com.google.inject.binder.AnnotatedElementBuilder expose(com.google.inject.TypeLiteral)
+    124:124:public com.google.inject.Binder skipSources(java.lang.Class[])
+    124:124:public com.google.inject.PrivateBinder skipSources(java.lang.Class[])
+    124:124:public com.google.inject.PrivateBinder withSource(java.lang.Object)
+com.google.inject.spi.Elements$RecordingBinder$1:
+    321:321:public void annotatedWith(java.lang.Class)
+    322:322:public void annotatedWith(java.lang.annotation.Annotation)
+com.google.inject.spi.ExposedBinding:
+    public abstract com.google.inject.spi.PrivateElements getPrivateElements()
+    public abstract void applyTo(com.google.inject.Binder)
+com.google.inject.spi.HasDependencies
+com.google.inject.spi.InjectionPoint:
+    60:64:private InjectionPoint(java.lang.reflect.Member,com.google.inject.internal.ImmutableList,boolean)
+    236:236:public static com.google.inject.spi.InjectionPoint forConstructorOf(java.lang.Class)
+com.google.inject.spi.InjectionRequest:
+    56:56:public com.google.inject.TypeLiteral getType()
+    80:81:public void applyTo(com.google.inject.Binder)
+com.google.inject.spi.MembersInjectorLookup
+com.google.inject.spi.MembersInjectorLookup$1
+com.google.inject.spi.Message:
+    private static final long serialVersionUID
+    115:116:public void applyTo(com.google.inject.Binder)
+    123:127:private java.lang.Object writeReplace()
+com.google.inject.spi.ProviderBinding:
+    public abstract com.google.inject.Key getProvidedKey()
+com.google.inject.spi.ProviderLookup:
+    68:69:public void applyTo(com.google.inject.Binder)
+    76:76:public com.google.inject.Provider getDelegate()
+com.google.inject.spi.ScopeBinding:
+    63:64:public void applyTo(com.google.inject.Binder)
+com.google.inject.spi.StaticInjectionRequest:
+    48:48:public java.lang.Class getType()
+    68:69:public void applyTo(com.google.inject.Binder)
+com.google.inject.spi.TypeConverterBinding
+com.google.inject.spi.TypeEncounter:
+    public abstract void addError(java.lang.String,java.lang.Object[])
+    public abstract void addError(java.lang.Throwable)
+    public abstract void addError(com.google.inject.spi.Message)
+    public abstract com.google.inject.Provider getProvider(com.google.inject.Key)
+    public abstract com.google.inject.Provider getProvider(java.lang.Class)
+    public abstract com.google.inject.MembersInjector getMembersInjector(com.google.inject.TypeLiteral)
+    public abstract com.google.inject.MembersInjector getMembersInjector(java.lang.Class)
+com.google.inject.spi.TypeListenerBinding:
+    65:66:public void applyTo(com.google.inject.Binder)
+com.google.inject.util.Modules:
+    69:69:public static com.google.inject.util.Modules$OverriddenModuleBuilder override(com.google.inject.Module[])
+    86:86:public static com.google.inject.util.Modules$OverriddenModuleBuilder override(java.lang.Iterable)
+    93:93:public static com.google.inject.Module combine(com.google.inject.Module[])
+    100:101:public static com.google.inject.Module combine(java.lang.Iterable)
+com.google.inject.util.Modules$2
+com.google.inject.util.Modules$ModuleWriter
+com.google.inject.util.Modules$OverriddenModuleBuilder
+com.google.inject.util.Modules$RealOverriddenModuleBuilder
+com.google.inject.util.Modules$RealOverriddenModuleBuilder$1
+com.google.inject.util.Modules$RealOverriddenModuleBuilder$1$1
+com.google.inject.util.Modules$RealOverriddenModuleBuilder$1$2
+com.google.inject.util.Modules$RealOverriddenModuleBuilder$1$3
+com.google.inject.util.Modules$RealOverriddenModuleBuilder$1$4
+com.google.inject.util.Types:
+    99:99:public static java.lang.reflect.ParameterizedType listOf(java.lang.reflect.Type)
+    109:109:public static java.lang.reflect.ParameterizedType setOf(java.lang.reflect.Type)
+    119:119:public static java.lang.reflect.ParameterizedType mapOf(java.lang.reflect.Type,java.lang.reflect.Type)
+    131:131:public static java.lang.reflect.ParameterizedType providerOf(java.lang.reflect.Type)
+com.google.protobuf.AbstractMessage
+com.google.protobuf.AbstractMessage$1
+com.google.protobuf.AbstractMessage$Builder
+com.google.protobuf.AbstractMessageLite
+com.google.protobuf.AbstractMessageLite$Builder
+com.google.protobuf.AbstractMessageLite$Builder$LimitedInputStream
+com.google.protobuf.BlockingRpcChannel
+com.google.protobuf.BlockingService
+com.google.protobuf.ByteString
+com.google.protobuf.ByteString$1
+com.google.protobuf.ByteString$CodedBuilder
+com.google.protobuf.ByteString$Output
+com.google.protobuf.CodedInputStream
+com.google.protobuf.CodedOutputStream
+com.google.protobuf.CodedOutputStream$OutOfSpaceException
+com.google.protobuf.DescriptorProtos
+com.google.protobuf.DescriptorProtos$1
+com.google.protobuf.DescriptorProtos$DescriptorProto
+com.google.protobuf.DescriptorProtos$DescriptorProto$Builder
+com.google.protobuf.DescriptorProtos$DescriptorProto$ExtensionRange
+com.google.protobuf.DescriptorProtos$DescriptorProto$ExtensionRange$Builder
+com.google.protobuf.DescriptorProtos$EnumDescriptorProto
+com.google.protobuf.DescriptorProtos$EnumDescriptorProto$Builder
+com.google.protobuf.DescriptorProtos$EnumOptions
+com.google.protobuf.DescriptorProtos$EnumOptions$Builder
+com.google.protobuf.DescriptorProtos$EnumValueDescriptorProto
+com.google.protobuf.DescriptorProtos$EnumValueDescriptorProto$Builder
+com.google.protobuf.DescriptorProtos$EnumValueOptions
+com.google.protobuf.DescriptorProtos$EnumValueOptions$Builder
+com.google.protobuf.DescriptorProtos$FieldDescriptorProto
+com.google.protobuf.DescriptorProtos$FieldDescriptorProto$Builder
+com.google.protobuf.DescriptorProtos$FieldDescriptorProto$Label
+com.google.protobuf.DescriptorProtos$FieldDescriptorProto$Label$1
+com.google.protobuf.DescriptorProtos$FieldDescriptorProto$Type
+com.google.protobuf.DescriptorProtos$FieldDescriptorProto$Type$1
+com.google.protobuf.DescriptorProtos$FieldOptions
+com.google.protobuf.DescriptorProtos$FieldOptions$Builder
+com.google.protobuf.DescriptorProtos$FieldOptions$CType
+com.google.protobuf.DescriptorProtos$FieldOptions$CType$1
+com.google.protobuf.DescriptorProtos$FileDescriptorProto
+com.google.protobuf.DescriptorProtos$FileDescriptorProto$Builder
+com.google.protobuf.DescriptorProtos$FileDescriptorSet
+com.google.protobuf.DescriptorProtos$FileDescriptorSet$Builder
+com.google.protobuf.DescriptorProtos$FileOptions
+com.google.protobuf.DescriptorProtos$FileOptions$Builder
+com.google.protobuf.DescriptorProtos$FileOptions$OptimizeMode
+com.google.protobuf.DescriptorProtos$FileOptions$OptimizeMode$1
+com.google.protobuf.DescriptorProtos$MessageOptions
+com.google.protobuf.DescriptorProtos$MessageOptions$Builder
+com.google.protobuf.DescriptorProtos$MethodDescriptorProto
+com.google.protobuf.DescriptorProtos$MethodDescriptorProto$Builder
+com.google.protobuf.DescriptorProtos$MethodOptions
+com.google.protobuf.DescriptorProtos$MethodOptions$Builder
+com.google.protobuf.DescriptorProtos$ServiceDescriptorProto
+com.google.protobuf.DescriptorProtos$ServiceDescriptorProto$Builder
+com.google.protobuf.DescriptorProtos$ServiceOptions
+com.google.protobuf.DescriptorProtos$ServiceOptions$Builder
+com.google.protobuf.DescriptorProtos$UninterpretedOption
+com.google.protobuf.DescriptorProtos$UninterpretedOption$Builder
+com.google.protobuf.DescriptorProtos$UninterpretedOption$NamePart
+com.google.protobuf.DescriptorProtos$UninterpretedOption$NamePart$Builder
+com.google.protobuf.Descriptors
+com.google.protobuf.Descriptors$1
+com.google.protobuf.Descriptors$Descriptor
+com.google.protobuf.Descriptors$DescriptorPool
+com.google.protobuf.Descriptors$DescriptorPool$DescriptorIntPair
+com.google.protobuf.Descriptors$DescriptorPool$PackageDescriptor
+com.google.protobuf.Descriptors$DescriptorValidationException
+com.google.protobuf.Descriptors$EnumDescriptor
+com.google.protobuf.Descriptors$EnumValueDescriptor
+com.google.protobuf.Descriptors$FieldDescriptor
+com.google.protobuf.Descriptors$FieldDescriptor$JavaType
+com.google.protobuf.Descriptors$FieldDescriptor$Type
+com.google.protobuf.Descriptors$FileDescriptor
+com.google.protobuf.Descriptors$FileDescriptor$InternalDescriptorAssigner
+com.google.protobuf.Descriptors$GenericDescriptor
+com.google.protobuf.Descriptors$MethodDescriptor
+com.google.protobuf.Descriptors$ServiceDescriptor
+com.google.protobuf.DynamicMessage
+com.google.protobuf.DynamicMessage$1
+com.google.protobuf.DynamicMessage$Builder
+com.google.protobuf.ExtensionRegistry
+com.google.protobuf.ExtensionRegistry$1
+com.google.protobuf.ExtensionRegistry$DescriptorIntPair
+com.google.protobuf.ExtensionRegistry$ExtensionInfo
+com.google.protobuf.ExtensionRegistryLite
+com.google.protobuf.ExtensionRegistryLite$ObjectIntPair
+com.google.protobuf.FieldSet
+com.google.protobuf.FieldSet$1
+com.google.protobuf.FieldSet$FieldDescriptorLite
+com.google.protobuf.GeneratedMessage
+com.google.protobuf.GeneratedMessage$1
+com.google.protobuf.GeneratedMessage$Builder
+com.google.protobuf.GeneratedMessage$ExtendableBuilder
+com.google.protobuf.GeneratedMessage$ExtendableMessage
+com.google.protobuf.GeneratedMessage$ExtendableMessage$ExtensionWriter
+com.google.protobuf.GeneratedMessage$FieldAccessorTable
+com.google.protobuf.GeneratedMessage$FieldAccessorTable$FieldAccessor
+com.google.protobuf.GeneratedMessage$FieldAccessorTable$RepeatedEnumFieldAccessor
+com.google.protobuf.GeneratedMessage$FieldAccessorTable$RepeatedFieldAccessor
+com.google.protobuf.GeneratedMessage$FieldAccessorTable$RepeatedMessageFieldAccessor
+com.google.protobuf.GeneratedMessage$FieldAccessorTable$SingularEnumFieldAccessor
+com.google.protobuf.GeneratedMessage$FieldAccessorTable$SingularFieldAccessor
+com.google.protobuf.GeneratedMessage$FieldAccessorTable$SingularMessageFieldAccessor
+com.google.protobuf.GeneratedMessage$GeneratedExtension
+com.google.protobuf.GeneratedMessageLite
+com.google.protobuf.GeneratedMessageLite$1
+com.google.protobuf.GeneratedMessageLite$Builder
+com.google.protobuf.GeneratedMessageLite$ExtendableBuilder
+com.google.protobuf.GeneratedMessageLite$ExtendableMessage
+com.google.protobuf.GeneratedMessageLite$ExtendableMessage$ExtensionWriter
+com.google.protobuf.GeneratedMessageLite$ExtensionDescriptor
+com.google.protobuf.GeneratedMessageLite$GeneratedExtension
+com.google.protobuf.Internal
+com.google.protobuf.Internal$EnumLite
+com.google.protobuf.Internal$EnumLiteMap
+com.google.protobuf.InvalidProtocolBufferException
+com.google.protobuf.Message
+com.google.protobuf.Message$Builder
+com.google.protobuf.MessageLite
+com.google.protobuf.MessageLite$Builder
+com.google.protobuf.ProtocolMessageEnum
+com.google.protobuf.RpcCallback
+com.google.protobuf.RpcChannel
+com.google.protobuf.RpcController
+com.google.protobuf.RpcUtil
+com.google.protobuf.RpcUtil$1
+com.google.protobuf.RpcUtil$2
+com.google.protobuf.RpcUtil$AlreadyCalledException
+com.google.protobuf.Service
+com.google.protobuf.ServiceException
+com.google.protobuf.TextFormat
+com.google.protobuf.TextFormat$1
+com.google.protobuf.TextFormat$InvalidEscapeSequenceException
+com.google.protobuf.TextFormat$ParseException
+com.google.protobuf.TextFormat$TextGenerator
+com.google.protobuf.TextFormat$Tokenizer
+com.google.protobuf.UninitializedMessageException
+com.google.protobuf.UnknownFieldSet
+com.google.protobuf.UnknownFieldSet$1
+com.google.protobuf.UnknownFieldSet$Builder
+com.google.protobuf.UnknownFieldSet$Field
+com.google.protobuf.UnknownFieldSet$Field$Builder
+com.google.protobuf.WireFormat
+com.google.protobuf.WireFormat$FieldType
+com.google.protobuf.WireFormat$JavaType
+com.googlecode.android.widgets.DateSlider.AlternativeDateSlider
+com.googlecode.android.widgets.DateSlider.AlternativeDateSlider$1
+com.googlecode.android.widgets.DateSlider.AlternativeDateSlider$2
+com.googlecode.android.widgets.DateSlider.AlternativeDateSlider$3
+com.googlecode.android.widgets.DateSlider.CustomDateSlider
+com.googlecode.android.widgets.DateSlider.CustomDateSlider$1
+com.googlecode.android.widgets.DateSlider.CustomDateSlider$2
+com.googlecode.android.widgets.DateSlider.CustomDateSlider$3
+com.googlecode.android.widgets.DateSlider.CustomDateSlider$CustomTimeTextView
+com.googlecode.android.widgets.DateSlider.MonthYearDateSlider
+com.googlecode.android.widgets.DateSlider.MonthYearDateSlider$1
+com.googlecode.android.widgets.DateSlider.MonthYearDateSlider$2
+com.googlecode.android.widgets.DateSlider.TimeSlider
+com.googlecode.android.widgets.DateSlider.TimeSlider$1
+com.googlecode.android.widgets.DateSlider.TimeSlider$2
+com.happytap.jumper.JumpDialog:
+    45:45:public boolean isUseHapticFeedback()
+    49:50:public void setUseHapticFeedback(boolean)
+    54:54:public java.util.LinkedHashSet getPrimaryCharacters()
+    58:59:public void setPrimaryCharacters(java.util.LinkedHashSet)
+    62:62:public java.util.LinkedHashSet getSecondaryCharacters()
+    66:67:public void setSecondaryCharacters(java.util.LinkedHashSet)
+    71:73:public JumpDialog(android.content.Context,boolean,android.content.DialogInterface$OnCancelListener,com.happytap.jumper.JumpListener)
+    76:78:public JumpDialog(android.content.Context,int,com.happytap.jumper.JumpListener)
+    243:243:public java.util.LinkedHashSet getEnabledCharacters()
+    263:263:public java.lang.Character getPrimaryCharacter()
+    267:268:public void setPrimaryCharacter(java.lang.Character)
+    271:271:public java.lang.Character getSecondaryCharacter()
+    275:276:public void setSecondaryCharacter(java.lang.Character)
+com.happytap.jumper.R$array
+com.happytap.jumper.R$attr
+com.happytap.jumper.R$bool
+com.happytap.jumper.R$color
+com.happytap.jumper.R$drawable
+com.happytap.jumper.R$id:
+    public static final int ad_fodder
+    public static final int ad_layout
+    public static final int arrival
+    public static final int arrivalText
+    public static final int away
+    public static final int close
+    public static final int company_name
+    public static final int connections
+    public static final int container
+    public static final int created_by
+    public static final int custom
+    public static final int dateSliderButLayout
+    public static final int dateSliderCancelButton
+    public static final int dateSliderMainLayout
+    public static final int dateSliderOkButton
+    public static final int dateSliderTitleText
+    public static final int dateSliderTodayButton
+    public static final int departure
+    public static final int departureDate
+    public static final int departureText
+    public static final int description
+    public static final int dismiss
+    public static final int doug
+    public static final int duration
+    public static final int edit
+    public static final int fare
+    public static final int favs
+    public static final int foo
+    public static final int getScheduleChevron
+    public static final int get_schedule
+    public static final int get_schedule_text
+    public static final int happytap
+    public static final int in_association_with
+    public static final int loader
+    public static final int loading
+    public static final int loading_dot_dot
+    public static final int map
+    public static final int map_container
+    public static final int meat
+    public static final int minus
+    public static final int no_affiliation
+    public static final int payload_text
+    public static final int percentage
+    public static final int plus
+    public static final int reverse
+    public static final int ryan
+    public static final int scheduleEnd
+    public static final int splash
+    public static final int station_container
+    public static final int time
+    public static final int timePicker
+    public static final int time_descriptor
+    public static final int time_group
+    public static final int to
+com.happytap.jumper.R$layout:
+    public static final int about
+    public static final int dateslider
+    public static final int dialogtitle
+    public static final int edit_payload
+    public static final int feedback
+    public static final int hour
+    public static final int hour_minute
+    public static final int loading
+    public static final int main
+    public static final int our_ad
+    public static final int rate
+    public static final int scroller
+    public static final int set_alarm
+    public static final int station_list
+    public static final int station_to_station
+    public static final int station_to_station_item
+    public static final int time
+    public static final int timer
+    public static final int trip
+com.happytap.jumper.R$raw
+com.happytap.jumper.R$string
+com.happytap.jumper.R$style
+com.happytap.jumper.R$xml
+com.happytap.schedule.activity.AlarmActivity:
+    public static final java.lang.String TYPE
+    public static final java.lang.String TYPE_ARRIVE
+    public static final java.lang.String TYPE_DEPART
+    public static final java.lang.String TIME
+com.happytap.schedule.activity.LoadScheduleActivity:
+    private android.content.SharedPreferences pref
+    public static final java.lang.String DEPARTURE_STATION
+    public static final java.lang.String ARRIVAL_STATION
+    public static final java.lang.String DEPARTURE_ID
+    public static final java.lang.String ARRIVAL_ID
+    public static final java.lang.String DEPARTURE_DATE_START
+    public static final java.lang.String DEPARTURE_DATE_END
+    private com.google.ads.AdView adView
+    231:233:private void setShowAds(boolean)
+com.happytap.schedule.activity.SchedulePreferenceActivity:
+    protected android.preference.CheckBoxPreference showJumper
+    protected android.preference.CheckBoxPreference useDepartureVision
+com.happytap.schedule.activity.SplashScreenActivity:
+    private static final int CHANGE_DATE_DIALOG
+    private static final int RETRY
+    private static final int TOAST
+    private android.widget.LinearLayout container
+    java.util.LinkedHashSet enabledCharacters
+    458:461:void doBindService()
+com.happytap.schedule.activity.StationListActivity:
+    private static final int DIALOG_JUMP
+    public static final java.lang.String STOP_ID
+    public static final java.lang.String STOP_NAME
+com.happytap.schedule.activity.StationToStationActivity:
+    android.app.NotificationManager notifications
+    public static final java.lang.String DEPARTURE_STATION
+    public static final java.lang.String ARRIVAL_STATION
+    public static final java.lang.String DEPARTURE_ID
+    public static final java.lang.String ALARM_TRIP_ID
+    public static final java.lang.String ARRIVAL_ID
+    public static final java.lang.String DEPARTURE_DATE_START
+    public static final java.lang.String DEPARTURE_DATE_END
+    private static final int DIALOG_ARRIVE
+    private static final int DIALOG_DEPART
+com.happytap.schedule.activity.TripActivity:
+    254:256:private void setShowAds(boolean)
+com.happytap.schedule.adapter.StationAdapter:
+    23:40:public StationAdapter(android.content.Context,com.happytap.schedule.database.StationDao)
+com.happytap.schedule.adapter.StationAdapter$1
+com.happytap.schedule.adapter.TripAdapter:
+    27:28:public TripAdapter(android.content.Context)
+com.happytap.schedule.database.DatabaseHelper:
+    private static final java.lang.String NAME
+    private static final int VERSION
+    public static final java.lang.String DATABASE_VERSION
+    295:297:public DatabaseHelper(android.content.Context)
+    300:300:public com.happytap.schedule.database.DatabaseHelper$InstallDatabaseMeter getInstallMeter()
+com.happytap.schedule.database.PreferencesDao:
+    27:29:public PreferencesDao(com.happytap.schedule.provider.PreferencesDatabaseProvider)
+    68:78:public void savePurchasedAdFree(boolean)
+    81:85:public boolean hasPurchasedAdFree()
+com.happytap.schedule.database.PreferencesDatabaseHelper:
+    private static final java.lang.String NAME
+    private static final int VERSION
+    18:19:public PreferencesDatabaseHelper(android.content.Context)
+com.happytap.schedule.database.ScheduleDao:
+    private android.content.Context context
+    android.content.SharedPreferences preferences
+    44:47:public ScheduleDao(android.database.sqlite.SQLiteDatabase,android.content.Context)
+    98:109:private java.lang.String[] getConnectionStations(java.lang.String,java.lang.String)
+    331:331:public static java.lang.String join(java.lang.String,java.lang.Object[])
+com.happytap.schedule.database.StationDao
+com.happytap.schedule.database.TripDao
+com.happytap.schedule.database.TripInfo:
+    private static final long serialVersionUID
+com.happytap.schedule.database.TripInfo$Stop:
+    public java.lang.String id
+com.happytap.schedule.dialog.AlarmTimeDialog
+com.happytap.schedule.dialog.AlarmTimeDialog$1
+com.happytap.schedule.dialog.AlarmTimeDialog$AlarmTimeListener
+com.happytap.schedule.dialog.HourDialog
+com.happytap.schedule.dialog.HourDialog$1
+com.happytap.schedule.dialog.HourMinuteDialog
+com.happytap.schedule.domain.Schedule:
+    private static final long serialVersionUID
+    public java.util.Map tripIdToTrip
+    public java.util.Map tripIdToBlockId
+    public java.util.Map blockIdToTripId
+    302:346:void traversal(java.util.Set,com.happytap.schedule.domain.ScheduleTraverser)
+    357:368:private java.util.Calendar populate(java.util.Date,java.util.Date)
+    372:379:public java.lang.String tripIdToBlockId(java.lang.String)
+    383:386:public java.util.Set blockidToTripId(java.lang.String)
+com.happytap.schedule.domain.Schedule$2
+com.happytap.schedule.domain.Service:
+    private static final long serialVersionUID
+com.happytap.schedule.domain.StationInterval:
+    public int transferDuration
+    24:24:public int getTransferDuration()
+    28:29:public void setTransferDuration(int)
+    91:100:private java.util.Calendar convert(java.util.Date,java.util.Date)
+com.happytap.schedule.domain.StationToStation:
+    private static final long serialVersionUID
+com.happytap.schedule.domain.StopTime
+com.happytap.schedule.domain.TrainStatus:
+    private static final long serialVersionUID
+    private java.lang.String departs
+    private java.lang.String dest
+    private java.lang.String line
+    16:16:public java.lang.String getDeparts()
+    19:20:public void setDeparts(java.lang.String)
+    28:28:public java.lang.String getDest()
+    31:32:public void setDest(java.lang.String)
+    34:34:public java.lang.String getLine()
+    37:38:public void setLine(java.lang.String)
+com.happytap.schedule.domain.Trip
+com.happytap.schedule.provider.SQLiteDatabaseProvider:
+    19:21:public SQLiteDatabaseProvider(com.happytap.schedule.database.DatabaseHelper)
+com.happytap.schedule.service.Base64:
+    public static final boolean ENCODE
+    public static final boolean DECODE
+    private static final byte EQUALS_SIGN
+    private static final byte NEW_LINE
+    private static final byte WHITE_SPACE_ENC
+    private static final byte EQUALS_SIGN_ENC
+    210:234:private static byte[] encode3to4(byte[],int,int,byte[],int,byte[])
+    247:247:public static java.lang.String encode(byte[])
+    258:258:public static java.lang.String encodeWebSafe(byte[],boolean)
+    274:286:public static java.lang.String encode(byte[],int,int,byte[],boolean)
+    301:345:public static byte[] encode(byte[],int,int,byte[],int)
+    431:432:public static byte[] decodeWebSafe(java.lang.String)
+    445:445:public static byte[] decode(byte[])
+    458:458:public static byte[] decodeWebSafe(byte[])
+    489:489:public static byte[] decodeWebSafe(byte[],int,int)
+com.happytap.schedule.service.Base64DecoderException:
+    private static final long serialVersionUID
+com.happytap.schedule.service.BillingReceiver:
+    private static final java.lang.String TAG
+com.happytap.schedule.service.BillingService:
+    private static final java.lang.String TAG
+com.happytap.schedule.service.BillingService$RequestPurchase:
+    218:219:public BillingService$RequestPurchase(com.happytap.schedule.service.BillingService,java.lang.String)
+com.happytap.schedule.service.Consts:
+    public static final java.lang.String MARKET_BILLING_SERVICE_ACTION
+    public static final java.lang.String ACTION_CONFIRM_NOTIFICATION
+    public static final java.lang.String ACTION_GET_PURCHASE_INFORMATION
+    public static final java.lang.String ACTION_RESTORE_TRANSACTIONS
+    public static final java.lang.String ACTION_NOTIFY
+    public static final java.lang.String ACTION_RESPONSE_CODE
+    public static final java.lang.String ACTION_PURCHASE_STATE_CHANGED
+    public static final java.lang.String NOTIFICATION_ID
+    public static final java.lang.String INAPP_SIGNED_DATA
+    public static final java.lang.String INAPP_SIGNATURE
+    public static final java.lang.String INAPP_REQUEST_ID
+    public static final java.lang.String INAPP_RESPONSE_CODE
+    public static final java.lang.String BILLING_REQUEST_METHOD
+    public static final java.lang.String BILLING_REQUEST_API_VERSION
+    public static final java.lang.String BILLING_REQUEST_PACKAGE_NAME
+    public static final java.lang.String BILLING_REQUEST_ITEM_ID
+    public static final java.lang.String BILLING_REQUEST_DEVELOPER_PAYLOAD
+    public static final java.lang.String BILLING_REQUEST_NOTIFY_IDS
+    public static final java.lang.String BILLING_REQUEST_NONCE
+    public static final java.lang.String BILLING_RESPONSE_RESPONSE_CODE
+    public static final java.lang.String BILLING_RESPONSE_PURCHASE_INTENT
+    public static final java.lang.String BILLING_RESPONSE_REQUEST_ID
+    public static final boolean DEBUG
+com.happytap.schedule.service.DepartureVision:
+    38:39:public void removeListener(com.happytap.schedule.service.DepartureVision$TrainStatusListener)
+com.happytap.schedule.service.MetroNorthPoller
+com.happytap.schedule.service.PurchaseDatabase:
+    private static final java.lang.String TAG
+    private static final java.lang.String DATABASE_NAME
+    private static final int DATABASE_VERSION
+    private static final java.lang.String PURCHASE_HISTORY_TABLE_NAME
+    private static final java.lang.String PURCHASED_ITEMS_TABLE_NAME
+    static final java.lang.String HISTORY_ORDER_ID_COL
+    static final java.lang.String HISTORY_STATE_COL
+    static final java.lang.String HISTORY_PRODUCT_ID_COL
+    static final java.lang.String HISTORY_PURCHASE_TIME_COL
+    static final java.lang.String HISTORY_DEVELOPER_PAYLOAD_COL
+    public static final java.lang.String PURCHASED_PRODUCT_ID_COL
+    public static final java.lang.String PURCHASED_QUANTITY_COL
+com.happytap.schedule.service.PurchaseObserver:
+    private static final java.lang.String TAG
+com.happytap.schedule.service.ResponseHandler:
+    private static final java.lang.String TAG
+com.happytap.schedule.service.ScheduleService:
+    public static final int GET_SCHEDULE
+    public static final int CHECK_FOR_UPGRADE
+    public static final int MSG_REGISTER_CLIENT
+    public static final int MSG_UNREGISTER_CLIENT
+    public static final int FOUND_SCHEDULE
+com.happytap.schedule.service.Security:
+    private static final java.lang.String TAG
+    private static final java.lang.String KEY_FACTORY_ALGORITHM
+    private static final java.lang.String SIGNATURE_ALGORITHM
+com.happytap.schedule.service.ThreadHelper:
+    30:36:public static void cleanUp()
+com.happytap.schedule.view.SwitchDrawable
+com.larvalabs.svgandroid.SVG:
+    public android.graphics.Picture getPicture()
+    public android.graphics.RectF getBounds()
+    public android.graphics.RectF getLimits()
+com.larvalabs.svgandroid.SVGParser:
+    static final java.lang.String TAG
+    public static com.larvalabs.svgandroid.SVG getSVGFromInputStream(java.io.InputStream)
+    public static com.larvalabs.svgandroid.SVG getSVGFromString(java.lang.String)
+    public static com.larvalabs.svgandroid.SVG getSVGFromAsset(android.content.res.AssetManager,java.lang.String)
+    public static com.larvalabs.svgandroid.SVG getSVGFromInputStream(java.io.InputStream,int,int)
+    public static com.larvalabs.svgandroid.SVG getSVGFromString(java.lang.String,int,int)
+    public static com.larvalabs.svgandroid.SVG getSVGFromResource(android.content.res.Resources,int,int,int)
+    public static com.larvalabs.svgandroid.SVG getSVGFromAsset(android.content.res.AssetManager,java.lang.String,int,int)
+    public static android.graphics.Path parsePath(java.lang.String)
+    private static java.lang.Integer getHexAttr(java.lang.String,org.xml.sax.Attributes)
+com.larvalabs.svgandroid.SVGParser$NumberParse:
+    public int getNextCmd()
+    public float getNumber(int)
+com.larvalabs.svgandroid.SVGParser$Properties:
+    public java.lang.Float getFloat(java.lang.String,float)
+com.larvalabs.svgandroid.package-info
+com.njtransit.rail.R$array
+com.njtransit.rail.R$attr
+com.njtransit.rail.R$bool
+com.njtransit.rail.R$color
+com.njtransit.rail.R$drawable
+com.njtransit.rail.R$id
+com.njtransit.rail.R$layout
+com.njtransit.rail.R$raw:
+    public static final int database_db_aaa
+    public static final int database_db_aab
+    public static final int database_db_aac
+    public static final int database_db_aad
+    public static final int database_db_aae
+    public static final int database_db_aaf
+    public static final int database_db_aag
+    public static final int database_db_aah
+    public static final int database_db_aai
+    public static final int database_db_aaj
+    public static final int database_db_aak
+    public static final int database_db_aal
+    public static final int database_db_aam
+    public static final int database_db_aan
+    public static final int database_db_aao
+    public static final int database_db_aap
+    public static final int database_db_aaq
+    public static final int database_db_aar
+    public static final int database_db_aas
+    public static final int database_db_aat
+    public static final int database_db_aau
+    public static final int database_db_aav
+    public static final int database_db_aaw
+    public static final int database_db_aax
+    public static final int database_db_aay
+    public static final int database_db_aaz
+    public static final int database_db_aba
+    public static final int database_db_abb
+    public static final int database_db_abc
+    public static final int database_db_abd
+    public static final int database_db_abe
+    public static final int database_db_abf
+    public static final int database_db_abg
+    public static final int database_db_abh
+    public static final int database_db_abi
+    public static final int database_db_abj
+    public static final int database_db_abk
+    public static final int database_db_abl
+    public static final int database_db_abm
+    public static final int database_db_abn
+    public static final int database_db_abo
+    public static final int database_db_abp
+    public static final int database_db_abq
+    public static final int database_db_abr
+    public static final int database_db_abs
+    public static final int database_db_abt
+    public static final int database_db_abu
+    public static final int database_db_abv
+    public static final int database_db_abw
+    public static final int database_db_abx
+    public static final int database_db_aby
+    public static final int database_db_abz
+    public static final int database_db_aca
+    public static final int database_db_acb
+    public static final int database_db_acc
+    public static final int database_db_acd
+    public static final int database_db_ace
+    public static final int database_db_acf
+    public static final int database_db_acg
+    public static final int database_db_ach
+    public static final int database_db_aci
+    public static final int database_db_acj
+    public static final int database_db_ack
+    public static final int database_db_acl
+    public static final int database_db_acm
+    public static final int database_db_acn
+    public static final int database_db_aco
+    public static final int database_db_acp
+    public static final int database_db_acq
+    public static final int database_db_acr
+    public static final int database_db_acs
+    public static final int database_db_act
+    public static final int database_db_acu
+    public static final int database_db_acv
+    public static final int database_db_acw
+    public static final int database_db_acx
+    public static final int database_db_acy
+    public static final int database_db_acz
+    public static final int database_db_ada
+    public static final int database_db_adb
+    public static final int database_db_adc
+    public static final int database_db_add
+    public static final int database_db_ade
+    public static final int database_db_adf
+    public static final int database_db_adg
+    public static final int database_db_adh
+    public static final int database_db_adi
+    public static final int database_db_adj
+    public static final int database_db_adk
+    public static final int database_db_adl
+    public static final int database_db_adm
+    public static final int database_db_adn
+    public static final int database_db_ado
+    public static final int database_db_adp
+    public static final int database_db_adq
+    public static final int database_db_adr
+    public static final int database_db_ads
+    public static final int database_db_adt
+    public static final int database_db_adu
+    public static final int database_db_adv
+    public static final int database_db_adw
+    public static final int database_db_adx
+    public static final int database_db_ady
+    public static final int database_db_adz
+    public static final int database_db_aea
+    public static final int database_db_aeb
+    public static final int database_db_aec
+    public static final int database_db_aed
+    public static final int database_db_aee
+    public static final int database_db_aef
+    public static final int database_db_aeg
+    public static final int database_db_aeh
+    public static final int database_db_aei
+    public static final int database_db_aej
+    public static final int database_db_aek
+    public static final int database_db_ael
+    public static final int database_db_aem
+    public static final int database_db_aen
+    public static final int newjersey
+    public static final int reload
+    public static final int star
+com.njtransit.rail.R$string
+com.njtransit.rail.R$style
+com.njtransit.rail.R$xml
+d:
+    public final synchronized boolean o()
+    public final synchronized void y()
+org.jsoup.Connection
+org.jsoup.Connection$Base
+org.jsoup.Connection$KeyVal
+org.jsoup.Connection$Method
+org.jsoup.Connection$Request
+org.jsoup.Connection$Response
+org.jsoup.Jsoup:
+    31:31:public static org.jsoup.nodes.Document parse(java.lang.String,java.lang.String)
+    45:45:public static org.jsoup.nodes.Document parse(java.lang.String,java.lang.String,org.jsoup.parser.Parser)
+    73:73:public static org.jsoup.Connection connect(java.lang.String)
+    88:88:public static org.jsoup.nodes.Document parse(java.io.File,java.lang.String,java.lang.String)
+    103:103:public static org.jsoup.nodes.Document parse(java.io.File,java.lang.String)
+    118:118:public static org.jsoup.nodes.Document parse(java.io.InputStream,java.lang.String,java.lang.String)
+    135:135:public static org.jsoup.nodes.Document parse(java.io.InputStream,java.lang.String,java.lang.String,org.jsoup.parser.Parser)
+    148:148:public static org.jsoup.nodes.Document parseBodyFragment(java.lang.String,java.lang.String)
+    160:160:public static org.jsoup.nodes.Document parseBodyFragment(java.lang.String)
+    178:180:public static org.jsoup.nodes.Document parse(java.net.URL,int)
+    195:198:public static java.lang.String clean(java.lang.String,java.lang.String,org.jsoup.safety.Whitelist)
+    212:212:public static java.lang.String clean(java.lang.String,org.jsoup.safety.Whitelist)
+    224:226:public static boolean isValid(java.lang.String,org.jsoup.safety.Whitelist)
+org.jsoup.examples.HtmlToPlainText
+org.jsoup.examples.HtmlToPlainText$1
+org.jsoup.examples.HtmlToPlainText$FormattingVisitor
+org.jsoup.examples.ListLinks
+org.jsoup.helper.DataUtil
+org.jsoup.helper.HttpConnection
+org.jsoup.helper.HttpConnection$1
+org.jsoup.helper.HttpConnection$Base
+org.jsoup.helper.HttpConnection$KeyVal
+org.jsoup.helper.HttpConnection$Request
+org.jsoup.helper.HttpConnection$Response
+org.jsoup.helper.StringUtil:
+    20:20:public static java.lang.String join(java.util.Collection,java.lang.String)
+    30:42:public static java.lang.String join(java.util.Iterator,java.lang.String)
+    86:94:public static boolean isNumeric(java.lang.String)
+org.jsoup.helper.Validate:
+    44:46:public static void isTrue(boolean,java.lang.String)
+    101:103:public static void notEmpty(java.lang.String,java.lang.String)
+org.jsoup.nodes.Attribute:
+    41:43:public void setKey(java.lang.String)
+    95:96:public static org.jsoup.nodes.Attribute createFromEncoded(java.lang.String,java.lang.String)
+    100:100:protected boolean isDataAttribute()
+org.jsoup.nodes.Attributes:
+    protected static final java.lang.String dataPrefix
+    66:70:public void remove(java.lang.String)
+    129:129:public java.util.Map dataset()
+    247:247:private static java.lang.String dataKey(java.lang.String)
+    17:17:static java.util.LinkedHashMap access$100(org.jsoup.nodes.Attributes)
+    17:17:static java.util.LinkedHashMap access$102(org.jsoup.nodes.Attributes,java.util.LinkedHashMap)
+    17:17:static java.lang.String access$300(java.lang.String)
+org.jsoup.nodes.Attributes$1
+org.jsoup.nodes.Attributes$Dataset
+org.jsoup.nodes.Attributes$Dataset$DatasetIterator
+org.jsoup.nodes.Attributes$Dataset$EntrySet
+org.jsoup.nodes.Comment:
+    private static final java.lang.String COMMENT_KEY
+org.jsoup.nodes.DataNode:
+    private static final java.lang.String DATA_KEY
+    38:39:public org.jsoup.nodes.DataNode setWholeData(java.lang.String)
+    59:60:public static org.jsoup.nodes.DataNode createFromEncoded(java.lang.String,java.lang.String)
+org.jsoup.nodes.Document:
+    36:43:public static org.jsoup.nodes.Document createShell(java.lang.String)
+    51:51:public org.jsoup.nodes.Element head()
+    59:59:public org.jsoup.nodes.Element body()
+    67:68:public java.lang.String title()
+    77:84:public void title(java.lang.String)
+    92:92:public org.jsoup.nodes.Element createElement(java.lang.String)
+    101:118:public org.jsoup.nodes.Document normalise()
+    123:138:private void normaliseTextNodes(org.jsoup.nodes.Element)
+    142:160:private void normaliseStructure(java.lang.String,org.jsoup.nodes.Element)
+    164:173:private org.jsoup.nodes.Element findFirstElementByTagName(java.lang.String,org.jsoup.nodes.Node)
+    188:189:public org.jsoup.nodes.Element text(java.lang.String)
+org.jsoup.nodes.Document$OutputSettings:
+    234:235:public org.jsoup.nodes.Document$OutputSettings escapeMode(org.jsoup.nodes.Entities$EscapeMode)
+    247:247:public java.nio.charset.Charset charset()
+    291:292:public org.jsoup.nodes.Document$OutputSettings prettyPrint(boolean)
+    309:311:public org.jsoup.nodes.Document$OutputSettings indentAmount(int)
+org.jsoup.nodes.Element:
+    78:80:public org.jsoup.nodes.Element tagName(java.lang.String)
+    99:99:public boolean isBlock()
+    108:109:public java.lang.String id()
+    137:137:public java.util.Map dataset()
+    150:152:public org.jsoup.select.Elements parents()
+    156:161:private static void accumulateParents(org.jsoup.nodes.Element,org.jsoup.select.Elements)
+    174:174:public org.jsoup.nodes.Element child(int)
+    187:192:public org.jsoup.select.Elements children()
+    212:217:public java.util.List textNodes()
+    229:234:public java.util.List dataNodes()
+    255:255:public org.jsoup.select.Elements select(java.lang.String)
+    278:281:public org.jsoup.nodes.Element prependChild(org.jsoup.nodes.Node)
+    292:294:public org.jsoup.nodes.Element appendElement(java.lang.String)
+    305:307:public org.jsoup.nodes.Element prependElement(java.lang.String)
+    317:319:public org.jsoup.nodes.Element appendText(java.lang.String)
+    329:331:public org.jsoup.nodes.Element prependText(java.lang.String)
+    341:345:public org.jsoup.nodes.Element append(java.lang.String)
+    355:359:public org.jsoup.nodes.Element prepend(java.lang.String)
+    371:371:public org.jsoup.nodes.Element before(java.lang.String)
+    394:394:public org.jsoup.nodes.Element after(java.lang.String)
+    405:405:public org.jsoup.nodes.Element after(org.jsoup.nodes.Node)
+    413:414:public org.jsoup.nodes.Element empty()
+    425:425:public org.jsoup.nodes.Element wrap(java.lang.String)
+    433:433:public org.jsoup.select.Elements siblingElements()
+    445:451:public org.jsoup.nodes.Element nextElementSibling()
+    460:466:public org.jsoup.nodes.Element previousElementSibling()
+    475:476:public org.jsoup.nodes.Element firstElementSibling()
+    485:486:public java.lang.Integer elementSiblingIndex()
+    494:495:public org.jsoup.nodes.Element lastElementSibling()
+    499:507:private static java.lang.Integer indexInList(org.jsoup.nodes.Element,java.util.List)
+    518:521:public org.jsoup.select.Elements getElementsByTag(java.lang.String)
+    534:540:public org.jsoup.nodes.Element getElementById(java.lang.String)
+    555:557:public org.jsoup.select.Elements getElementsByClass(java.lang.String)
+    567:570:public org.jsoup.select.Elements getElementsByAttribute(java.lang.String)
+    580:583:public org.jsoup.select.Elements getElementsByAttributeStarting(java.lang.String)
+    594:594:public org.jsoup.select.Elements getElementsByAttributeValue(java.lang.String,java.lang.String)
+    605:605:public org.jsoup.select.Elements getElementsByAttributeValueNot(java.lang.String,java.lang.String)
+    616:616:public org.jsoup.select.Elements getElementsByAttributeValueStarting(java.lang.String,java.lang.String)
+    627:627:public org.jsoup.select.Elements getElementsByAttributeValueEnding(java.lang.String,java.lang.String)
+    638:638:public org.jsoup.select.Elements getElementsByAttributeValueContaining(java.lang.String,java.lang.String)
+    648:648:public org.jsoup.select.Elements getElementsByAttributeValueMatching(java.lang.String,java.util.regex.Pattern)
+    661:665:public org.jsoup.select.Elements getElementsByAttributeValueMatching(java.lang.String,java.lang.String)
+    674:674:public org.jsoup.select.Elements getElementsByIndexLessThan(int)
+    683:683:public org.jsoup.select.Elements getElementsByIndexGreaterThan(int)
+    692:692:public org.jsoup.select.Elements getElementsByIndexEquals(int)
+    703:703:public org.jsoup.select.Elements getElementsContainingText(java.lang.String)
+    714:714:public org.jsoup.select.Elements getElementsContainingOwnText(java.lang.String)
+    724:724:public org.jsoup.select.Elements getElementsMatchingText(java.util.regex.Pattern)
+    736:740:public org.jsoup.select.Elements getElementsMatchingText(java.lang.String)
+    750:750:public org.jsoup.select.Elements getElementsMatchingOwnText(java.util.regex.Pattern)
+    762:766:public org.jsoup.select.Elements getElementsMatchingOwnText(java.lang.String)
+    775:775:public org.jsoup.select.Elements getAllElements()
+    788:790:public java.lang.String text()
+    794:807:private void text(java.lang.StringBuilder)
+    821:823:public java.lang.String ownText()
+    827:835:private void ownText(java.lang.StringBuilder)
+    838:846:private void appendNormalisedText(java.lang.StringBuilder,org.jsoup.nodes.TextNode)
+    849:851:private static void appendWhitespaceIfBr(org.jsoup.nodes.Element,java.lang.StringBuilder)
+    863:869:public org.jsoup.nodes.Element text(java.lang.String)
+    877:888:public boolean hasText()
+    898:910:public java.lang.String data()
+    942:944:public org.jsoup.nodes.Element classNames(java.util.Set)
+    953:958:public boolean hasClass(java.lang.String)
+    967:973:public org.jsoup.nodes.Element addClass(java.lang.String)
+    982:988:public org.jsoup.nodes.Element removeClass(java.lang.String)
+    997:1006:public org.jsoup.nodes.Element toggleClass(java.lang.String)
+    1014:1017:public java.lang.String val()
+    1026:1030:public org.jsoup.nodes.Element val(java.lang.String)
+    1080:1082:public org.jsoup.nodes.Element html(java.lang.String)
+    24:24:public org.jsoup.nodes.Node wrap(java.lang.String)
+    24:24:public org.jsoup.nodes.Node after(org.jsoup.nodes.Node)
+    24:24:public org.jsoup.nodes.Node after(java.lang.String)
+    24:24:public org.jsoup.nodes.Node before(java.lang.String)
+org.jsoup.nodes.Entities:
+    83:83:static java.lang.String unescape(java.lang.String)
+    94:124:static java.lang.String unescape(java.lang.String,boolean)
+org.jsoup.nodes.Node:
+    121:123:public org.jsoup.nodes.Node removeAttr(java.lang.String)
+    131:131:public java.lang.String baseUri()
+    217:217:protected org.jsoup.nodes.Node[] childNodesAsArray()
+    256:257:public org.jsoup.nodes.Node before(java.lang.String)
+    281:282:public org.jsoup.nodes.Node after(java.lang.String)
+    292:296:public org.jsoup.nodes.Node after(org.jsoup.nodes.Node)
+    300:306:private void addSiblingHtml(int,java.lang.String)
+    314:335:public org.jsoup.nodes.Node wrap(java.lang.String)
+    352:359:public org.jsoup.nodes.Node unwrap()
+    363:367:private org.jsoup.nodes.Element getDeepChild(org.jsoup.nodes.Element)
+    375:378:public void replaceWith(org.jsoup.nodes.Node)
+    387:397:protected void replaceChild(org.jsoup.nodes.Node,org.jsoup.nodes.Node)
+    443:443:public java.util.List siblingNodes()
+    468:474:public org.jsoup.nodes.Node previousSibling()
+org.jsoup.nodes.TextNode:
+    private static final java.lang.String TEXT_KEY
+    41:41:public java.lang.String text()
+    50:53:public org.jsoup.nodes.TextNode text(java.lang.String)
+    79:89:public org.jsoup.nodes.TextNode splitText(int)
+    115:116:public static org.jsoup.nodes.TextNode createFromEncoded(java.lang.String,java.lang.String)
+    125:125:static java.lang.String stripLeadingWhitespace(java.lang.String)
+    129:129:static boolean lastCharIsWhitespace(java.lang.StringBuilder)
+    166:167:public org.jsoup.nodes.Node removeAttr(java.lang.String)
+org.jsoup.nodes.XmlDeclaration
+org.jsoup.parser.CharacterReader:
+    static final char EOF
+    59:59:java.lang.String consumeAsString()
+org.jsoup.parser.HtmlTreeBuilder:
+    42:77:java.util.List parseFragment(java.lang.String,org.jsoup.nodes.Element,java.lang.String,org.jsoup.parser.ParseErrorList)
+    495:496:void setPendingTableCharacters(java.util.List)
+org.jsoup.parser.ParseError:
+    25:25:public java.lang.String getErrorMessage()
+    33:33:public int getPosition()
+org.jsoup.parser.ParseErrorList:
+    private static final int INITIAL_CAPACITY
+    24:24:int getMaxSize()
+    32:32:static org.jsoup.parser.ParseErrorList tracking(int)
+org.jsoup.parser.Parser:
+    private static final int DEFAULT_MAX_ERRORS
+    private org.jsoup.parser.TreeBuilder treeBuilder
+    private int maxErrors
+    private org.jsoup.parser.ParseErrorList errors
+    24:26:public Parser(org.jsoup.parser.TreeBuilder)
+    29:31:public org.jsoup.nodes.Document parseInput(java.lang.String,java.lang.String)
+    40:40:public org.jsoup.parser.TreeBuilder getTreeBuilder()
+    49:50:public org.jsoup.parser.Parser setTreeBuilder(org.jsoup.parser.TreeBuilder)
+    58:58:public boolean isTrackErrors()
+    67:68:public org.jsoup.parser.Parser setTrackErrors(int)
+    76:76:public java.util.List getErrors()
+    104:105:public static java.util.List parseFragment(java.lang.String,org.jsoup.nodes.Element,java.lang.String)
+    117:124:public static org.jsoup.nodes.Document parseBodyFragment(java.lang.String,java.lang.String)
+    135:135:public static org.jsoup.nodes.Document parseBodyFragmentRelaxed(java.lang.String,java.lang.String)
+    146:146:public static org.jsoup.parser.Parser htmlParser()
+    155:155:public static org.jsoup.parser.Parser xmlParser()
+org.jsoup.parser.Tag:
+    69:69:public boolean isBlock()
+    87:87:public boolean canContainBlock()
+    96:96:public boolean isInline()
+    105:105:public boolean isData()
+    114:114:public boolean isEmpty()
+org.jsoup.parser.TokenQueue
+org.jsoup.parser.Tokeniser:
+    static final char replacementChar
+    84:84:org.jsoup.parser.TokeniserState getState()
+    224:224:boolean currentNodeInHtmlNS()
+org.jsoup.parser.TokeniserState:
+    private static final char nullChar
+    private static final char replacementChar
+    private static final char eof
+org.jsoup.parser.TreeBuilder:
+    36:36:org.jsoup.nodes.Document parse(java.lang.String,java.lang.String)
+org.jsoup.parser.XmlTreeBuilder
+org.jsoup.parser.XmlTreeBuilder$1
+org.jsoup.safety.Cleaner
+org.jsoup.safety.Cleaner$ElementMeta
+org.jsoup.safety.Whitelist
+org.jsoup.safety.Whitelist$AttributeKey
+org.jsoup.safety.Whitelist$AttributeValue
+org.jsoup.safety.Whitelist$Protocol
+org.jsoup.safety.Whitelist$TagName
+org.jsoup.safety.Whitelist$TypedValue
+org.jsoup.select.Collector
+org.jsoup.select.Collector$Accumulator
+org.jsoup.select.CombiningEvaluator
+org.jsoup.select.CombiningEvaluator$And
+org.jsoup.select.CombiningEvaluator$Or
+org.jsoup.select.Elements
+org.jsoup.select.Evaluator
+org.jsoup.select.Evaluator$AllElements
+org.jsoup.select.Evaluator$Attribute
+org.jsoup.select.Evaluator$AttributeKeyPair
+org.jsoup.select.Evaluator$AttributeStarting
+org.jsoup.select.Evaluator$AttributeWithValue
+org.jsoup.select.Evaluator$AttributeWithValueContaining
+org.jsoup.select.Evaluator$AttributeWithValueEnding
+org.jsoup.select.Evaluator$AttributeWithValueMatching
+org.jsoup.select.Evaluator$AttributeWithValueNot
+org.jsoup.select.Evaluator$AttributeWithValueStarting
+org.jsoup.select.Evaluator$Class
+org.jsoup.select.Evaluator$ContainsOwnText
+org.jsoup.select.Evaluator$ContainsText
+org.jsoup.select.Evaluator$Id
+org.jsoup.select.Evaluator$IndexEquals
+org.jsoup.select.Evaluator$IndexEvaluator
+org.jsoup.select.Evaluator$IndexGreaterThan
+org.jsoup.select.Evaluator$IndexLessThan
+org.jsoup.select.Evaluator$Matches
+org.jsoup.select.Evaluator$MatchesOwn
+org.jsoup.select.Evaluator$Tag
+org.jsoup.select.QueryParser
+org.jsoup.select.Selector
+org.jsoup.select.Selector$SelectorParseException
+org.jsoup.select.StructuralEvaluator
+org.jsoup.select.StructuralEvaluator$Has
+org.jsoup.select.StructuralEvaluator$ImmediateParent
+org.jsoup.select.StructuralEvaluator$ImmediatePreviousSibling
+org.jsoup.select.StructuralEvaluator$Not
+org.jsoup.select.StructuralEvaluator$Parent
+org.jsoup.select.StructuralEvaluator$PreviousSibling
+org.jsoup.select.StructuralEvaluator$Root
+roboguice.activity.event.OnActivityResultEvent:
+    24:24:public int getRequestCode()
+    28:28:public int getResultCode()
+    32:32:public android.content.Intent getData()
+roboguice.activity.event.OnConfigurationChangedEvent:
+    22:22:public android.content.res.Configuration getOldConfig()
+    26:26:public android.content.res.Configuration getNewConfig()
+roboguice.activity.event.OnCreateEvent:
+    22:22:public android.os.Bundle getSavedInstanceState()
+roboguice.adapter.IterableAdapter
+roboguice.application.RoboApplication:
+    185:185:public java.util.List getStaticTypeListeners()
+roboguice.event.EventManager:
+    51:52:public void registerObserver(java.lang.Class,roboguice.event.EventListener)
+    63:64:public void registerObserver(java.lang.Object,java.lang.reflect.Method,java.lang.Class)
+    74:75:public void unregisterObserver(java.lang.Class,roboguice.event.EventListener)
+    85:86:public void unregisterObserver(java.lang.Object,java.lang.Class)
+    147:162:public void unregisterObserver(android.content.Context,java.lang.Class,roboguice.event.EventListener)
+    172:191:public void unregisterObserver(android.content.Context,java.lang.Object,java.lang.Class)
+roboguice.inject.ContextScope$WeakActiveStack:
+    244:261:public java.lang.Object pop()
+roboguice.inject.ResourceFactory
+roboguice.inject.ResourcesProvider:
+    35:37:public ResourcesProvider(android.app.Application)
+roboguice.inject.RoboApplicationProvider
+roboguice.inject.SharedPreferencesName
+roboguice.inject.SharedPreferencesProvider:
+    protected static final java.lang.String DEFAULT
+    41:43:public SharedPreferencesProvider(roboguice.inject.SharedPreferencesProvider$PreferencesNameHolder)
+    45:47:public SharedPreferencesProvider(java.lang.String)
+roboguice.inject.SharedPreferencesProvider$PreferencesNameHolder
+roboguice.inject.StringResourceFactory
+roboguice.receiver.RoboBroadcastReceiver:
+    protected roboguice.inject.ContextScope scope
+    23:35:public final void onReceive(android.content.Context,android.content.Intent)
+    46:46:protected void handleReceive(android.content.Context,android.content.Intent)
+roboguice.service.RoboIntentService:
+    protected roboguice.event.EventManager eventManager
+    protected roboguice.inject.ContextScope scope
+    47:48:public RoboIntentService(java.lang.String)
+    53:60:public void onCreate()
+    64:67:public void onStart(android.content.Intent,int)
+    72:75:public void onDestroy()
+    79:82:public void onConfigurationChanged(android.content.res.Configuration)
+    88:88:public com.google.inject.Injector getInjector()
+roboguice.service.event.OnConfigurationChangedEvent:
+    22:22:public android.content.res.Configuration getOldConfig()
+    26:26:public android.content.res.Configuration getNewConfig()
+roboguice.test.RoboActivityUnitTestCase
+roboguice.test.RoboUnitTestCase
+roboguice.util.Ln:
+    77:77:public static int v(java.lang.Throwable)
+    90:95:public static int v(java.lang.Throwable,java.lang.Object,java.lang.Object[])
+    99:99:public static int d(java.lang.Throwable)
+    103:108:public static int d(java.lang.Object,java.lang.Object[])
+    112:117:public static int d(java.lang.Throwable,java.lang.Object,java.lang.Object[])
+    121:121:public static int i(java.lang.Throwable)
+    125:130:public static int i(java.lang.Object,java.lang.Object[])
+    134:139:public static int i(java.lang.Throwable,java.lang.Object,java.lang.Object[])
+    143:143:public static int w(java.lang.Throwable)
+    156:161:public static int w(java.lang.Throwable,java.lang.Object,java.lang.Object[])
+    169:174:public static int e(java.lang.Object,java.lang.Object[])
+    178:183:public static int e(java.lang.Throwable,java.lang.Object,java.lang.Object[])
+    187:187:public static boolean isDebugEnabled()
+    195:195:public static roboguice.util.Ln$Config getConfig()
+    237:252:public static java.lang.String logLevelToString(int)
+roboguice.util.Ln$BaseConfig:
+    213:225:public Ln$BaseConfig(android.content.Context)
+    228:228:public int getLoggingLevel()
+    232:233:public void setLoggingLevel(int)
+roboguice.util.Ln$Config
+roboguice.util.RoboAsyncTask:
+    29:30:protected RoboAsyncTask(android.os.Handler)
+    33:34:protected RoboAsyncTask(android.os.Handler,java.util.concurrent.Executor)
+    37:38:protected RoboAsyncTask(java.util.concurrent.Executor)
+    42:42:protected roboguice.util.SafeAsyncTask$Task newTask()
+roboguice.util.RoboAsyncTask$RoboTask
+roboguice.util.RoboLooperThread
+roboguice.util.RoboLooperThread$1
+roboguice.util.SafeAsyncTask:
+    public static final int DEFAULT_POOL_SIZE
+    protected android.os.Handler handler
+    protected java.lang.StackTraceElement[] launchLocation
+    protected java.util.concurrent.FutureTask future
+    47:50:public SafeAsyncTask(android.os.Handler)
+    55:57:public SafeAsyncTask(java.util.concurrent.Executor)
+    59:62:public SafeAsyncTask(android.os.Handler,java.util.concurrent.Executor)
+    66:67:public java.util.concurrent.FutureTask future()
+    71:72:public roboguice.util.SafeAsyncTask executor(java.util.concurrent.Executor)
+    76:76:public java.util.concurrent.Executor executor()
+    80:81:public roboguice.util.SafeAsyncTask handler(android.os.Handler)
+    85:85:public android.os.Handler handler()
+    89:90:public void execute()
+    93:95:protected void execute(java.lang.StackTraceElement[])
+    98:101:public boolean cancel(boolean)
+    108:108:protected void onPreExecute()
+    115:115:protected void onSuccess(java.lang.Object)
+    128:129:protected void onInterrupted(java.lang.Exception)
+    139:140:protected void onException(java.lang.Exception)
+    145:145:protected void onFinally()
+    149:149:protected roboguice.util.SafeAsyncTask$Task newTask()
+roboguice.util.SafeAsyncTask$Task
+roboguice.util.SafeAsyncTask$Task$1
+roboguice.util.SafeAsyncTask$Task$2
+roboguice.util.SafeAsyncTask$Task$3
+roboguice.util.SafeAsyncTask$Task$4
+roboguice.util.SafeAsyncTask$Task$5
+roboguice.util.Strings:
+    private static final int DEFAULT_BUFFER_SIZE
+    23:33:public static java.lang.String joinAnd(java.lang.String,java.lang.String,java.util.Collection)
+    37:37:public static java.lang.String joinAnd(java.lang.String,java.lang.String,java.lang.Object[])
+    113:124:public static java.lang.String md5(java.lang.String)
+    129:130:public static java.lang.String capitalize(java.lang.String)
+    134:134:public static boolean equals(java.lang.Object,java.lang.Object)
+    138:138:public static boolean equalsIgnoreCase(java.lang.Object,java.lang.Object)
+    142:151:public static java.lang.String[] chunk(java.lang.String,int)
+    155:158:public static java.lang.String namedFormat(java.lang.String,java.util.Map)
+    162:169:public static java.lang.String namedFormat(java.lang.String,java.lang.Object[])

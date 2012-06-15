@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import roboguice.inject.ContextSingleton;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -31,7 +33,7 @@ import com.happytap.schedule.domain.Service;
 import com.happytap.schedule.domain.StopTime;
 import com.njtransit.rail.R;
 
-@Singleton
+@ContextSingleton
 public class ScheduleDao {
 
 	private final SQLiteDatabase database;

@@ -1,19 +1,8 @@
 package com.happytap.schedule.application;
 
-import java.util.List;
+import android.app.Application;
 
-import roboguice.application.RoboApplication;
+public class ScheduleApplication extends Application {
 
-import com.google.inject.Module;
-import com.happytap.schedule.module.ScheduleModule;
-
-public class ScheduleApplication extends RoboApplication {
-
-	@Override
-	protected void addApplicationModules(List<Module> modules) {
-		
-		modules.add(new ScheduleModule());
-		
-	}
 
 }

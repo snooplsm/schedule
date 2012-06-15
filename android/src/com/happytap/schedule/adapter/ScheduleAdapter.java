@@ -2,23 +2,23 @@ package com.happytap.schedule.adapter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import roboguice.util.Strings;
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.text.SpannableStringBuilder;
 import android.text.style.SuperscriptSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.happytap.schedule.activity.LoadScheduleActivity;
 import com.happytap.schedule.activity.SplashScreenActivity;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.ScheduleTraverser;
@@ -28,14 +28,27 @@ import com.happytap.schedule.domain.TrainStatus;
 import com.happytap.schedule.util.date.DateUtils;
 import com.njtransit.rail.R;
 
-public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
+public class ScheduleAdapter extends BaseAdapter {
 
 	Schedule schedule;
 
 	private boolean isToday;
 	private Calendar limit;
 	private boolean reversed = false;
+	private Context context;
+	private List<StationToStation> stations = new ArrayList<StationToStation>();
 
+	@Override
+	public int getCount() {
+		return stations.size();
+	}
+	
+	@Override
+	public long getItemId(int position) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	private void traverse() {
 		limit = Calendar.getInstance();
 		limit.setTime(schedule.end);
@@ -63,11 +76,11 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 					StationToStation stationToStation, int total) {
 				if (!isToday) {
 					if (!stationToStation.departTime.before(limit)) {
-						add(stationToStation);
+						stations.add(stationToStation);
 					}
 				} else if (!stationToStation.departTime.after(limit)) {
 					if (!stationToStation.arriveTime.before(priorLimit)) {
-						add(stationToStation);
+						stations.add(stationToStation);
 					}
 
 				}
@@ -81,11 +94,16 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 	}
 
 	public ScheduleAdapter(Context context, Schedule schedule) {
-		super(context, R.layout.station_to_station_item);
+		super();
 		this.schedule = schedule;
-
+this.context = context;
 		traverse();
 
+	}
+	
+	@Override
+	public StationToStation getItem(int position) {
+		return stations.get(position);
 	}
 
 	public int findIndexOfCurrent() {
@@ -103,26 +121,39 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = convertView;
 		if (v == null) {
-			LayoutInflater vi = (LayoutInflater) getContext().getSystemService(
-					Context.LAYOUT_INFLATER_SERVICE);
+			LayoutInflater vi = LayoutInflater.from(context);
 			v = vi.inflate(R.layout.station_to_station_item, null);
 		}
 		
 		
 		StationToStation sts = getItem(position);
-		int l = v.getLeft();
-		int r = v.getRight();
-		int t = v.getTop();
-		int b = v.getBottom();
-		if(sts.tripId!=null && tripIdForAlarm!=null && sts.tripId.equals(tripIdForAlarm)) {
-			v.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.alarm_background));
-		} else {
-			v.setBackgroundDrawable(getContext().getResources().getDrawable(android.R.drawable.list_selector_background));
-		}
 		TextView textView = (TextView) v.findViewById(R.id.time);
 		TextView duration = (TextView) v.findViewById(R.id.duration);
 		TextView departsIn = (TextView) v.findViewById(R.id.away);
 		TextView connections = (TextView) v.findViewById(R.id.connections);
+		TextView tomorrow = (TextView) v.findViewById(R.id.time_descriptor);
+		TextView fare = (TextView) v.findViewById(R.id.fare);
+		if(sts==null) {
+			textView.setText("");
+			tomorrow.setText("");
+			duration.setText("");
+			departsIn.setText("");
+			connections.setText("");
+			fare.setText("Fare: " + LoadScheduleActivity.df.format(this.fare));
+			fare.setVisibility(View.VISIBLE);
+			v.setClickable(false);
+			return v;
+		} else {
+			v.setClickable(true);
+			fare.setVisibility(View.GONE);
+			v.setId(View.NO_ID);
+		}
+		if(sts.tripId!=null && tripIdForAlarm!=null && sts.tripId.equals(tripIdForAlarm)) {
+			v.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.alarm_background));
+		} else {
+			v.setBackgroundDrawable(context.getResources().getDrawable(android.R.drawable.list_selector_background));
+		}
+		
 		textView.setText(time(sts));
 		departs(departsIn, sts);
 		if (sts instanceof StationInterval) {
@@ -135,9 +166,12 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 			} else {
 				populateExtraInfo(connections,sts2);				
 			}
-			TextView tomorrow = (TextView) v.findViewById(R.id.time_descriptor);
+			
 			tomorrow(tomorrow, sts);
 			TrainStatus status = trainStatuses.get(sts.blockId);
+			if(status==null) {
+				status = trainStatuses.get(sts.tripId);
+			}
 			if (status == null) {
 				onNoTrainStatus(v, sts);
 				return v;
@@ -147,7 +181,6 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 			connections.setVisibility(View.GONE);
 			textView.setText(time(sts));
 			duration.setText(duration(sts));
-			TextView tomorrow = (TextView) v.findViewById(R.id.time_descriptor);
 			tomorrow(tomorrow, sts);
 			
 			TrainStatus status = trainStatuses.get(sts.blockId);
@@ -166,7 +199,7 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 			b.append(sts.schedule.routeIdToName.get(sts.routeId));
 			b.append(" ");
 		}
-		if(sts.blockId!=null) {
+		if(sts.blockId!=null && sts.blockId.trim().length()>0) {
 			b.append("#").append(sts.blockId);
 		}
 		connections.setText(b);
@@ -214,7 +247,7 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 					b.append(" ");
 					b.append(sts2.schedule.stopIdToName.get(sts2.arriveId));
 					
-					if(sts2.blockId!=null) {
+					if(sts2.blockId!=null && sts2.blockId.trim().length()>0) {
 						b.append(" #");
 						b.append(sts2.blockId);
 					}
@@ -265,7 +298,7 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 		b.append(arrive);
 		b.append(") ");
 		b.append(sts2.schedule.stopIdToName.get(sts2.arriveId));
-		if(sts2.blockId!=null) {
+		if(sts2.blockId!=null && sts2.blockId.trim().length()>0) {
 			b.append(" #").append(sts2.blockId);
 		}
 		connections.setText(b.toString());
@@ -426,6 +459,20 @@ public class ScheduleAdapter extends ArrayAdapter<StationToStation> {
 		}
 		clear();
 		traverse();
+		notifyDataSetChanged();
+	}
+	
+	public void clear() {
+		stations.clear();
+	}
+	
+	int fareAnchor = -1;
+	Double fare;
+
+	public void setFareAnchor(Double fare, int i) {
+		this.fare = fare;
+		this.fareAnchor = i;
+		stations.add(i,null);
 		notifyDataSetChanged();
 	}
 }

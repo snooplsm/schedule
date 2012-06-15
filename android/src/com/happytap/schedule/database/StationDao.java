@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import roboguice.inject.ContextSingleton;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
-@Singleton
+@ContextSingleton
 public class StationDao {
 
 	private final SQLiteDatabase database;

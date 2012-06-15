@@ -3,6 +3,7 @@ package com.happytap.schedule.service;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 
+import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.TrainStatus;
 
 /**
@@ -44,13 +45,13 @@ public class DepartureVision {
 		cancelled = true;
 	}
 
-	public void startDepartures(String[] ids) throws IOException {
+	public void startDepartures(final Schedule schedule, String[] ids) throws IOException {
 		stopDepartures();
 		poller = new DeparturePoller();
 		cancelled = false;
 		while (!cancelled) {
 			for (int i = 1; i < ids.length; i++) {
-				for (TrainStatus status : poller.getTrainStatuses(ids[i])) {
+				for (TrainStatus status : poller.getTrainStatuses(schedule, ids[i])) {
 					onTrainStatus(status);
 				}
 			}

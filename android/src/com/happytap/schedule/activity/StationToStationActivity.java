@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import roboguice.inject.InjectView;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.Notification;
@@ -56,6 +57,7 @@ import com.happytap.schedule.provider.CurrentScheduleProvider;
 import com.happytap.schedule.service.BillingService;
 import com.happytap.schedule.service.BillingService.RequestPurchase;
 import com.happytap.schedule.service.BillingService.RestoreTransactions;
+import com.happytap.schedule.service.Consts;
 import com.happytap.schedule.service.Consts.PurchaseState;
 import com.happytap.schedule.service.Consts.ResponseCode;
 import com.happytap.schedule.service.DepartureVision;
@@ -68,7 +70,7 @@ import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
 import com.njtransit.rail.R;
 
-public class StationToStationActivity extends ScheduleActivity implements
+public class StationToStationActivity extends Activity implements
 		OnItemLongClickListener, OnItemClickListener, OnClickListener {
 
 	@InjectView(android.R.id.list)
@@ -108,6 +110,12 @@ public class StationToStationActivity extends ScheduleActivity implements
 	NotificationManager notifications;
 
 	AdView adView;
+	
+	@InjectView(R.id.fare)
+	TextView fare;
+	
+	@InjectView(R.id.fare_container)
+	View fareContainer;
 
 	public static final String SCHEDULE = Schedule.class.getName();
 	public static final String DEPARTURE_STATION = "departure_station";
@@ -130,9 +138,13 @@ public class StationToStationActivity extends ScheduleActivity implements
 				getApplication().getPackageName() + "_preferences",
 				Context.MODE_PRIVATE).getBoolean("useDepartureVision", true)
 				&& DateUtils.isToday(start);
+
 	}
 
 	private boolean showAds() {
+		if(getResources().getBoolean(R.bool.paidApp)) {
+			return false;
+		}
 		return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("showAds", true);
 	}
 
@@ -140,7 +152,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("showAds", show)
 				.commit();
 	}
-
+	
 	boolean paused;
 
 	private AsyncTask<Void, Integer, Void> last;
@@ -213,7 +225,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 						}
 					}
 					if (abbreviatedName != null && abbreviatedName.length > 1) {
-						vision.startDepartures(abbreviatedName);
+						vision.startDepartures(schedule,abbreviatedName);
 					}
 				} catch (IOException e) {
 				}
@@ -259,14 +271,13 @@ public class StationToStationActivity extends ScheduleActivity implements
 		}
 
 		@Override
-		public void onBillingSupported(boolean supported) {
+		public void onBillingSupported(boolean supported, String type) {
 			// TODO Auto-generated method stub
 			if (supported) {
 				restoreDatabase();
 			}
-
 		}
-
+		
 		private void restoreDatabase() {
 			mBillingService.restoreTransactions();
 		}
@@ -287,9 +298,22 @@ public class StationToStationActivity extends ScheduleActivity implements
 					purchasedAdFree = false;
 				}
 			}
+			if(purchasedAdFree==false) {
+				if ("remove.ads.subscription".equals(itemId)) {
+					if (purchaseState == PurchaseState.PURCHASED) {
+						purchasedAdFree = true;
+					}
+					if (purchaseState == PurchaseState.CANCELED) {
+						purchasedAdFree = false;
+					}
+					if (purchaseState == PurchaseState.REFUNDED) {
+						purchasedAdFree = false;
+					}
+				}
+			}
 			onPurchaseStateChanged();
 		}
-
+		
 		@Override
 		public void onRequestPurchaseResponse(RequestPurchase request,
 				ResponseCode responseCode) {
@@ -321,7 +345,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	private void showPayloadEditDialog() {
 		// mBillingService.ch
-		mBillingService.requestPurchase("remove.ads", null);
+		mBillingService.requestPurchase("remove.ads.subscription", Consts.ITEM_TYPE_SUBSCRIPTION, null);
 	}
 
 	@Override
@@ -397,8 +421,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 					+ " to " + arrive + " " + currentItemDescription);
 			startActivity(Intent.createChooser(shareIntent, "Share"));
 			return true;
-		}
-		StationToStation sts = getAdapter().getItem(currentItemPosition);
+		}		
 		if (item.equals(alarmArrive)) {
 			showDialog(DIALOG_ARRIVE);
 			return true;
@@ -409,7 +432,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		}
 		if (item.equals(rate)) {
 			Intent intent = new Intent(Intent.ACTION_VIEW,
-					Uri.parse("market://details?id=" + getPackageName()));
+					Uri.parse(getString(R.string.marketUrl,getPackageName())));
 			startActivity(intent);
 			return true;
 		}
@@ -475,7 +498,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 					.getColumnIndexOrThrow(PurchaseDatabase.PURCHASED_PRODUCT_ID_COL);
 			while (cursor.moveToNext()) {
 				String productId = cursor.getString(productIdCol);
-				if (productId.equals("remove.ads")) {
+				if (productId.equals("remove.ads") || productId.equals("remove.ads.subscription")) {
 					purchasedAdFree = true;
 				}
 			}
@@ -517,6 +540,13 @@ public class StationToStationActivity extends ScheduleActivity implements
 		ResponseHandler.register(mPurchaseObserver);
 		adView = new AdView(this, AdSize.BANNER,
 				getString(R.string.publisherId));
+		double fare = getIntent().getDoubleExtra(LoadScheduleActivity.FARE, -1);
+//		if(fare>=0) {
+//			this.fare.setText("Fair: " + LoadScheduleActivity.df.format(fare));
+//			this.fareContainer.setVisibility(View.VISIBLE);
+//		} else {
+			this.fareContainer.setVisibility(View.GONE);
+//		}
 		if (showAds()) {
 			AdRequest req = new AdRequest();
 			final View orAd = getLayoutInflater()
@@ -566,8 +596,20 @@ public class StationToStationActivity extends ScheduleActivity implements
 			});
 		}
 		adFodder.setVisibility(View.GONE);
-
+		
 		schedule = scheduleProvider.get();
+		if(schedule!=null) {
+			new Thread() {
+				public void run() {
+					Intent it = new Intent(StationToStationActivity.this,StationToStationActivity.class);
+					it.putExtras(getIntent());
+					it.putExtra("schedule", schedule);
+					setIntent(it);
+				};
+			}.start();
+		} else {
+			schedule = (Schedule) getIntent().getSerializableExtra("schedule");
+		}
 		listView.setAdapter(adapter = new ScheduleAdapter(this, schedule));
 		if (getIntent().hasExtra(ALARM_TRIP_ID)) {
 			adapter.setTripIdForAlarm(getIntent().getStringExtra(ALARM_TRIP_ID));
@@ -577,7 +619,14 @@ public class StationToStationActivity extends ScheduleActivity implements
 		listView.setOnItemClickListener(this);
 		int index = adapter.findIndexOfCurrent();
 		if (index > 0) {
+			if(fare>=0) {
+				adapter.setFareAnchor(fare,index-1);
+			}
 			listView.setSelectionFromTop(index - 1, 0);
+		} else {
+			if(fare>=0) {
+				adapter.setFareAnchor(fare,0);
+			}
 		}
 
 		departureStopId = getIntent().getStringExtra(DEPARTURE_ID);
@@ -677,6 +726,9 @@ public class StationToStationActivity extends ScheduleActivity implements
 			int position, long id) {
 		ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
 		StationToStation sts = adapter.getItem(position);
+		if(sts==null) {
+			return;
+		}
 		Intent intent = new Intent(this, TripActivity.class)
 				.putExtra("tripId", sts.tripId)
 				.putExtra("start", sts.departTime.getTimeInMillis())

@@ -1,14 +1,13 @@
 package com.happytap.schedule.module;
 
-import roboguice.config.AbstractAndroidModule;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.inject.AbstractModule;
 import com.happytap.schedule.provider.SQLiteDatabaseProvider;
 
-public class ScheduleModule extends AbstractAndroidModule {
+public class ScheduleModule extends AbstractModule {
 
-	
-	
+
 	@Override
 	protected void configure() {
 		

@@ -1,13 +1,13 @@
 package com.happytap.schedule.provider;
 
+import roboguice.inject.ContextSingleton;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Singleton;
 import com.happytap.schedule.database.DatabaseHelper;
 
-@Singleton
+@ContextSingleton
 public class SQLiteDatabaseProvider implements Provider<SQLiteDatabase> {
 
 	@Inject

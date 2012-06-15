@@ -8,8 +8,12 @@ import com.happytap.schedule.domain.Schedule;
 @Singleton
 public class CurrentScheduleProvider implements Provider<Schedule> {
 
-	public Schedule schedule;
+	private Schedule schedule;
 	
+	public void setSchedule(Schedule schedule) {		
+		this.schedule = schedule;
+	}
+
 	@Inject
 	public CurrentScheduleProvider() {
 		

@@ -34,6 +34,8 @@ public class LoadScheduleActivity extends RoboActivity {
 	
 	private Messenger mService = null;
 	
+	Double fare;
+	
 	boolean mIsBound;
 	
 	@Inject
@@ -68,17 +70,15 @@ public class LoadScheduleActivity extends RoboActivity {
 	public static final String ARRIVAL_STATION = "arrival_station";
 	public static final String DEPARTURE_ID = "departure_id";
 	public static final String ARRIVAL_ID = "arrival_id";
+	public static final String FARE = "fare";
 	public static final String DEPARTURE_DATE_START = "departure_date_start";
 	public static final String DEPARTURE_DATE_END = "departure_date_end";
 	
 	private AdView adView;
 	
-private static DecimalFormat df = new DecimalFormat("$0.00");
+public static DecimalFormat df = new DecimalFormat("$0.00");
 	
 	private AsyncTask<Void,Void,Void> task = new AsyncTask<Void,Void,Void>() {
-		
-		Double fare;
-	
 		
 		@Override
 		protected Void doInBackground(Void... arg0) {
@@ -179,7 +179,8 @@ private static DecimalFormat df = new DecimalFormat("$0.00");
                 		intent.putExtra(DEPARTURE_ID, getIntent().getStringExtra(StationToStationActivity.DEPARTURE_ID));
                 		intent.putExtra(ARRIVAL_ID, getIntent().getStringExtra(StationToStationActivity.ARRIVAL_ID));
                 		Schedule schedule = (Schedule)obj;
-                		scheduleProvider.schedule = schedule;
+                		scheduleProvider.setSchedule(schedule);
+                		intent.putExtra(FARE,fare);
                 		startActivity(intent);
                 		finish();
         			};
@@ -220,7 +221,11 @@ private static DecimalFormat df = new DecimalFormat("$0.00");
     }
     
 	private boolean showAds() {
-		return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("showAds", true);
+		if(getResources().getBoolean(R.bool.paidApp)) {
+			return false;
+		}
+		return 
+				PreferenceManager.getDefaultSharedPreferences(this).getBoolean("showAds", true);
 	}
 
 	private void setShowAds(boolean show) {

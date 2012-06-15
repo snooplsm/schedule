@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 
+import roboguice.inject.ContextSingleton;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,10 +23,9 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.njtransit.rail.R;
 
-@Singleton
+@ContextSingleton
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private Context context;

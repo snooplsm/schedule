@@ -1,5 +1,6 @@
 import networkx as networkx
 from datetime import datetime
+from datetime import timedelta
 import time as tk
 import sys
 import sqlite3
@@ -315,7 +316,6 @@ def buildGraph(agencies) :
 				name = routeShortName
 			routes[routeId] = {"label":name,"id":routeId}
 			c.execute("INSERT INTO route(route_id,name) values(?,?)",(routeId,name))
-			c.close()
 		conn.commit()
 		serviceReader = csv.reader(open(folder+"/calendar_dates.txt","rb"))
 		headers = {}
@@ -326,14 +326,81 @@ def buildGraph(agencies) :
 		serviceIdPos = headers["service_id"]
 		date = headers["date"]
 		exceptionType = headers["exception_type"]
+		dateServices = []
 #		print headers
 		for row in serviceReader:
-			if len(row)==0:
+			if(len(row)!=3):
 				continue
+			service = {}
+			service["id"] = row[serviceIdPos]
+			service["date"] = row[date]
+			service["exceptionType"] = row[exceptionType]
+			dateServices.append(service)
 			c.execute("INSERT INTO service(service_id,date) values(?,?)",(prepend+row[serviceIdPos],row[date]))
-			c.close()
 		conn.commit()
-	
+		# if os.path.exists(folder+"/calendar.txt"):
+		# 	calServices = []
+		# 	serviceReader = csv.reader(open(folder+"/calendar.txt","rb"))
+		# 	headers = {}
+		# 	for row in serviceReader:
+		# 		for i in range(len(row)):
+		# 			headers[row[i].lower().split(" ")[0]] = i
+		# 		break
+		# 	serviceIdPos = headers["service_id"]	
+		# 	mondayPos = headers["monday"]
+		# 	tuesdayPos = headers["tuesday"]
+		# 	wednesdayPos = headers["wednesday"]
+		# 	thursdayPos = headers["thursday"]
+		# 	fridayPos = headers["friday"]
+		# 	saturdayPos = headers["saturday"]
+		# 	sundayPos = headers["sunday"]
+		# 	startPos = headers["start_date"]
+		# 	endPos = headers["end_date"]
+		# 	newServices = []
+		# 	for row in serviceReader:
+		# 		startDate = datetime.strptime(row[startPos],"%Y%m%d")
+		# 		endDate = datetime.strptime(row[endPos],"%Y%m%d")
+		# 		print startDate,endDate
+		# 		curr = startDate					
+		# 		while(tk.mktime(curr.timetuple()) <= tk.mktime(endDate.timetuple())):
+		# 			print curr						
+		# 			day = curr.isoweekday()
+		# 			if(day==1 and row[mondayPos]=="1"
+		# 			or day==2 and row[tuesdayPos]=="1"
+		# 			or day==3 and row[wednesdayPos]=="1"
+		# 			or day==4 and row[thursdayPos]=="1"
+		# 			or day==5 and row[fridayPos]=="1"
+		# 			or day==6 and row[saturdayPos]=="1"
+		# 			or day==7 and row[sundayPos]=="1"):
+		# 				s = {}
+		# 				s["id"] = row[serviceIdPos]
+		# 				s["date"] = curr.strftime("%Y%m%d")
+		# 				s["exceptionType"] = "1"
+		# 				newServices.append(s)
+		# 			curr += timedelta(days=1)
+		# 		calServices.append(newServices)
+		# for dateService in dateServices:
+		# 	if dateService["exceptionType"]=="2":
+		# 		print len(newServices)
+		# 		todelete = []				
+		# 		for k in range(0,len(newServices)):
+		# 			check = newServices[k]					
+		# 			if(check["id"]==dateService["id"] and check["date"]==dateService["date"]):
+		# 				todelete.append(k)
+		# 		print todelete
+		# 		todelete.reverse()
+		# 		print todelete
+		# 		raw_input("wha?")
+		# 		for k in range(0, len(todelete)):
+		# 			print len(newServices)
+		# 			raw_input("deleting "+str(todelete[k]))
+		# 			del newServices[todelete[k]]
+#		dateServices.extend(newServices)
+#		for service in dateServices:
+#			c.execute("INSERT INTO service(service_id,date) values(?,?)",(service["id"],service["date"]))
+#		conn.commit()
+#		print dateServices
+#		raw_input("ok")
 		tripReader = csv.reader(open(folder+"/trips.txt","rb"))
 		headers = {}
 		for row in tripReader:
@@ -400,6 +467,7 @@ def buildGraph(agencies) :
 			else:
 				stops = tripToStops[tripId]
 			stops.insert(int(sequence),stop)
+	print stations
 	for tripId in tripToStops:
 		stops = tripToStops[tripId]
 		trip = trips[tripId]
@@ -555,7 +623,6 @@ def buildGraph(agencies) :
 					transferedges[fromStop][toStopId] = minTransferTime
 #					print fromStopId,toStopId,minTransferTime
 					c.execute("INSERT INTO transfer_edge(source,target,duration) values(?,?,?)",(fromStopId,toStopId,minTransferTime))
-					c.close()				
 			conn.commit()				
 		else:
 			count = 0
@@ -598,7 +665,6 @@ def buildGraph(agencies) :
 #						G[fromId][toId]["routes"]["walk2"] = round(dist*1.389)
 						walks.append((fromId,toId))
 						c.execute("INSERT INTO transfer_edge(source,target,duration) values(?,?,?)",(fromId,toId,int(round(dist/1.389))))
-						c.close()
 			conn.commit()
 			metersPerSecond = 1.389
 	print "ok"
@@ -651,8 +717,8 @@ def buildGraph(agencies) :
 							H.add_edge(route,sRoute,{"weight":weight})
 	print "strongly connected stations: ",networkx.algorithms.components.strongly_connected.number_strongly_connected_components(G)
 	print "strongly connected routes: ",networkx.algorithms.components.strongly_connected.number_strongly_connected_components(H)
-	draw(G,"stations_after.dot")
-	draw(H,"routes_after.dot")
+#	draw(G,"stations_after.dot")
+#	draw(H,"routes_after.dot")
 #	raw_input("k?")			
 #	print "all pairs shortest paths routes"
 	paths = networkx.algorithms.shortest_paths.weighted.all_pairs_dijkstra_path(H)
@@ -661,7 +727,6 @@ def buildGraph(agencies) :
 		for target in paths[source]:
 			nodes = ",".join(paths[source][target][1:len(paths[source][target])-1])
 			c.execute("INSERT INTO shortest_route_path(source,target,nodes,hop_count) values(?,?,?,?)",(source,target,nodes,len(paths[source][target])))
-			c.close()
 		conn.commit()
 	for stationKey in stations:
 		if stationKey not in stopRoutes:
@@ -669,7 +734,6 @@ def buildGraph(agencies) :
 		else:
 			for route in stopRoutes[stationKey]:
 				c.execute("INSERT INTO station_route(station,route) values(?,?)",(stationKey,route))
-				c.close()
 		conn.commit()
 				
 	polymap(minLat,minLon,maxLat,maxLon,stations,walks,None,True)
@@ -701,7 +765,6 @@ def buildGraph(agencies) :
 				day = ahour / 24 + 1
 			arriveTime = datetime(1970,1,day,ahour%24,amin,asec)
 			c.execute("INSERT INTO nested_trip(lft,rgt,trip_id,service_id,stop_id,depart,arrive,block_id,route_id) values(?,?,?,?,?,?,?,?,?)",(id+1,len(tripToStops[tripId]),tripId,trip["service_id"],stop["id"],stop["depart"],stop["arrive"],trip["block_id"],trip["route_id"]))
-			c.close()
 			lastStation = stop
 		conn.commit()
 		for id in ids:
@@ -730,7 +793,7 @@ def buildGraph(agencies) :
 					if stationB in paths[stationA]:
 						shortestPath = paths[stationA][stationB]
 						pathLength = len(shortestPath)
-						if(pathLength>1):
+						if(pathLength>1 and stationA in stopRoutes and stationB in stopRoutes):
 							aRoutes = stopRoutes[stationA]
 							bRoutes = stopRoutes[stationB]
 							minRouteLength = sys.maxint
@@ -804,7 +867,6 @@ def buildGraph(agencies) :
 									a = stationsToUse[index][0]
 									b = stationsToUse[index][1]
 									c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",(source,target,a,b,level,index))
-									c.close()
 							# indent = 1
 							# print stations[stationA]["name"],stations[stationB]["name"]
 							# for x,y in stationsToUse:
@@ -818,7 +880,6 @@ def buildGraph(agencies) :
 	for stop in stations:
 		stop = stations[stop]
 		c.execute("INSERT INTO stop(name,stop_id,lat,lon) values(?,?,?,?)",(stop["name"],stop["id"],stop["lat"],stop["lon"]))
-		c.close()
 	conn.commit()
 	return (prepend,G,H,stations,walks,stopRoutes,tripToStops)
 shutil.rmtree("target",True)
@@ -914,7 +975,6 @@ c.execute("""CREATE TABLE IF NOT EXISTS fares (
 
 
 conn.commit()
-c.close()
 results = [buildGraph([("gtfs/njtransit","")])]
 conn2 = sqlite3.connect("fares.db")
 conn.row_factory = dict_factory
@@ -922,7 +982,6 @@ c2 = conn2.cursor()
 c2.execute("select * from fares")
 for r in c2.fetchall():
 	c.execute("INSERT INTO fares(source,target,adult,child,senior,disabled,weekly,ten_trip,monthly,student_monthly) values(:source,:target,:adult,:child,:senior,:disabled,:weekly,:ten_trip,:monthly,:student_monthly)",r)
-	c.close()
 	conn.commit()
 # ,buildGraph([("gtfs/septa","s")]),buildGraph([("gtfs/lirr","l")]),buildGraph([("gtfs/metro-north","m")])]
 agencywalks = []
@@ -945,7 +1004,6 @@ for agency,G,H,stations,walks,stopRoutes,tripToStops in results:
 					if D.has_edge(agency,agencyp)==False:
 						D.add_edge(agency,agencyp)						
 					c.execute("INSERT INTO agency_transfer_edge(agency_source,agency_target,source,target,duration) values(?,?,?,?,?)",(agency,agencyp,station["id"],stationp["id"],int(round(dist*1.389))))
-					c.close()				
 		conn.commit()				
 paths = networkx.algorithms.shortest_paths.unweighted.all_pairs_shortest_path(D)
 #print paths
