@@ -1,8 +1,6 @@
 package com.happytap.schedule.activity;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import roboguice.inject.InjectView;
@@ -15,7 +13,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,13 +21,14 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -323,7 +321,84 @@ public class StationToStationActivity extends ScheduleActivity implements
 //		purchases = menu.add("Remove Ads");
 //		return true;
 //	}
+	
+	com.actionbarsherlock.view.MenuItem rates,emails,purchase,shares,reverse;
+	@Override
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+		reverse = menu.add("Reverse").setIcon(R.drawable.ic_refresh);
+		reverse.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		shares = menu.add("Share").setIcon(R.drawable.ic_share);
+		shares.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		rates = menu.add("Rate").setIcon(R.drawable.ic_star);
+		rates.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		emails = menu.add("Email us for help").setIcon(R.drawable.ic_help);
+		emails.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		return super.onCreateOptionsMenu(menu);
+		
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(
+			com.actionbarsherlock.view.MenuItem item) {
+		if(item.equals(reverse)) {
+			reverse();
+		}
+		if(item.equals(shares)) {
+			share();
+		}
+		if(item.equals(rates)) {
+			rate();
+		}
+		if(item.equals(emails)) {
+			email();
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	private void rate() {
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(
+				R.string.marketUrl, getPackageName())));
+		startActivity(intent);
+	}
+	
+	private void email() {
+		Intent i = new Intent(Intent.ACTION_SEND);
+		i.setType("plain/text");
+		i.putExtra(Intent.EXTRA_EMAIL,
+				new String[] { "njtransitrail-feedback@wmwm.us" });
+		StringBuilder b = new StringBuilder("NJTransit Rail Feedback "
+				+ getIntent().getStringExtra(DEPARTURE_STATION) + " : "
+				+ getIntent().getStringExtra(ARRIVAL_STATION));
+		try {
+			b.append(" version:"
+					+ getPackageManager().getPackageInfo(getPackageName(),
+							0).versionName);
+		} catch (Exception e) {
 
+		}
+		i.putExtra(Intent.EXTRA_SUBJECT, b.toString());
+		i.putExtra(Intent.EXTRA_TEXT, "");			
+		if(getPackageManager().resolveActivity(i, 0)!=null) {
+			startActivity(i);
+		} else {
+			Toast.makeText(this, "Sorry, you do not have an email client on your device.  Email us@wmwm.us", Toast.LENGTH_LONG).show();
+		}
+		
+	}
+	
+
+	private void share() {
+		Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+		String depart = getIntent().getStringExtra(DEPARTURE_STATION);
+		String arrive = getIntent().getStringExtra(ARRIVAL_STATION);
+		shareIntent.setType("text/plain");
+		shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, depart
+				+ " to " + arrive + " " + currentItemDescription);
+		shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, depart
+				+ " to " + arrive + " " + currentItemDescription);
+		startActivity(Intent.createChooser(shareIntent, "Share"));
+	}
+	
 	private String mPayloadContents = null;
 
 	private void showPayloadEditDialog() {
@@ -354,113 +429,113 @@ public class StationToStationActivity extends ScheduleActivity implements
 //		return true;
 //	}
 
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		if (item.equals(shareItem)) {
-			Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-			shareIntent.setType("text/plain");
-			Resources r = getResources();
-			String url = r.getString(R.string.application_url);
-			String name = r.getString(R.string.app_name);
-			String date = new SimpleDateFormat("MMMM dd, yyyy")
-					.format(schedule.end);
-			String depart = getIntent().getStringExtra(DEPARTURE_STATION);
-			String arrive = getIntent().getStringExtra(ARRIVAL_STATION);
-			shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "["
-					+ name + "] " + depart + " to " + arrive + " " + date);
-			StringBuilder b = new StringBuilder();
-			b.append(depart + " to " + arrive + " for " + date).append("\n\n");
-			ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
-			DateFormat df = new SimpleDateFormat("MM/dd/yy");
-			boolean tomorrow = false;
-			for (int i = 0; i < adapter.getCount(); i++) {
-				StationToStation sts = adapter.getItem(i);
-				if (!DateUtils.isToday(sts.departTime)) {
-					if (!tomorrow) {
-						b.append('\n');
-					}
-					tomorrow = true;
-				}
-				b.append(ScheduleAdapter.time(sts));
-				if (!DateUtils.isToday(sts.departTime)) {
-					b.append(" (").append(df.format(sts.departTime.getTime()))
-							.append(")");
-				}
-				b.append('\n');
-			}
-			shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,
-					b.toString());
-			startActivity(Intent.createChooser(shareIntent, "Share"));
-			return true;
-		}
-		if (item.equals(share)) {
-			Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-			String depart = getIntent().getStringExtra(DEPARTURE_STATION);
-			String arrive = getIntent().getStringExtra(ARRIVAL_STATION);
-			shareIntent.setType("text/plain");
-			shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, depart
-					+ " to " + arrive + " " + currentItemDescription);
-			shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, depart
-					+ " to " + arrive + " " + currentItemDescription);
-			startActivity(Intent.createChooser(shareIntent, "Share"));
-			return true;
-		}		
-		if (item.equals(alarmArrive)) {
-			showDialog(DIALOG_ARRIVE);
-			return true;
-		}
-		if (item.equals(alarmDepart)) {
-			showDialog(DIALOG_DEPART);
-			return true;
-		}
-		if (item.equals(rate)) {
-			Intent intent = new Intent(Intent.ACTION_VIEW,
-					Uri.parse(getString(R.string.marketUrl,getPackageName())));
-			startActivity(intent);
-			return true;
-		}
-		if (item.equals(email)) {
-			Intent i = new Intent(Intent.ACTION_SEND);
-			i.setType("plain/text");
-			i.putExtra(Intent.EXTRA_EMAIL,
-					new String[] { "njtransitrail-feedback@wmwm.us" });
-			StringBuilder b = new StringBuilder("NJTransit Rail Feedback "
-					+ getIntent().getStringExtra(DEPARTURE_STATION) + " : "
-					+ getIntent().getStringExtra(ARRIVAL_STATION));
-			try {
-				b.append(" version:"
-						+ getPackageManager().getPackageInfo(getPackageName(),
-								0).versionName);
-			} catch (Exception e) {
-
-			}
-			i.putExtra(Intent.EXTRA_SUBJECT, b.toString());
-			i.putExtra(Intent.EXTRA_TEXT, "");			
-			if(getPackageManager().resolveActivity(i, 0)!=null) {
-				startActivity(i);
-			} else {
-				Toast.makeText(this, "Sorry, you do not have an email client on your device.  Email us@wmwm.us", Toast.LENGTH_LONG).show();
-			}
-			
-			return true;
-		}
-		if (item.equals(clearAlarm)) {
-			getAdapter().setTripIdForAlarm(null);
-			String ns = Context.NOTIFICATION_SERVICE;
-			NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
-			mNotificationManager.cancel(1);
-			Intent intent = new Intent(StationToStationActivity.this,
-					AlarmActivity.class);
-			PendingIntent pi = PendingIntent.getActivity(
-					StationToStationActivity.this, 1, intent, 0);
-			alarmManager.cancel(pi);
-			adapter.notifyDataSetChanged();
-		}
-		if (item.equals(purchases)) {
-			showPayloadEditDialog();
-		}
-		return false;
-	}
+//	@Override
+//	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+//		if (item.equals(shareItem)) {
+//			Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+//			shareIntent.setType("text/plain");
+//			Resources r = getResources();
+//			String url = r.getString(R.string.application_url);
+//			String name = r.getString(R.string.app_name);
+//			String date = new SimpleDateFormat("MMMM dd, yyyy")
+//					.format(schedule.end);
+//			String depart = getIntent().getStringExtra(DEPARTURE_STATION);
+//			String arrive = getIntent().getStringExtra(ARRIVAL_STATION);
+//			shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "["
+//					+ name + "] " + depart + " to " + arrive + " " + date);
+//			StringBuilder b = new StringBuilder();
+//			b.append(depart + " to " + arrive + " for " + date).append("\n\n");
+//			ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
+//			DateFormat df = new SimpleDateFormat("MM/dd/yy");
+//			boolean tomorrow = false;
+//			for (int i = 0; i < adapter.getCount(); i++) {
+//				StationToStation sts = adapter.getItem(i);
+//				if (!DateUtils.isToday(sts.departTime)) {
+//					if (!tomorrow) {
+//						b.append('\n');
+//					}
+//					tomorrow = true;
+//				}
+//				b.append(ScheduleAdapter.time(sts));
+//				if (!DateUtils.isToday(sts.departTime)) {
+//					b.append(" (").append(df.format(sts.departTime.getTime()))
+//							.append(")");
+//				}
+//				b.append('\n');
+//			}
+//			shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,
+//					b.toString());
+//			startActivity(Intent.createChooser(shareIntent, "Share"));
+//			return true;
+//		}
+//		if (item.equals(share)) {
+//			Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+//			String depart = getIntent().getStringExtra(DEPARTURE_STATION);
+//			String arrive = getIntent().getStringExtra(ARRIVAL_STATION);
+//			shareIntent.setType("text/plain");
+//			shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, depart
+//					+ " to " + arrive + " " + currentItemDescription);
+//			shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, depart
+//					+ " to " + arrive + " " + currentItemDescription);
+//			startActivity(Intent.createChooser(shareIntent, "Share"));
+//			return true;
+//		}		
+//		if (item.equals(alarmArrive)) {
+//			showDialog(DIALOG_ARRIVE);
+//			return true;
+//		}
+//		if (item.equals(alarmDepart)) {
+//			showDialog(DIALOG_DEPART);
+//			return true;
+//		}
+//		if (item.equals(rate)) {
+//			Intent intent = new Intent(Intent.ACTION_VIEW,
+//					Uri.parse(getString(R.string.marketUrl,getPackageName())));
+//			startActivity(intent);
+//			return true;
+//		}
+//		if (item.equals(email)) {
+//			Intent i = new Intent(Intent.ACTION_SEND);
+//			i.setType("plain/text");
+//			i.putExtra(Intent.EXTRA_EMAIL,
+//					new String[] { "njtransitrail-feedback@wmwm.us" });
+//			StringBuilder b = new StringBuilder("NJTransit Rail Feedback "
+//					+ getIntent().getStringExtra(DEPARTURE_STATION) + " : "
+//					+ getIntent().getStringExtra(ARRIVAL_STATION));
+//			try {
+//				b.append(" version:"
+//						+ getPackageManager().getPackageInfo(getPackageName(),
+//								0).versionName);
+//			} catch (Exception e) {
+//
+//			}
+//			i.putExtra(Intent.EXTRA_SUBJECT, b.toString());
+//			i.putExtra(Intent.EXTRA_TEXT, "");			
+//			if(getPackageManager().resolveActivity(i, 0)!=null) {
+//				startActivity(i);
+//			} else {
+//				Toast.makeText(this, "Sorry, you do not have an email client on your device.  Email us@wmwm.us", Toast.LENGTH_LONG).show();
+//			}
+//			
+//			return true;
+//		}
+//		if (item.equals(clearAlarm)) {
+//			getAdapter().setTripIdForAlarm(null);
+//			String ns = Context.NOTIFICATION_SERVICE;
+//			NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+//			mNotificationManager.cancel(1);
+//			Intent intent = new Intent(StationToStationActivity.this,
+//					AlarmActivity.class);
+//			PendingIntent pi = PendingIntent.getActivity(
+//					StationToStationActivity.this, 1, intent, 0);
+//			alarmManager.cancel(pi);
+//			adapter.notifyDataSetChanged();
+//		}
+//		if (item.equals(purchases)) {
+//			showPayloadEditDialog();
+//		}
+//		return false;
+//	}
 
 	private void initializeOwnedItems() {
 		new Thread(new Runnable() {
@@ -515,8 +590,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 		//setTheme(android.R.style.Theme_Light_NoTitleBar);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.station_to_station);
-		this.getSupportActionBar().setSubtitle(getIntent().getStringExtra(DEPARTURE_STATION) + " to " + getIntent().getStringExtra(ARRIVAL_STATION));
-		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		this.getSupportActionBar().setSubtitle(getIntent().getStringExtra(DEPARTURE_STATION) + " \nto\n" + getIntent().getStringExtra(ARRIVAL_STATION));
+		//getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mBillingService = new BillingService();
 		mBillingService.setContext(this);
@@ -546,7 +621,10 @@ public class StationToStationActivity extends ScheduleActivity implements
 			if (rand == 1) {
 				adLayout.addView(orAd);
 			}
-			adLayout.addView(adView);
+			adView.setGravity(Gravity.CENTER);
+			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+			lp.gravity = Gravity.CENTER;//
+			adLayout.addView(adView,lp);
 			adView.loadAd(req);
 			adView.setAdListener(new AdListener() {
 
@@ -852,6 +930,53 @@ public class StationToStationActivity extends ScheduleActivity implements
 		return (ScheduleAdapter) listView.getAdapter();
 	}
 
+	private void reverse() {
+		boolean departureVision = useDepartureVision();
+		if (departureVision) {
+			departureVisionTask.cancel(true);
+		}
+		if (schedule.transfers.length == 1) {
+			String temp = departureText;
+			departureText = arrivalText;
+			arrivalText = temp;
+			String temp2 = departureStopId;
+			departureStopId = arrivalStopId;
+			arrivalStopId = temp2;
+			getSupportActionBar().setSubtitle(departureText + " to " + arrivalText);
+			getAdapter().reverse();
+			int index = getAdapter().findIndexOfCurrent();
+			if (index > 0) {
+				listView.setSelectionFromTop(index - 1, 0);
+			}
+			if (departureVision) {
+				departureVisionTask = newDepartureVisionTask();
+				departureVisionTask.execute();
+			}
+			return;
+		}
+		Intent intent = new Intent(StationToStationActivity.this,
+				LoadScheduleActivity.class);
+		intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION,
+				arrivalText);
+		intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION,
+				departureText);
+		Calendar c = Calendar.getInstance();
+		c.setTime(schedule.start);
+		intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_START, c);
+		intent.putExtra(LoadScheduleActivity.DEPARTURE_ID, arrivalStopId);
+		intent.putExtra(LoadScheduleActivity.ARRIVAL_ID, departureStopId);
+		if (DateUtils.isToday(c)) {
+			Calendar tom = Calendar.getInstance();
+			tom.setTimeInMillis(c.getTimeInMillis());
+			tom.add(Calendar.DAY_OF_YEAR, 1);
+			intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_END, tom);
+		} else {
+			intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_END, c);
+		}
+		startActivity(intent);
+
+	}
+	
 	@Override
 	public void onClick(View arg0) {
 		boolean departureVision = useDepartureVision();

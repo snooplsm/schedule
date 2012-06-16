@@ -10,7 +10,7 @@ public class SchedulePreferenceActivity extends SherlockPreferenceActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		setTheme(R.style.Theme_Sherlock);
+		setTheme(R.style.OrangeTheme);
 		super.onCreate(savedInstanceState);
 		//PreferenceManager.setDefaultValues(this, R.xml.preference, false);
 		//getSupportActionBar().set
