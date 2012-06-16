@@ -141,10 +141,10 @@ this.context = context;
 			connections.setText("");
 			fare.setText("Fare: " + LoadScheduleActivity.df.format(this.fare));
 			fare.setVisibility(View.VISIBLE);
-			v.setClickable(false);
+			//v.setClickable(false);
 			return v;
 		} else {
-			v.setClickable(true);
+			//v.setClickable(true);
 			fare.setVisibility(View.GONE);
 			v.setId(View.NO_ID);
 		}

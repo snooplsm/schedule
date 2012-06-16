@@ -47,12 +47,6 @@ public class TripActivity extends ScheduleActivity {
 	@Inject
 	CurrentScheduleProvider provider;
 
-	@InjectView(R.id.departureText)
-	TextView departureText;
-
-	@InjectView(R.id.arrivalText)
-	TextView arrivalText;
-
 	@Inject
 	ScheduleDao dao;
 
@@ -95,8 +89,8 @@ public class TripActivity extends ScheduleActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		setTheme(android.R.style.Theme_Light_NoTitleBar);
 		super.onCreate(savedInstanceState);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.station_to_station);
 		if (showAds()) {
 			adView = new AdView(this, AdSize.BANNER,
@@ -146,6 +140,8 @@ public class TripActivity extends ScheduleActivity {
 		if (savedInstanceState == null) {
 			String id = getIntent().getStringExtra("tripId");
 			schedule = provider.get();
+			getSupportActionBar().setTitle("Trip #" + id);
+			getSupportActionBar().setSubtitle(schedule.stopIdToName.get(schedule.departId) + " to " + schedule.stopIdToName.get(schedule.arriveId));
 
 			StationInterval interval = schedule.getStationIntervalForTripId(id);
 			Stack<StationInterval> intervals = new Stack<StationInterval>();
@@ -162,7 +158,7 @@ public class TripActivity extends ScheduleActivity {
 				if (interval.hasNext()) {
 					intervals.push(interval.next());
 				}
-				System.out.println(stops);
+				//System.out.println(stops);
 			}
 			start = getIntent().getLongExtra("start", 0);
 			Calendar startCal = Calendar.getInstance();
@@ -217,8 +213,6 @@ public class TripActivity extends ScheduleActivity {
 		// adapter.add(stop);
 		// }
 		// }
-		departureText.setText(schedule.stopIdToName.get(schedule.departId));
-		arrivalText.setText(schedule.stopIdToName.get(schedule.arriveId));
 
 	}
 	

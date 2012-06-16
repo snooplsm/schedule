@@ -1,6 +1,8 @@
 package com.happytap.schedule.activity;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import roboguice.inject.InjectView;
@@ -13,12 +15,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
@@ -29,11 +34,14 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.view.ActionProvider;
 import com.actionbarsherlock.view.Menu;
 import com.google.ads.Ad;
 import com.google.ads.AdListener;
@@ -333,9 +341,40 @@ public class StationToStationActivity extends ScheduleActivity implements
 		reverse.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		shares = menu.add("Share").setIcon(R.drawable.ic_share);
 		shares.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		//ShareActionProvider actionProvider = new ShareActionProvider(this);
+		
+		shares.setActionProvider(new ActionProvider(this) {
+
+			@Override
+			public boolean hasSubMenu() {
+				return true;
+			}
+			
+			@Override
+			public View onCreateActionView() {
+				// TODO Auto-generated method stub
+		        TypedValue outTypedValue = new TypedValue();
+		        StationToStationActivity.this.getTheme().resolveAttribute(R.attr.actionModeShareDrawable, outTypedValue, true);
+		        Drawable drawable = StationToStationActivity.this.getResources().getDrawable(outTypedValue.resourceId);
+		        RelativeLayout l = new RelativeLayout(StationToStationActivity.this);
+		        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		        ImageView v = new ImageView(StationToStationActivity.this);
+		        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		        v.setImageDrawable(drawable);
+		        l.addView(v,lp);
+				return l;
+			}
+			
+		});
+		//shares.
+        //actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+        // Note that you can set/change the intent any time,
+        // say when the user has selected an image.
+        //actionProvider.setShareIntent(share());
 		rates = menu.add("Rate").setIcon(R.drawable.ic_star);
 		rates.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		emails = menu.add("Email us for help").setIcon(R.drawable.ic_help);
+		emails = menu.add("Email us for help").setIcon(R.drawable.ic_email);
 		emails.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		purchase = menu.add("Purchases").setIcon(R.drawable.ic_action_dollar);
 		purchase.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -349,14 +388,17 @@ public class StationToStationActivity extends ScheduleActivity implements
 		if (item.equals(reverse)) {
 			reverse();
 		}
-		if (item.equals(shares)) {
-			share();
-		}
+//		if (item.equals(shares)) {
+//			share();
+//		}
 		if (item.equals(rates)) {
 			rate();
 		}
 		if (item.equals(emails)) {
 			email();
+		}
+		if (item.equals(purchase)) {
+			showPayloadEditDialog();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -394,16 +436,44 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	}
 
-	private void share() {
+	private Intent share() {
 		Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+		shareIntent.setType("text/plain");
+		Resources r = getResources();
+		String url = r.getString(R.string.application_url);
+		String name = r.getString(R.string.app_name);
+		String date = new SimpleDateFormat("MMMM dd, yyyy")
+				.format(schedule.end);
 		String depart = getIntent().getStringExtra(DEPARTURE_STATION);
 		String arrive = getIntent().getStringExtra(ARRIVAL_STATION);
-		shareIntent.setType("text/plain");
-		shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, depart
-				+ " to " + arrive + " " + currentItemDescription);
-		shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, depart + " to "
-				+ arrive + " " + currentItemDescription);
-		startActivity(Intent.createChooser(shareIntent, "Share"));
+		shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "[" + name
+				+ "] " + depart + " to " + arrive + " " + date);
+		StringBuilder b = new StringBuilder();
+		b.append(depart + " to " + arrive + " for " + date).append("\n\n");
+		ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
+		DateFormat df = new SimpleDateFormat("MM/dd/yy");
+		boolean tomorrow = false;
+		for (int i = 0; i < adapter.getCount(); i++) {
+			StationToStation sts = adapter.getItem(i);
+			if(sts==null) {
+				continue;
+			}
+			if (!DateUtils.isToday(sts.departTime)) {
+				if (!tomorrow) {
+					b.append('\n');
+				}
+				tomorrow = true;
+			}
+			b.append(ScheduleAdapter.time(sts));
+			if (!DateUtils.isToday(sts.departTime)) {
+				b.append(" (").append(df.format(sts.departTime.getTime()))
+						.append(")");
+			}
+			b.append('\n');
+		}
+		shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, b.toString());
+		return shareIntent;
+		//startActivity(Intent.createChooser(shareIntent, "Share"));
 	}
 
 	private String mPayloadContents = null;
@@ -428,7 +498,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 					clearAlarm.setVisible(false);
 				}
 			}
-			if(purchase!=null) {
+			if (purchase != null) {
 				purchase.setVisible(showAds());
 			}
 		} else {

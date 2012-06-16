@@ -234,6 +234,7 @@ public class SplashScreenActivity extends ScheduleActivity {
 			protected void onPostExecute(Void result) {
 				if (!error) {
 					splashContainer.setVisibility(View.GONE);
+					getSupportActionBar().show();
 				} else {
 					percentage
 							.setText("Something has gone horribly wrong.  Is your disk full?  Uninstall and reinstall.");
@@ -553,8 +554,10 @@ public class SplashScreenActivity extends ScheduleActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getSupportActionBar().hide();
 		setContentView(R.layout.main);
-		
+		getSupportActionBar().setDisplayUseLogoEnabled(false);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.newjersey);
 		splashImage.setImageDrawable(svg.createPictureDrawable());
 		svg = SVGParser.getSVGFromResource(getResources(), R.raw.reload);
@@ -674,7 +677,7 @@ public class SplashScreenActivity extends ScheduleActivity {
 		prefs = menu.add("Preferences").setIcon(R.drawable.ic_settings);
 				prefs.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		abt = menu.add("About").setIcon(R.drawable.ic_about);
-				abt.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+				abt.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		return super.onCreateOptionsMenu(menu);		
 	}
 
