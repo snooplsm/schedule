@@ -1,6 +1,5 @@
 package com.happytap.schedule.activity;
 
-import roboguice.activity.RoboListActivity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +13,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.inject.Inject;
@@ -24,7 +25,7 @@ import com.happytap.schedule.adapter.StationAdapter;
 import com.happytap.schedule.database.StationDao;
 import com.njtransit.rail.R;
 
-public class StationListActivity extends RoboListActivity implements OnItemLongClickListener, OnItemClickListener, JumpListener {
+public class StationListActivity extends ScheduleActivity implements OnItemLongClickListener, OnItemClickListener, JumpListener {
 	
 	@Inject
 	SharedPreferences preferences;
@@ -53,11 +54,24 @@ public class StationListActivity extends RoboListActivity implements OnItemLongC
 		return super.onCreateDialog(id);
 	}
 	
+	private void setListAdapter(ListAdapter adapter) {
+		getListView().setAdapter(adapter);
+	}
+	
+	private ListAdapter getListAdapter() {
+		return getListView().getAdapter();
+	}
+	
+	private ListView getListView() {
+		return (ListView)findViewById(R.id.list);
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		setTheme(android.R.style.Theme_Light);
+		setContentView(R.layout.stations);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setTitle(getString(R.string.activity_title_stations));
 		setListAdapter(new StationAdapter(this, stationDao));
 		getListView().setOnItemLongClickListener(this);
 		getListView().setOnItemClickListener(this);
@@ -134,7 +148,7 @@ public class StationListActivity extends RoboListActivity implements OnItemLongC
 	@Override
 	public void onJump(Character c) {		
 		StationAdapter a = (StationAdapter)getListAdapter();
-		setSelection(a.findNearestPosition(c));
+		getListView().setSelection(a.findNearestPosition(c));
 	}
 	
 }

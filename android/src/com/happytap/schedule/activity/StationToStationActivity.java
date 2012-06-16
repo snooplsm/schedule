@@ -34,6 +34,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.view.Menu;
 import com.google.ads.Ad;
 import com.google.ads.AdListener;
 import com.google.ads.AdRequest;
@@ -123,17 +124,18 @@ public class StationToStationActivity extends ScheduleActivity implements
 	}
 
 	private boolean showAds() {
-		if(getResources().getBoolean(R.bool.paidApp)) {
+		if (getResources().getBoolean(R.bool.paidApp)) {
 			return false;
 		}
-		return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("showAds", true);
+		return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
+				"showAds", true);
 	}
 
 	private void setShowAds(boolean show) {
-		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("showAds", show)
-				.commit();
+		PreferenceManager.getDefaultSharedPreferences(this).edit()
+				.putBoolean("showAds", show).commit();
 	}
-	
+
 	boolean paused;
 
 	private AsyncTask<Void, Integer, Void> last;
@@ -206,7 +208,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 						}
 					}
 					if (abbreviatedName != null && abbreviatedName.length > 1) {
-						vision.startDepartures(schedule,abbreviatedName);
+						vision.startDepartures(schedule, abbreviatedName);
 					}
 				} catch (IOException e) {
 				}
@@ -258,7 +260,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 				restoreDatabase();
 			}
 		}
-		
+
 		private void restoreDatabase() {
 			mBillingService.restoreTransactions();
 		}
@@ -279,7 +281,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 					purchasedAdFree = false;
 				}
 			}
-			if(purchasedAdFree==false) {
+			if (purchasedAdFree == false) {
 				if ("remove.ads.subscription".equals(itemId)) {
 					if (purchaseState == PurchaseState.PURCHASED) {
 						purchasedAdFree = true;
@@ -294,7 +296,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 			}
 			onPurchaseStateChanged();
 		}
-		
+
 		@Override
 		public void onRequestPurchaseResponse(RequestPurchase request,
 				ResponseCode responseCode) {
@@ -309,20 +311,22 @@ public class StationToStationActivity extends ScheduleActivity implements
 		}
 	}
 
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		shareItem = menu.add("Share");
-//		shareItem.setIcon(getResources().getDrawable(
-//				android.R.drawable.ic_menu_share));
-//		rate = menu.add("Rate");
-//		rate.setIcon(R.drawable.ic_menu_star);
-//		email = menu.add("Email us");
-//		email.setIcon(android.R.drawable.ic_menu_send);
-//		purchases = menu.add("Remove Ads");
-//		return true;
-//	}
-	
-	com.actionbarsherlock.view.MenuItem rates,emails,purchase,shares,reverse;
+	// @Override
+	// public boolean onCreateOptionsMenu(Menu menu) {
+	// shareItem = menu.add("Share");
+	// shareItem.setIcon(getResources().getDrawable(
+	// android.R.drawable.ic_menu_share));
+	// rate = menu.add("Rate");
+	// rate.setIcon(R.drawable.ic_menu_star);
+	// email = menu.add("Email us");
+	// email.setIcon(android.R.drawable.ic_menu_send);
+	// purchases = menu.add("Remove Ads");
+	// return true;
+	// }
+
+	com.actionbarsherlock.view.MenuItem rates, emails, purchase, shares,
+			reverse;
+
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
 		reverse = menu.add("Reverse").setIcon(R.drawable.ic_refresh);
@@ -333,34 +337,36 @@ public class StationToStationActivity extends ScheduleActivity implements
 		rates.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		emails = menu.add("Email us for help").setIcon(R.drawable.ic_help);
 		emails.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		purchase = menu.add("Purchases").setIcon(R.drawable.ic_action_dollar);
+		purchase.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return super.onCreateOptionsMenu(menu);
-		
+
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
-		if(item.equals(reverse)) {
+		if (item.equals(reverse)) {
 			reverse();
 		}
-		if(item.equals(shares)) {
+		if (item.equals(shares)) {
 			share();
 		}
-		if(item.equals(rates)) {
+		if (item.equals(rates)) {
 			rate();
 		}
-		if(item.equals(emails)) {
+		if (item.equals(emails)) {
 			email();
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	private void rate() {
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(
 				R.string.marketUrl, getPackageName())));
 		startActivity(intent);
 	}
-	
+
 	private void email() {
 		Intent i = new Intent(Intent.ACTION_SEND);
 		i.setType("plain/text");
@@ -371,21 +377,22 @@ public class StationToStationActivity extends ScheduleActivity implements
 				+ getIntent().getStringExtra(ARRIVAL_STATION));
 		try {
 			b.append(" version:"
-					+ getPackageManager().getPackageInfo(getPackageName(),
-							0).versionName);
+					+ getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
 		} catch (Exception e) {
 
 		}
 		i.putExtra(Intent.EXTRA_SUBJECT, b.toString());
-		i.putExtra(Intent.EXTRA_TEXT, "");			
-		if(getPackageManager().resolveActivity(i, 0)!=null) {
+		i.putExtra(Intent.EXTRA_TEXT, "");
+		if (getPackageManager().resolveActivity(i, 0) != null) {
 			startActivity(i);
 		} else {
-			Toast.makeText(this, "Sorry, you do not have an email client on your device.  Email us@wmwm.us", Toast.LENGTH_LONG).show();
+			Toast.makeText(
+					this,
+					"Sorry, you do not have an email client on your device.  Email us@wmwm.us",
+					Toast.LENGTH_LONG).show();
 		}
-		
+
 	}
-	
 
 	private void share() {
 		Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
@@ -394,148 +401,177 @@ public class StationToStationActivity extends ScheduleActivity implements
 		shareIntent.setType("text/plain");
 		shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, depart
 				+ " to " + arrive + " " + currentItemDescription);
-		shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, depart
-				+ " to " + arrive + " " + currentItemDescription);
+		shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, depart + " to "
+				+ arrive + " " + currentItemDescription);
 		startActivity(Intent.createChooser(shareIntent, "Share"));
 	}
-	
+
 	private String mPayloadContents = null;
 
 	private void showPayloadEditDialog() {
 		// mBillingService.ch
-		mBillingService.requestPurchase("remove.ads.subscription", Consts.ITEM_TYPE_SUBSCRIPTION, null);
+		mBillingService.requestPurchase("remove.ads.subscription",
+				Consts.ITEM_TYPE_SUBSCRIPTION, null);
 	}
 
-//	@Override
-//	public boolean onPrepareOptionsMenu(Menu menu) {
-//		if (listView != null && listView.getAdapter() != null
-//				&& listView.getAdapter().getCount() > 0) {
-//			rate.setVisible(true);
-//			shareItem.setVisible(true);
-//			ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
-//			if (clearAlarm != null) {
-//				if (adapter.getTripIdForAlarm() != null) {
-//					clearAlarm.setVisible(true);
-//				} else {
-//					clearAlarm.setVisible(false);
-//				}
-//			}
-//			purchases.setVisible(showAds());
-//		} else {
-//
-//			shareItem.setVisible(false);
-//			rate.setVisible(false);
-//		}
-//		return true;
-//	}
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		if (listView != null && listView.getAdapter() != null
+				&& listView.getAdapter().getCount() > 0) {
+			rates.setVisible(true);
+			shares.setVisible(true);
+			ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
+			if (clearAlarm != null) {
+				if (adapter.getTripIdForAlarm() != null) {
+					clearAlarm.setVisible(true);
+				} else {
+					clearAlarm.setVisible(false);
+				}
+			}
+			if(purchase!=null) {
+				purchase.setVisible(showAds());
+			}
+		} else {
 
-//	@Override
-//	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-//		if (item.equals(shareItem)) {
-//			Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-//			shareIntent.setType("text/plain");
-//			Resources r = getResources();
-//			String url = r.getString(R.string.application_url);
-//			String name = r.getString(R.string.app_name);
-//			String date = new SimpleDateFormat("MMMM dd, yyyy")
-//					.format(schedule.end);
-//			String depart = getIntent().getStringExtra(DEPARTURE_STATION);
-//			String arrive = getIntent().getStringExtra(ARRIVAL_STATION);
-//			shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "["
-//					+ name + "] " + depart + " to " + arrive + " " + date);
-//			StringBuilder b = new StringBuilder();
-//			b.append(depart + " to " + arrive + " for " + date).append("\n\n");
-//			ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
-//			DateFormat df = new SimpleDateFormat("MM/dd/yy");
-//			boolean tomorrow = false;
-//			for (int i = 0; i < adapter.getCount(); i++) {
-//				StationToStation sts = adapter.getItem(i);
-//				if (!DateUtils.isToday(sts.departTime)) {
-//					if (!tomorrow) {
-//						b.append('\n');
-//					}
-//					tomorrow = true;
-//				}
-//				b.append(ScheduleAdapter.time(sts));
-//				if (!DateUtils.isToday(sts.departTime)) {
-//					b.append(" (").append(df.format(sts.departTime.getTime()))
-//							.append(")");
-//				}
-//				b.append('\n');
-//			}
-//			shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,
-//					b.toString());
-//			startActivity(Intent.createChooser(shareIntent, "Share"));
-//			return true;
-//		}
-//		if (item.equals(share)) {
-//			Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-//			String depart = getIntent().getStringExtra(DEPARTURE_STATION);
-//			String arrive = getIntent().getStringExtra(ARRIVAL_STATION);
-//			shareIntent.setType("text/plain");
-//			shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, depart
-//					+ " to " + arrive + " " + currentItemDescription);
-//			shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, depart
-//					+ " to " + arrive + " " + currentItemDescription);
-//			startActivity(Intent.createChooser(shareIntent, "Share"));
-//			return true;
-//		}		
-//		if (item.equals(alarmArrive)) {
-//			showDialog(DIALOG_ARRIVE);
-//			return true;
-//		}
-//		if (item.equals(alarmDepart)) {
-//			showDialog(DIALOG_DEPART);
-//			return true;
-//		}
-//		if (item.equals(rate)) {
-//			Intent intent = new Intent(Intent.ACTION_VIEW,
-//					Uri.parse(getString(R.string.marketUrl,getPackageName())));
-//			startActivity(intent);
-//			return true;
-//		}
-//		if (item.equals(email)) {
-//			Intent i = new Intent(Intent.ACTION_SEND);
-//			i.setType("plain/text");
-//			i.putExtra(Intent.EXTRA_EMAIL,
-//					new String[] { "njtransitrail-feedback@wmwm.us" });
-//			StringBuilder b = new StringBuilder("NJTransit Rail Feedback "
-//					+ getIntent().getStringExtra(DEPARTURE_STATION) + " : "
-//					+ getIntent().getStringExtra(ARRIVAL_STATION));
-//			try {
-//				b.append(" version:"
-//						+ getPackageManager().getPackageInfo(getPackageName(),
-//								0).versionName);
-//			} catch (Exception e) {
-//
-//			}
-//			i.putExtra(Intent.EXTRA_SUBJECT, b.toString());
-//			i.putExtra(Intent.EXTRA_TEXT, "");			
-//			if(getPackageManager().resolveActivity(i, 0)!=null) {
-//				startActivity(i);
-//			} else {
-//				Toast.makeText(this, "Sorry, you do not have an email client on your device.  Email us@wmwm.us", Toast.LENGTH_LONG).show();
-//			}
-//			
-//			return true;
-//		}
-//		if (item.equals(clearAlarm)) {
-//			getAdapter().setTripIdForAlarm(null);
-//			String ns = Context.NOTIFICATION_SERVICE;
-//			NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
-//			mNotificationManager.cancel(1);
-//			Intent intent = new Intent(StationToStationActivity.this,
-//					AlarmActivity.class);
-//			PendingIntent pi = PendingIntent.getActivity(
-//					StationToStationActivity.this, 1, intent, 0);
-//			alarmManager.cancel(pi);
-//			adapter.notifyDataSetChanged();
-//		}
-//		if (item.equals(purchases)) {
-//			showPayloadEditDialog();
-//		}
-//		return false;
-//	}
+			shares.setVisible(false);
+			rates.setVisible(false);
+		}
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	// @Override
+	// public boolean onPrepareOptionsMenu(Menu menu) {
+	// if (listView != null && listView.getAdapter() != null
+	// && listView.getAdapter().getCount() > 0) {
+	// rate.setVisible(true);
+	// shareItem.setVisible(true);
+	// ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
+	// if (clearAlarm != null) {
+	// if (adapter.getTripIdForAlarm() != null) {
+	// clearAlarm.setVisible(true);
+	// } else {
+	// clearAlarm.setVisible(false);
+	// }
+	// }
+	// purchases.setVisible(showAds());
+	// } else {
+	//
+	// shareItem.setVisible(false);
+	// rate.setVisible(false);
+	// }
+	// return true;
+	// }
+
+	// @Override
+	// public boolean onMenuItemSelected(int featureId, MenuItem item) {
+	// if (item.equals(shareItem)) {
+	// Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+	// shareIntent.setType("text/plain");
+	// Resources r = getResources();
+	// String url = r.getString(R.string.application_url);
+	// String name = r.getString(R.string.app_name);
+	// String date = new SimpleDateFormat("MMMM dd, yyyy")
+	// .format(schedule.end);
+	// String depart = getIntent().getStringExtra(DEPARTURE_STATION);
+	// String arrive = getIntent().getStringExtra(ARRIVAL_STATION);
+	// shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "["
+	// + name + "] " + depart + " to " + arrive + " " + date);
+	// StringBuilder b = new StringBuilder();
+	// b.append(depart + " to " + arrive + " for " + date).append("\n\n");
+	// ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
+	// DateFormat df = new SimpleDateFormat("MM/dd/yy");
+	// boolean tomorrow = false;
+	// for (int i = 0; i < adapter.getCount(); i++) {
+	// StationToStation sts = adapter.getItem(i);
+	// if (!DateUtils.isToday(sts.departTime)) {
+	// if (!tomorrow) {
+	// b.append('\n');
+	// }
+	// tomorrow = true;
+	// }
+	// b.append(ScheduleAdapter.time(sts));
+	// if (!DateUtils.isToday(sts.departTime)) {
+	// b.append(" (").append(df.format(sts.departTime.getTime()))
+	// .append(")");
+	// }
+	// b.append('\n');
+	// }
+	// shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,
+	// b.toString());
+	// startActivity(Intent.createChooser(shareIntent, "Share"));
+	// return true;
+	// }
+	// if (item.equals(share)) {
+	// Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+	// String depart = getIntent().getStringExtra(DEPARTURE_STATION);
+	// String arrive = getIntent().getStringExtra(ARRIVAL_STATION);
+	// shareIntent.setType("text/plain");
+	// shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, depart
+	// + " to " + arrive + " " + currentItemDescription);
+	// shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, depart
+	// + " to " + arrive + " " + currentItemDescription);
+	// startActivity(Intent.createChooser(shareIntent, "Share"));
+	// return true;
+	// }
+	// if (item.equals(alarmArrive)) {
+	// showDialog(DIALOG_ARRIVE);
+	// return true;
+	// }
+	// if (item.equals(alarmDepart)) {
+	// showDialog(DIALOG_DEPART);
+	// return true;
+	// }
+	// if (item.equals(rate)) {
+	// Intent intent = new Intent(Intent.ACTION_VIEW,
+	// Uri.parse(getString(R.string.marketUrl,getPackageName())));
+	// startActivity(intent);
+	// return true;
+	// }
+	// if (item.equals(email)) {
+	// Intent i = new Intent(Intent.ACTION_SEND);
+	// i.setType("plain/text");
+	// i.putExtra(Intent.EXTRA_EMAIL,
+	// new String[] { "njtransitrail-feedback@wmwm.us" });
+	// StringBuilder b = new StringBuilder("NJTransit Rail Feedback "
+	// + getIntent().getStringExtra(DEPARTURE_STATION) + " : "
+	// + getIntent().getStringExtra(ARRIVAL_STATION));
+	// try {
+	// b.append(" version:"
+	// + getPackageManager().getPackageInfo(getPackageName(),
+	// 0).versionName);
+	// } catch (Exception e) {
+	//
+	// }
+	// i.putExtra(Intent.EXTRA_SUBJECT, b.toString());
+	// i.putExtra(Intent.EXTRA_TEXT, "");
+	// if(getPackageManager().resolveActivity(i, 0)!=null) {
+	// startActivity(i);
+	// } else {
+	// Toast.makeText(this,
+	// "Sorry, you do not have an email client on your device.  Email us@wmwm.us",
+	// Toast.LENGTH_LONG).show();
+	// }
+	//
+	// return true;
+	// }
+	// if (item.equals(clearAlarm)) {
+	// getAdapter().setTripIdForAlarm(null);
+	// String ns = Context.NOTIFICATION_SERVICE;
+	// NotificationManager mNotificationManager = (NotificationManager)
+	// getSystemService(ns);
+	// mNotificationManager.cancel(1);
+	// Intent intent = new Intent(StationToStationActivity.this,
+	// AlarmActivity.class);
+	// PendingIntent pi = PendingIntent.getActivity(
+	// StationToStationActivity.this, 1, intent, 0);
+	// alarmManager.cancel(pi);
+	// adapter.notifyDataSetChanged();
+	// }
+	// if (item.equals(purchases)) {
+	// showPayloadEditDialog();
+	// }
+	// return false;
+	// }
 
 	private void initializeOwnedItems() {
 		new Thread(new Runnable() {
@@ -556,7 +592,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 					.getColumnIndexOrThrow(PurchaseDatabase.PURCHASED_PRODUCT_ID_COL);
 			while (cursor.moveToNext()) {
 				String productId = cursor.getString(productIdCol);
-				if (productId.equals("remove.ads") || productId.equals("remove.ads.subscription")) {
+				if (productId.equals("remove.ads")
+						|| productId.equals("remove.ads.subscription")) {
 					purchasedAdFree = true;
 				}
 			}
@@ -569,16 +606,16 @@ public class StationToStationActivity extends ScheduleActivity implements
 	private void onPurchaseStateChanged() {
 		boolean val = purchasedAdFree;
 		setShowAds(!purchasedAdFree);
-		if(!showAds()) {
+		if (!showAds()) {
 			runOnUiThread(new Runnable() {
 
 				@Override
 				public void run() {
-					adLayout.setVisibility(View.GONE);	
+					adLayout.setVisibility(View.GONE);
 				}
-				
+
 			});
-			
+
 		}
 	}
 
@@ -587,11 +624,13 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		//setTheme(android.R.style.Theme_Light_NoTitleBar);
+		// setTheme(android.R.style.Theme_Light_NoTitleBar);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.station_to_station);
-		this.getSupportActionBar().setSubtitle(getIntent().getStringExtra(DEPARTURE_STATION) + " \nto\n" + getIntent().getStringExtra(ARRIVAL_STATION));
-		//getSupportActionBar().setDisplayShowHomeEnabled(true);
+		this.getSupportActionBar().setSubtitle(
+				getIntent().getStringExtra(DEPARTURE_STATION) + " \nto\n"
+						+ getIntent().getStringExtra(ARRIVAL_STATION));
+		// getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mBillingService = new BillingService();
 		mBillingService.setContext(this);
@@ -601,12 +640,12 @@ public class StationToStationActivity extends ScheduleActivity implements
 		adView = new AdView(this, AdSize.BANNER,
 				getString(R.string.publisherId));
 		double fare = getIntent().getDoubleExtra(LoadScheduleActivity.FARE, -1);
-//		if(fare>=0) {
-//			this.fare.setText("Fair: " + LoadScheduleActivity.df.format(fare));
-//			this.fareContainer.setVisibility(View.VISIBLE);
-//		} else {
-//			this.fareContainer.setVisibility(View.GONE);
-//		}
+		// if(fare>=0) {
+		// this.fare.setText("Fair: " + LoadScheduleActivity.df.format(fare));
+		// this.fareContainer.setVisibility(View.VISIBLE);
+		// } else {
+		// this.fareContainer.setVisibility(View.GONE);
+		// }
 		if (showAds()) {
 			AdRequest req = new AdRequest();
 			final View orAd = getLayoutInflater()
@@ -614,7 +653,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 			orAd.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					showPayloadEditDialog();	
+					showPayloadEditDialog();
 				}
 			});
 			int rand = 1;
@@ -622,9 +661,10 @@ public class StationToStationActivity extends ScheduleActivity implements
 				adLayout.addView(orAd);
 			}
 			adView.setGravity(Gravity.CENTER);
-			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+					LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 			lp.gravity = Gravity.CENTER;//
-			adLayout.addView(adView,lp);
+			adLayout.addView(adView, lp);
 			adView.loadAd(req);
 			adView.setAdListener(new AdListener() {
 
@@ -659,12 +699,13 @@ public class StationToStationActivity extends ScheduleActivity implements
 			});
 		}
 		adFodder.setVisibility(View.GONE);
-		
+
 		schedule = scheduleProvider.get();
-		if(schedule!=null) {
+		if (schedule != null) {
 			new Thread() {
 				public void run() {
-					Intent it = new Intent(StationToStationActivity.this,StationToStationActivity.class);
+					Intent it = new Intent(StationToStationActivity.this,
+							StationToStationActivity.class);
 					it.putExtras(getIntent());
 					it.putExtra("schedule", schedule);
 					setIntent(it);
@@ -682,16 +723,16 @@ public class StationToStationActivity extends ScheduleActivity implements
 		listView.setOnItemClickListener(this);
 		int index = adapter.findIndexOfCurrent();
 		if (index > 1) {
-			if(fare>=0) {
-				adapter.setFareAnchor(fare,index-1);
+			if (fare >= 0) {
+				adapter.setFareAnchor(fare, index - 1);
 				listView.setSelectionFromTop(index - 2, 0);
 			} else {
 				listView.setSelectionFromTop(index - 1, 0);
 			}
-			
+
 		} else {
-			if(fare>=0) {
-				adapter.setFareAnchor(fare,0);
+			if (fare >= 0) {
+				adapter.setFareAnchor(fare, 0);
 			}
 		}
 
@@ -701,7 +742,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		arrivalText = getIntent().getStringExtra(ARRIVAL_STATION);
 
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.reload);
-		
+
 		mPurchaseDatabase.queryAllPurchasedItems();
 		mBillingService.checkBillingSupported();
 	}
@@ -791,7 +832,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 			int position, long id) {
 		ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
 		StationToStation sts = adapter.getItem(position);
-		if(sts==null) {
+		if (sts == null) {
 			return;
 		}
 		Intent intent = new Intent(this, TripActivity.class)
@@ -942,7 +983,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 			String temp2 = departureStopId;
 			departureStopId = arrivalStopId;
 			arrivalStopId = temp2;
-			getSupportActionBar().setSubtitle(departureText + " to " + arrivalText);
+			getSupportActionBar().setSubtitle(
+					departureText + " to " + arrivalText);
 			getAdapter().reverse();
 			int index = getAdapter().findIndexOfCurrent();
 			if (index > 0) {
@@ -956,10 +998,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 		}
 		Intent intent = new Intent(StationToStationActivity.this,
 				LoadScheduleActivity.class);
-		intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION,
-				arrivalText);
-		intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION,
-				departureText);
+		intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION, arrivalText);
+		intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION, departureText);
 		Calendar c = Calendar.getInstance();
 		c.setTime(schedule.start);
 		intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_START, c);
@@ -976,7 +1016,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		startActivity(intent);
 
 	}
-	
+
 	@Override
 	public void onClick(View arg0) {
 		boolean departureVision = useDepartureVision();
@@ -1003,10 +1043,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 		}
 		Intent intent = new Intent(StationToStationActivity.this,
 				LoadScheduleActivity.class);
-		intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION,
-				arrivalText);
-		intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION,
-				departureText);
+		intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION, arrivalText);
+		intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION, departureText);
 		Calendar c = Calendar.getInstance();
 		c.setTime(schedule.start);
 		intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_START, c);

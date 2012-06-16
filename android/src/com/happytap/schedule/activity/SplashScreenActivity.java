@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import roboguice.RoboGuice;
 import roboguice.inject.InjectView;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -160,9 +161,6 @@ public class SplashScreenActivity extends ScheduleActivity {
 				Context.MODE_PRIVATE).getBoolean("showScheduleExpiration",
 				false);
 	}
-
-	@Inject
-	Injector injector;
 
 	private AsyncTask<Void, Float, Void> loadingTask = newLoadingTask();
 
@@ -409,7 +407,8 @@ public class SplashScreenActivity extends ScheduleActivity {
 		public void onClick(View arg0) {
 
 			final List<Favorite> favs = preferencesDao.topHistory();
-			ScheduleDao dao = injector.getInstance(ScheduleDao.class);
+			
+			ScheduleDao dao = RoboGuice.getInjector(SplashScreenActivity.this).getInstance(ScheduleDao.class);
 			dao.name(favs);
 			final CharSequence[] k = new CharSequence[favs.size()];
 			int i = 0;
@@ -609,7 +608,7 @@ public class SplashScreenActivity extends ScheduleActivity {
 
 	public void onCreateContextMenu(android.view.ContextMenu menu, View v,
 			android.view.ContextMenu.ContextMenuInfo menuInfo) {
-		PreferencesDao dao = injector.getInstance(PreferencesDao.class);
+		PreferencesDao dao = RoboGuice.getInjector(SplashScreenActivity.this).getInstance(PreferencesDao.class);
 
 	}
 

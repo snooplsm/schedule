@@ -1,23 +1,18 @@
 package com.happytap.schedule.database;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
+import roboguice.inject.ContextSingleton;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.happytap.schedule.adapter.StationAdapter;
 import com.happytap.schedule.domain.Favorite;
 import com.happytap.schedule.provider.PreferencesDatabaseProvider;
 
-@Singleton
+@ContextSingleton
 public class PreferencesDao {
 
 	private SQLiteDatabase database;

@@ -17,14 +17,13 @@ import java.util.Map;
 import java.util.Set;
 
 import roboguice.inject.ContextSingleton;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.happytap.schedule.adapter.StationAdapter;
 import com.happytap.schedule.domain.ConnectionInterval;
 import com.happytap.schedule.domain.Favorite;
@@ -38,7 +37,7 @@ public class ScheduleDao {
 
 	private final SQLiteDatabase database;
 	private Context context;
-	@Inject
+	
 	SharedPreferences preferences;
 
 	@Inject
@@ -46,6 +45,7 @@ public class ScheduleDao {
 		super();
 		this.database = database;
 		this.context = context;
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
 	private static DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");

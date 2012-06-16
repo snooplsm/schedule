@@ -24,7 +24,10 @@ public class AboutActivity extends ScheduleActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setBackgroundDrawable(null);
+		getSupportActionBar().setTitle(getString(R.string.activity_title_about));
+		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.about);		
 		OnClickListener clickListener = new OnClickListener() {
 
