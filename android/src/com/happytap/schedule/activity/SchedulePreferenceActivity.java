@@ -13,6 +13,7 @@ public class SchedulePreferenceActivity extends SherlockPreferenceActivity {
 		setTheme(R.style.Theme_Sherlock);
 		super.onCreate(savedInstanceState);
 		//PreferenceManager.setDefaultValues(this, R.xml.preference, false);
+		//getSupportActionBar().set
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle("Preferences");
 		addPreferencesFromResource(R.xml.preference);
@@ -21,7 +22,7 @@ public class SchedulePreferenceActivity extends SherlockPreferenceActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
-		if(R.id.abs__home==item.getItemId()) {
+		if(android.R.id.home==item.getItemId()) {
 			super.onBackPressed();	return true;		
 		}
 		return super.onOptionsItemSelected(item);

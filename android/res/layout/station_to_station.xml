@@ -6,65 +6,6 @@
     android:orientation="vertical" >
 
     <RelativeLayout
-        android:id="@+id/departure"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/user_details_activity_general_selector"
-        android:clickable="true"
-        android:focusable="true"
-        android:padding="2dip" >
-
-        <ImageView
-            android:id="@+id/reverse"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dip" />
-
-        <LinearLayout
-            android:id="@+id/station_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/departureText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:paddingLeft="2dip"
-                android:paddingTop="3dip"
-                android:text="Departure Station"
-                android:textAppearance="@style/TextViewStyleUserDetailsActivityGeneralTitle"
-                android:textSize="15dip" />
-
-            <TextView
-                android:id="@+id/arrivalText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/departureText"
-                android:gravity="center_vertical"
-                android:paddingLeft="2dip"
-                android:paddingTop="3dip"
-                android:text="Arrival Station"
-                android:textAppearance="@style/TextViewStyleUserDetailsActivityGeneralTitle"
-                android:textSize="15dip" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="30dip"
-            android:layout_height="30dip"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/station_container"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dip"
-            android:text="to"
-            android:textAppearance="@style/TextViewStyleUserDetailsActivityGeneralTitle"
-            android:textSize="16dip" />
-    </RelativeLayout>
-
-    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
@@ -99,26 +40,11 @@
 
             <ListView
                 android:id="@+android:id/list"
-                style="@android:style/Theme.Light"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:background="@color/white"
                 android:cacheColorHint="#FFFFFFFF" />
-
-            <RelativeLayout
-                android:id="@+id/fare_container"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="#A3F87735"
-                android:layout_alignParentBottom="true" >
-
-                <TextView
-                    android:id="@+id/fare"
-                    android:layout_centerInParent="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Fare: $3.33" />
-            </RelativeLayout>
+            
         </RelativeLayout>
     </RelativeLayout>
 

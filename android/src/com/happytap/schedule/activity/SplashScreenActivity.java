@@ -19,7 +19,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
@@ -30,7 +29,6 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.text.format.DateUtils;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,7 +39,6 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.TranslateAnimation;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -61,7 +58,6 @@ import com.happytap.schedule.domain.Favorite;
 import com.happytap.schedule.provider.PreferencesDatabaseProvider;
 import com.happytap.schedule.provider.SQLiteDatabaseProvider;
 import com.happytap.schedule.service.ScheduleService;
-import com.happytap.schedule.view.SwitchDrawable;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
 import com.njtransit.rail.R;
@@ -559,10 +555,7 @@ public class SplashScreenActivity extends ScheduleActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		getSupportActionBar().setDisplayUseLogoEnabled(false);
-		getSupportActionBar().setDisplayShowHomeEnabled(false);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.newjersey);
 		splashImage.setImageDrawable(svg.createPictureDrawable());
 		svg = SVGParser.getSVGFromResource(getResources(), R.raw.reload);
@@ -700,7 +693,7 @@ public class SplashScreenActivity extends ScheduleActivity {
 			Intent intent = new Intent(this, AboutActivity.class);
 			startActivity(intent);
 		}
-		return true;
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

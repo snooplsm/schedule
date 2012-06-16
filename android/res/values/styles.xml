@@ -8,7 +8,13 @@
 		<item name="android:typeface">monospace</item>
 	</style>
     -->
-    <style name="OrangeTheme" parent="@android:style/Theme.Light">
+
+    <style name="NormalListView" parent="@android:style/Widget.ListView">
+        <item name="android:overScrollFooter">@null</item>
+    </style>
+
+    <style name="OrangeTheme" parent="@style/Theme.Sherlock">
+        <item name="android:listViewStyle">@style/NormalListView</item>
         <item name="android:listSeparatorTextViewStyle">@style/listSeparatorTextViewStyle</item>
     </style>
 

@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import roboguice.inject.InjectView;
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.Notification;
@@ -25,11 +24,9 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -70,7 +67,7 @@ import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
 import com.njtransit.rail.R;
 
-public class StationToStationActivity extends Activity implements
+public class StationToStationActivity extends ScheduleActivity implements
 		OnItemLongClickListener, OnItemClickListener, OnClickListener {
 
 	@InjectView(android.R.id.list)
@@ -91,17 +88,9 @@ public class StationToStationActivity extends Activity implements
 
 	private BillingService mBillingService;
 
-	@InjectView(R.id.departureText)
-	TextView departureText;
+	String departureText;
 
-	@InjectView(R.id.arrivalText)
-	TextView arrivalText;
-
-	@InjectView(R.id.reverse)
-	ImageView reverse;
-
-	@InjectView(R.id.departure)
-	View departureView;
+	String arrivalText;
 
 	@Inject
 	AlarmManager alarmManager;
@@ -110,12 +99,6 @@ public class StationToStationActivity extends Activity implements
 	NotificationManager notifications;
 
 	AdView adView;
-	
-	@InjectView(R.id.fare)
-	TextView fare;
-	
-	@InjectView(R.id.fare_container)
-	View fareContainer;
 
 	public static final String SCHEDULE = Schedule.class.getName();
 	public static final String DEPARTURE_STATION = "departure_station";
@@ -328,18 +311,18 @@ public class StationToStationActivity extends Activity implements
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		shareItem = menu.add("Share");
-		shareItem.setIcon(getResources().getDrawable(
-				android.R.drawable.ic_menu_share));
-		rate = menu.add("Rate");
-		rate.setIcon(R.drawable.ic_menu_star);
-		email = menu.add("Email us");
-		email.setIcon(android.R.drawable.ic_menu_send);
-		purchases = menu.add("Remove Ads");
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		shareItem = menu.add("Share");
+//		shareItem.setIcon(getResources().getDrawable(
+//				android.R.drawable.ic_menu_share));
+//		rate = menu.add("Rate");
+//		rate.setIcon(R.drawable.ic_menu_star);
+//		email = menu.add("Email us");
+//		email.setIcon(android.R.drawable.ic_menu_send);
+//		purchases = menu.add("Remove Ads");
+//		return true;
+//	}
 
 	private String mPayloadContents = null;
 
@@ -348,28 +331,28 @@ public class StationToStationActivity extends Activity implements
 		mBillingService.requestPurchase("remove.ads.subscription", Consts.ITEM_TYPE_SUBSCRIPTION, null);
 	}
 
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		if (listView != null && listView.getAdapter() != null
-				&& listView.getAdapter().getCount() > 0) {
-			rate.setVisible(true);
-			shareItem.setVisible(true);
-			ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
-			if (clearAlarm != null) {
-				if (adapter.getTripIdForAlarm() != null) {
-					clearAlarm.setVisible(true);
-				} else {
-					clearAlarm.setVisible(false);
-				}
-			}
-			purchases.setVisible(showAds());
-		} else {
-
-			shareItem.setVisible(false);
-			rate.setVisible(false);
-		}
-		return true;
-	}
+//	@Override
+//	public boolean onPrepareOptionsMenu(Menu menu) {
+//		if (listView != null && listView.getAdapter() != null
+//				&& listView.getAdapter().getCount() > 0) {
+//			rate.setVisible(true);
+//			shareItem.setVisible(true);
+//			ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
+//			if (clearAlarm != null) {
+//				if (adapter.getTripIdForAlarm() != null) {
+//					clearAlarm.setVisible(true);
+//				} else {
+//					clearAlarm.setVisible(false);
+//				}
+//			}
+//			purchases.setVisible(showAds());
+//		} else {
+//
+//			shareItem.setVisible(false);
+//			rate.setVisible(false);
+//		}
+//		return true;
+//	}
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
@@ -529,10 +512,12 @@ public class StationToStationActivity extends Activity implements
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		setTheme(android.R.style.Theme_Light_NoTitleBar);
+		//setTheme(android.R.style.Theme_Light_NoTitleBar);
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.station_to_station);
+		this.getSupportActionBar().setSubtitle(getIntent().getStringExtra(DEPARTURE_STATION) + " to " + getIntent().getStringExtra(ARRIVAL_STATION));
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mBillingService = new BillingService();
 		mBillingService.setContext(this);
 		mPurchaseDatabase = new PurchaseDatabase(this);
@@ -545,7 +530,7 @@ public class StationToStationActivity extends Activity implements
 //			this.fare.setText("Fair: " + LoadScheduleActivity.df.format(fare));
 //			this.fareContainer.setVisibility(View.VISIBLE);
 //		} else {
-			this.fareContainer.setVisibility(View.GONE);
+//			this.fareContainer.setVisibility(View.GONE);
 //		}
 		if (showAds()) {
 			AdRequest req = new AdRequest();
@@ -618,11 +603,14 @@ public class StationToStationActivity extends Activity implements
 		listView.setOnItemLongClickListener(this);
 		listView.setOnItemClickListener(this);
 		int index = adapter.findIndexOfCurrent();
-		if (index > 0) {
+		if (index > 1) {
 			if(fare>=0) {
 				adapter.setFareAnchor(fare,index-1);
+				listView.setSelectionFromTop(index - 2, 0);
+			} else {
+				listView.setSelectionFromTop(index - 1, 0);
 			}
-			listView.setSelectionFromTop(index - 1, 0);
+			
 		} else {
 			if(fare>=0) {
 				adapter.setFareAnchor(fare,0);
@@ -631,12 +619,11 @@ public class StationToStationActivity extends Activity implements
 
 		departureStopId = getIntent().getStringExtra(DEPARTURE_ID);
 		arrivalStopId = getIntent().getStringExtra(ARRIVAL_ID);
-		departureText.setText(getIntent().getStringExtra(DEPARTURE_STATION));
-		arrivalText.setText(getIntent().getStringExtra(ARRIVAL_STATION));
+		departureText = getIntent().getStringExtra(DEPARTURE_STATION);
+		arrivalText = getIntent().getStringExtra(ARRIVAL_STATION);
 
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.reload);
-		reverse.setImageDrawable(svg.createPictureDrawable());
-		departureView.setOnClickListener(this);
+		
 		mPurchaseDatabase.queryAllPurchasedItems();
 		mBillingService.checkBillingSupported();
 	}
@@ -872,9 +859,9 @@ public class StationToStationActivity extends Activity implements
 			departureVisionTask.cancel(true);
 		}
 		if (schedule.transfers.length == 1) {
-			CharSequence temp = departureText.getText();
-			departureText.setText(arrivalText.getText());
-			arrivalText.setText(temp);
+			String temp = departureText;
+			departureText = arrivalText;
+			arrivalText = temp;
 			String temp2 = departureStopId;
 			departureStopId = arrivalStopId;
 			arrivalStopId = temp2;
@@ -892,9 +879,9 @@ public class StationToStationActivity extends Activity implements
 		Intent intent = new Intent(StationToStationActivity.this,
 				LoadScheduleActivity.class);
 		intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION,
-				arrivalText.getText());
+				arrivalText);
 		intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION,
-				departureText.getText());
+				departureText);
 		Calendar c = Calendar.getInstance();
 		c.setTime(schedule.start);
 		intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_START, c);
