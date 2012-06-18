@@ -8,6 +8,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -45,6 +46,7 @@ public class AlarmActivity extends ScheduleActivity {
 			}
 			
 		});
+		PreferenceManager.getDefaultSharedPreferences(this).edit().remove("alarm").commit();
 		vibrator.vibrate(new long[] {0,200,500},0);
 		audioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
 		Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);

@@ -436,6 +436,7 @@ this.context = context;
 
 	public void setTripIdForAlarm(String tripIdForAlarm) {
 		this.tripIdForAlarm = tripIdForAlarm;
+		notifyDataSetChanged();
 	}
 
 	public final void onStatus(TrainStatus status) {

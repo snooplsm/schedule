@@ -17,31 +17,27 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.ActionProvider;
 import com.actionbarsherlock.view.Menu;
 import com.google.ads.Ad;
 import com.google.ads.AdListener;
@@ -75,7 +71,8 @@ import com.larvalabs.svgandroid.SVGParser;
 import com.njtransit.rail.R;
 
 public class StationToStationActivity extends ScheduleActivity implements
-		OnItemLongClickListener, OnItemClickListener, OnClickListener {
+		OnItemLongClickListener, OnItemClickListener, OnClickListener,
+		OnMenuItemClickListener {
 
 	@InjectView(android.R.id.list)
 	ListView listView;
@@ -151,6 +148,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 	protected void onResume() {
 		super.onResume();
 		paused = false;
+		adapter.setTripIdForAlarm(PreferenceManager.getDefaultSharedPreferences(StationToStationActivity.this).getString("alarm", null));
 		last = new AsyncTask<Void, Integer, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
@@ -341,37 +339,41 @@ public class StationToStationActivity extends ScheduleActivity implements
 		reverse.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		shares = menu.add("Share").setIcon(R.drawable.ic_share);
 		shares.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		//ShareActionProvider actionProvider = new ShareActionProvider(this);
-		
-		shares.setActionProvider(new ActionProvider(this) {
+		// ShareActionProvider actionProvider = new ShareActionProvider(this);
 
-			@Override
-			public boolean hasSubMenu() {
-				return true;
-			}
-			
-			@Override
-			public View onCreateActionView() {
-				// TODO Auto-generated method stub
-		        TypedValue outTypedValue = new TypedValue();
-		        StationToStationActivity.this.getTheme().resolveAttribute(R.attr.actionModeShareDrawable, outTypedValue, true);
-		        Drawable drawable = StationToStationActivity.this.getResources().getDrawable(outTypedValue.resourceId);
-		        RelativeLayout l = new RelativeLayout(StationToStationActivity.this);
-		        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		        ImageView v = new ImageView(StationToStationActivity.this);
-		        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		        v.setImageDrawable(drawable);
-		        l.addView(v,lp);
-				return l;
-			}
-			
-		});
-		//shares.
-        //actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
-        // Note that you can set/change the intent any time,
-        // say when the user has selected an image.
-        //actionProvider.setShareIntent(share());
+		// shares.setActionProvider(new ActionProvider(this) {
+		//
+		// @Override
+		// public boolean hasSubMenu() {
+		// return true;
+		// }
+		//
+		// @Override
+		// public View onCreateActionView() {
+		// // TODO Auto-generated method stub
+		// TypedValue outTypedValue = new TypedValue();
+		// StationToStationActivity.this.getTheme().resolveAttribute(R.attr.actionModeShareDrawable,
+		// outTypedValue, true);
+		// Drawable drawable =
+		// StationToStationActivity.this.getResources().getDrawable(outTypedValue.resourceId);
+		// RelativeLayout l = new RelativeLayout(StationToStationActivity.this);
+		// RelativeLayout.LayoutParams lp = new
+		// RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+		// LayoutParams.WRAP_CONTENT);
+		// ImageView v = new ImageView(StationToStationActivity.this);
+		// lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		// lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		// v.setImageDrawable(drawable);
+		// l.addView(v,lp);
+		// return l;
+		// }
+		//
+		// });
+		// shares.
+		// actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+		// Note that you can set/change the intent any time,
+		// say when the user has selected an image.
+		// actionProvider.setShareIntent(share());
 		rates = menu.add("Rate").setIcon(R.drawable.ic_star);
 		rates.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		emails = menu.add("Email us for help").setIcon(R.drawable.ic_email);
@@ -388,9 +390,9 @@ public class StationToStationActivity extends ScheduleActivity implements
 		if (item.equals(reverse)) {
 			reverse();
 		}
-//		if (item.equals(shares)) {
-//			share();
-//		}
+		if (item.equals(shares)) {
+			startActivity(share());
+		}
 		if (item.equals(rates)) {
 			rate();
 		}
@@ -455,7 +457,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		boolean tomorrow = false;
 		for (int i = 0; i < adapter.getCount(); i++) {
 			StationToStation sts = adapter.getItem(i);
-			if(sts==null) {
+			if (sts == null) {
 				continue;
 			}
 			if (!DateUtils.isToday(sts.departTime)) {
@@ -473,7 +475,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		}
 		shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, b.toString());
 		return shareIntent;
-		//startActivity(Intent.createChooser(shareIntent, "Share"));
+		// startActivity(Intent.createChooser(shareIntent, "Share"));
 	}
 
 	private String mPayloadContents = null;
@@ -494,8 +496,10 @@ public class StationToStationActivity extends ScheduleActivity implements
 			if (clearAlarm != null) {
 				if (adapter.getTripIdForAlarm() != null) {
 					clearAlarm.setVisible(true);
-				} else {
-					clearAlarm.setVisible(false);
+					
+				} else {					
+					clearAlarm.setVisible(true);
+					
 				}
 			}
 			if (purchase != null) {
@@ -795,7 +799,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		if (index > 1) {
 			if (fare >= 0) {
 				adapter.setFareAnchor(fare, index - 1);
-				listView.setSelectionFromTop(index - 2, 0);
+				listView.setSelectionFromTop(index-1, 0);
 			} else {
 				listView.setSelectionFromTop(index - 1, 0);
 			}
@@ -917,6 +921,9 @@ public class StationToStationActivity extends ScheduleActivity implements
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view,
 			int position, long id) {
 		// getCurrentStopId(adapter,position);
+		if (adapter.getItem(position) == null) {
+			return true;
+		}
 		currentItemPosition = position;
 		currentItemDescription = ""
 				+ ((TextView) view.findViewById(R.id.time)).getText();
@@ -935,7 +942,9 @@ public class StationToStationActivity extends ScheduleActivity implements
 			ContextMenuInfo menuInfo) {
 		menu.setHeaderTitle(currentItemDescription);
 		alarmDepart = menu.add("Add Depart Alarm");
+		alarmDepart.setOnMenuItemClickListener(this);
 		alarmArrive = menu.add("Add Arrive Alarm");
+		alarmArrive.setOnMenuItemClickListener(this);
 		final StationToStation sts = getAdapter().getItem(currentItemPosition);
 		if (sts.arriveTime.before(Calendar.getInstance())) {
 			alarmArrive.setVisible(false);
@@ -946,12 +955,18 @@ public class StationToStationActivity extends ScheduleActivity implements
 		share = menu.add("Share");
 		share.setIcon(getResources().getDrawable(
 				android.R.drawable.ic_menu_share));
+		share.setOnMenuItemClickListener(this);
 		clearAlarm = menu.add("Clear Alarm");
 		clearAlarm.setIcon(R.drawable.ic_menu_alarms);
+		clearAlarm.setOnMenuItemClickListener(this);
 		if (adapter.getTripIdForAlarm() != null) {
 			clearAlarm.setVisible(true);
+			alarmDepart.setVisible(false);
+			alarmArrive.setVisible(false);
 		} else {
 			clearAlarm.setVisible(false);
+			alarmDepart.setVisible(true);
+			alarmArrive.setVisible(true);
 		}
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
@@ -963,8 +978,9 @@ public class StationToStationActivity extends ScheduleActivity implements
 			protected void onPreExecute() {
 				ScheduleAdapter adapter = (ScheduleAdapter) listView
 						.getAdapter();
+				PreferenceManager.getDefaultSharedPreferences(StationToStationActivity.this).edit().putString("alarm", sts.tripId).commit();
 				adapter.setTripIdForAlarm(sts.tripId);
-				listView.invalidateViews();
+				//listView.invalidateViews();
 			};
 
 			@Override
@@ -1016,6 +1032,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 						StationToStationActivity.this,
 						StationToStationActivity.class);
 				notificationIntent.putExtras(getIntent().getExtras());
+				notificationIntent.putExtra("alarm", sts.tripId);
 				PendingIntent contentIntent = PendingIntent
 						.getActivity(StationToStationActivity.this, 0,
 								notificationIntent, 0);
@@ -1130,5 +1147,43 @@ public class StationToStationActivity extends ScheduleActivity implements
 		}
 		startActivity(intent);
 
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		if (item.equals(alarmArrive)) {
+			showDialog(DIALOG_ARRIVE);
+			return true;
+		}
+		if (item.equals(alarmDepart)) {
+			showDialog(DIALOG_DEPART);
+			return true;
+		}
+		if (item.equals(share)) {
+			Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+			String depart = getIntent().getStringExtra(DEPARTURE_STATION);
+			String arrive = getIntent().getStringExtra(ARRIVAL_STATION);
+			shareIntent.setType("text/plain");
+			shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, depart
+					+ " to " + arrive + " " + currentItemDescription);
+			shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, depart
+					+ " to " + arrive + " " + currentItemDescription);
+			startActivity(Intent.createChooser(shareIntent, "Share"));
+			return true;
+		}
+		if (item.equals(clearAlarm)) {
+			PreferenceManager.getDefaultSharedPreferences(this).edit().remove("alarm").commit();
+			getAdapter().setTripIdForAlarm(null);
+			String ns = Context.NOTIFICATION_SERVICE;
+			NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+			mNotificationManager.cancel(1);
+			Intent intent = new Intent(StationToStationActivity.this,
+					AlarmActivity.class);
+			PendingIntent pi = PendingIntent.getActivity(
+					StationToStationActivity.this, 1, intent, 0);
+			alarmManager.cancel(pi);
+			adapter.notifyDataSetChanged();
+		}
+		return false;
 	}
 }
