@@ -10,7 +10,9 @@ import java.util.concurrent.TimeUnit;
 import roboguice.inject.InjectView;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
@@ -93,7 +95,7 @@ public class TripActivity extends ScheduleActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.station_to_station);
 		if (showAds()) {
-			adView = new AdView(this, AdSize.BANNER,
+			adView = new AdView(this, AdSize.SMART_BANNER,
 					getString(R.string.publisherId));
 			AdRequest req = new AdRequest();
 			final View orAd = getLayoutInflater()
@@ -102,7 +104,11 @@ public class TripActivity extends ScheduleActivity {
 			if (rand == 1) {
 				adLayout.addView(orAd);
 			}
-			adLayout.addView(adView);
+			adView.setGravity(Gravity.CENTER);
+			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+					LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+			lp.gravity = Gravity.CENTER;
+			adLayout.addView(adView,lp);
 			adView.loadAd(req);
 			adView.setAdListener(new AdListener() {
 

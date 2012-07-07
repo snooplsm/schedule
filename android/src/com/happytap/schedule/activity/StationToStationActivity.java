@@ -711,7 +711,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		mPurchaseDatabase = new PurchaseDatabase(this);
 		mPurchaseObserver = new SchedulePurchaseObserver(mHandler);
 		ResponseHandler.register(mPurchaseObserver);
-		adView = new AdView(this, AdSize.BANNER,
+		adView = new AdView(this, AdSize.SMART_BANNER,
 				getString(R.string.publisherId));
 		double fare = getIntent().getDoubleExtra(LoadScheduleActivity.FARE, -1);
 		// if(fare>=0) {

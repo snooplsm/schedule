@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
     package="com.njtransit.rail"
-    android:versionCode="2012042601"
-    android:versionName="2012-04-26" >
+    android:versionCode="2012061900"
+    android:versionName="2012-06-19" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -16,13 +16,15 @@
     <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
-        android:debuggable="true"
+        android:debuggable="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:hardwareAccelerated="true"
         android:name="com.happytap.schedule.application.ScheduleApplication" >
         <activity
             android:configChanges="keyboard|keyboardHidden"
             android:label="@string/app_name"
+            android:hardwareAccelerated="false"
             android:name="com.happytap.schedule.activity.SplashScreenActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
@@ -74,8 +76,8 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:configChanges="keyboard|keyboardHidden|orientation"
-            android:name="com.google.ads.AdActivity" />
+            android:name="com.google.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
 
         <service android:name="com.happytap.schedule.service.ScheduleService" />
         <service android:name="com.happytap.schedule.service.BillingService" />
