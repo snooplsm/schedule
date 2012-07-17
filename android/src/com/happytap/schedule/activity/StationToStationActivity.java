@@ -695,6 +695,30 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	private PurchaseDatabase mPurchaseDatabase;
 	private SchedulePurchaseObserver mPurchaseObserver;
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		outState.putLong("start", schedule.start.getTime());
+		outState.putString("departureText", departureText);
+		outState.putString("arrivalText", arrivalText);
+		outState.putString("departureId", departureStopId);
+		outState.putString("arrivalId", arrivalStopId);
+	}
+	
+	private long start;
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onRestoreInstanceState(savedInstanceState);
+		start = savedInstanceState.getLong("start");
+		departureText = savedInstanceState.getString("departureText");
+		departureStopId = savedInstanceState.getString("departureId");
+		arrivalText = savedInstanceState.getString("arrivalText");
+		arrivalStopId = savedInstanceState.getString("arrivalStopId");
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -787,6 +811,27 @@ public class StationToStationActivity extends ScheduleActivity implements
 			}.start();
 		} else {
 			schedule = (Schedule) getIntent().getSerializableExtra("schedule");
+		}
+		if(schedule==null) {
+			Intent intent = new Intent(StationToStationActivity.this,
+					LoadScheduleActivity.class);
+			intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION, departureText);
+			intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION, arrivalText);
+			Calendar c = Calendar.getInstance();
+			c.setTimeInMillis(start);
+			intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_START, c);
+			intent.putExtra(LoadScheduleActivity.DEPARTURE_ID, departureStopId);
+			intent.putExtra(LoadScheduleActivity.ARRIVAL_ID, arrivalStopId);
+			if (DateUtils.isToday(c)) {
+				Calendar tom = Calendar.getInstance();
+				tom.setTimeInMillis(c.getTimeInMillis());
+				tom.add(Calendar.DAY_OF_YEAR, 1);
+				intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_END, tom);
+			} else {
+				intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_END, c);
+			}
+			startActivity(intent);
+			return;
 		}
 		listView.setAdapter(adapter = new ScheduleAdapter(this, schedule));
 		if (getIntent().hasExtra(ALARM_TRIP_ID)) {

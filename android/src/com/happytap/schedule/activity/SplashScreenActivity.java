@@ -559,10 +559,14 @@ public class SplashScreenActivity extends ScheduleActivity {
 		getSupportActionBar().setDisplayUseLogoEnabled(false);
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.newjersey);
+		splashImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		splashImage.setImageDrawable(svg.createPictureDrawable());
+		reverse.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		svg = SVGParser.getSVGFromResource(getResources(), R.raw.reload);
 		reverse.setImageDrawable(svg.createPictureDrawable());
+		
 		svg = SVGParser.getSVGFromResource(getResources(), R.raw.star);
+		favs.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		favs.setImageDrawable(svg.createPictureDrawable());
 		fixReverseFavs();
 		arrival.setOnClickListener(clickStationListener);
