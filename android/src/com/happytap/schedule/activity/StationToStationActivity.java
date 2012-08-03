@@ -288,7 +288,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 				}
 			}
 			if (purchasedAdFree == false) {
-				if ("remove.ads.subscription".equals(itemId)) {
+				if ("remove.ads.subscription".equals(itemId) || "remove_ads_monthly".equals(itemId)) {
 					if (purchaseState == PurchaseState.PURCHASED) {
 						purchasedAdFree = true;
 					}
@@ -482,7 +482,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	private void showPayloadEditDialog() {
 		// mBillingService.ch
-		mBillingService.requestPurchase("remove.ads.subscription",
+		mBillingService.requestPurchase("remove_ads_monthly",
 				Consts.ITEM_TYPE_SUBSCRIPTION, null);
 	}
 

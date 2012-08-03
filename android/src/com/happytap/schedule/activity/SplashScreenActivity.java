@@ -22,6 +22,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -47,7 +48,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.googlecode.android.widgets.DateSlider.DateSlider;
 import com.googlecode.android.widgets.DateSlider.DateSlider.OnDateSetListener;
 import com.googlecode.android.widgets.DateSlider.DefaultDateSlider;
@@ -559,14 +559,19 @@ public class SplashScreenActivity extends ScheduleActivity {
 		getSupportActionBar().setDisplayUseLogoEnabled(false);
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.newjersey);
-		splashImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		if(Build.VERSION.SDK_INT>=11) {
+			splashImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);	
+			reverse.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+			favs.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		}
+		
 		splashImage.setImageDrawable(svg.createPictureDrawable());
-		reverse.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		
 		svg = SVGParser.getSVGFromResource(getResources(), R.raw.reload);
 		reverse.setImageDrawable(svg.createPictureDrawable());
 		
 		svg = SVGParser.getSVGFromResource(getResources(), R.raw.star);
-		favs.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		
 		favs.setImageDrawable(svg.createPictureDrawable());
 		fixReverseFavs();
 		arrival.setOnClickListener(clickStationListener);
