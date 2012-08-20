@@ -31,10 +31,12 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.text.format.DateUtils;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -62,8 +64,11 @@ import com.happytap.schedule.service.ScheduleService;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
 import com.njtransit.rail.R;
+import com.slidingmenu.lib.SlidingMenu;
+import com.slidingmenu.lib.app.SlidingActivityBase;
+import com.slidingmenu.lib.app.SlidingActivityHelper;
 
-public class SplashScreenActivity extends ScheduleActivity {
+public class SplashScreenActivity extends ScheduleActivity implements SlidingActivityBase {
 
 	private static final int CHANGE_DATE_DIALOG = 1970;
 	private static final int RETRY = 1;
@@ -242,6 +247,31 @@ public class SplashScreenActivity extends ScheduleActivity {
 				}
 			};
 		};
+	}
+	
+	public View findViewById(int id) {
+		View v = super.findViewById(id);
+		if (v != null)
+			return v;
+		return mHelper.findViewById(id);
+	}
+	
+	public void setContentView(int id) {
+		setContentView(getLayoutInflater().inflate(id, null));
+	}
+
+	public void setContentView(View v) {
+		setContentView(v, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+	}
+
+	public void setContentView(View v, LayoutParams params) {
+		super.setContentView(v, params);
+		mHelper.registerAboveContentView(v, params);
+	}
+	
+	public void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		mHelper.onPostCreate(savedInstanceState);
 	}
 
 	private OnLongClickListener longClickStationListener = new OnLongClickListener() {
@@ -550,7 +580,11 @@ public class SplashScreenActivity extends ScheduleActivity {
 			scheduleEnd.setVisibility(View.GONE);
 		}
 	}
+	
+	
 
+	private SlidingActivityHelper mHelper;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -558,6 +592,18 @@ public class SplashScreenActivity extends ScheduleActivity {
 		setContentView(R.layout.main);
 		getSupportActionBar().setDisplayUseLogoEnabled(false);
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		mHelper = new SlidingActivityHelper(this);
+		mHelper.onCreate(savedInstanceState);
+		SlidingMenu menu = mHelper.getSlidingMenu();
+		menu.setTouchModeBehind(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		menu.setShadowDrawable(R.drawable.defaultshadow);
+		menu.setBehindOffset((int)getResources().getDimension(R.dimen.abs__action_button_min_width));
+		//menu.setShadowWidth(1);
+		menu.setBehindScrollScale(.25f);
+		setSlidingActionBarEnabled(true);
+		setContentView(R.layout.main);
+		setBehindContentView(LayoutInflater.from(this).inflate(R.layout.history_list, null));
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.newjersey);
 		if(Build.VERSION.SDK_INT>=11) {
 			splashImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);	
@@ -785,6 +831,38 @@ public class SplashScreenActivity extends ScheduleActivity {
 		outState.putString("departureStopName", departureText.getText()
 				.toString());
 		outState.putString("arrivalStopName", arrivalText.getText().toString());
-	};
+	}
+
+	public void setBehindContentView(int id) {
+		setBehindContentView(getLayoutInflater().inflate(id, null));
+	}
+
+	public void setBehindContentView(View v) {
+		setBehindContentView(v, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+	}
+
+	public void setBehindContentView(View v, LayoutParams params) {
+		mHelper.setBehindContentView(v, params);
+	}
+
+	public SlidingMenu getSlidingMenu() {
+		return mHelper.getSlidingMenu();
+	}
+
+	public void toggle() {
+		mHelper.toggle();
+	}
+
+	public void showAbove() {
+		mHelper.showAbove();
+	}
+
+	public void showBehind() {
+		mHelper.showBehind();
+	}
+	
+	public void setSlidingActionBarEnabled(boolean b) {
+		mHelper.setSlidingActionBarEnabled(b);
+	}
 
 }

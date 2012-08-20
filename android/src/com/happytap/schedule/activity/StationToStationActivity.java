@@ -730,6 +730,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 						+ getIntent().getStringExtra(ARRIVAL_STATION));
 		// getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		mBillingService = new BillingService();
 		mBillingService.setContext(this);
 		mPurchaseDatabase = new PurchaseDatabase(this);
