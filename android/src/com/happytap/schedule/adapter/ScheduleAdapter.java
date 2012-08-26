@@ -10,6 +10,7 @@ import java.util.Map;
 
 import roboguice.util.Strings;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.SpannableStringBuilder;
 import android.text.style.SuperscriptSpan;
 import android.view.LayoutInflater;
@@ -42,13 +43,13 @@ public class ScheduleAdapter extends BaseAdapter {
 	public int getCount() {
 		return stations.size();
 	}
-	
+
 	@Override
 	public long getItemId(int position) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+
 	private void traverse() {
 		limit = Calendar.getInstance();
 		limit.setTime(schedule.end);
@@ -74,14 +75,23 @@ public class ScheduleAdapter extends BaseAdapter {
 			@Override
 			public void populateItem(int index,
 					StationToStation stationToStation, int total) {
+
+				// if(stationToStation.departTime.get(Calendar.HOUR_OF_DAY)==1)
+				// {
+				// System.out.println("what");
+				// System.out.println(stationToStation.departTime.getTime());
+				// System.out.println("!"+stationToStation.departTime.getTime()+".after("+limit.getTime()+")");
+				// }
+				// stations.add(stationToStation);
 				if (!isToday) {
 					if (!stationToStation.departTime.before(limit)) {
+						// System.out.println(stationToStation.departTime.getTime());
 						stations.add(stationToStation);
 					}
-				} else if (!stationToStation.departTime.after(limit)) {
-					if (!stationToStation.arriveTime.before(priorLimit)) {
+				} else {
+					if (!stationToStation.departTime.before(priorLimit)
+							&& !stationToStation.departTime.after(limit))
 						stations.add(stationToStation);
-					}
 
 				}
 			}
@@ -96,11 +106,11 @@ public class ScheduleAdapter extends BaseAdapter {
 	public ScheduleAdapter(Context context, Schedule schedule) {
 		super();
 		this.schedule = schedule;
-this.context = context;
+		this.context = context;
 		traverse();
 
 	}
-	
+
 	@Override
 	public StationToStation getItem(int position) {
 		return stations.get(position);
@@ -124,8 +134,7 @@ this.context = context;
 			LayoutInflater vi = LayoutInflater.from(context);
 			v = vi.inflate(R.layout.station_to_station_item, null);
 		}
-		
-		
+
 		StationToStation sts = getItem(position);
 		TextView textView = (TextView) v.findViewById(R.id.time);
 		TextView duration = (TextView) v.findViewById(R.id.duration);
@@ -133,7 +142,7 @@ this.context = context;
 		TextView connections = (TextView) v.findViewById(R.id.connections);
 		TextView tomorrow = (TextView) v.findViewById(R.id.time_descriptor);
 		TextView fare = (TextView) v.findViewById(R.id.fare);
-		if(sts==null) {
+		if (sts == null) {
 			textView.setText("");
 			tomorrow.setText("");
 			duration.setText("");
@@ -141,19 +150,22 @@ this.context = context;
 			connections.setText("");
 			fare.setText("Fare: " + LoadScheduleActivity.df.format(this.fare));
 			fare.setVisibility(View.VISIBLE);
-			//v.setClickable(false);
+			// v.setClickable(false);
 			return v;
 		} else {
-			//v.setClickable(true);
+			// v.setClickable(true);
 			fare.setVisibility(View.GONE);
 			v.setId(View.NO_ID);
 		}
-		if(sts.tripId!=null && tripIdForAlarm!=null && sts.tripId.equals(tripIdForAlarm)) {
-			v.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.alarm_background));
+		if (sts.tripId != null && tripIdForAlarm != null
+				&& sts.tripId.equals(tripIdForAlarm)) {
+			v.setBackgroundDrawable(context.getResources().getDrawable(
+					R.drawable.alarm_background));
 		} else {
-			v.setBackgroundDrawable(context.getResources().getDrawable(android.R.drawable.list_selector_background));
+			v.setBackgroundDrawable(context.getResources().getDrawable(
+					android.R.drawable.list_selector_background));
 		}
-		
+
 		textView.setText(time(sts));
 		departs(departsIn, sts);
 		if (sts instanceof StationInterval) {
@@ -164,12 +176,12 @@ this.context = context;
 			if (sts2.schedule.transfers.length > 1) {
 				populateConnections(connections, sts2);
 			} else {
-				populateExtraInfo(connections,sts2);				
+				populateExtraInfo(connections, sts2);
 			}
-			
+
 			tomorrow(tomorrow, sts);
 			TrainStatus status = trainStatuses.get(sts.blockId);
-			if(status==null) {
+			if (status == null) {
 				status = trainStatuses.get(sts.tripId);
 			}
 			if (status == null) {
@@ -182,7 +194,7 @@ this.context = context;
 			textView.setText(time(sts));
 			duration.setText(duration(sts));
 			tomorrow(tomorrow, sts);
-			
+
 			TrainStatus status = trainStatuses.get(sts.blockId);
 			if (status == null) {
 				onNoTrainStatus(v, sts);
@@ -195,11 +207,11 @@ this.context = context;
 
 	private void populateExtraInfo(TextView connections, StationInterval sts) {
 		StringBuilder b = new StringBuilder();
-		if(sts.routeId!=null) {
+		if (sts.routeId != null) {
 			b.append(sts.schedule.routeIdToName.get(sts.routeId));
 			b.append(" ");
 		}
-		if(sts.blockId!=null && sts.blockId.trim().length()>0) {
+		if (sts.blockId != null && sts.blockId.trim().length() > 0) {
 			b.append("#").append(sts.blockId);
 		}
 		connections.setText(b);
@@ -213,7 +225,8 @@ this.context = context;
 		while (sts2.hasNext()) {
 			boolean isTransfer = sts2.isTransfer();
 			nextTripId = sts2.next().tripId;
-			if (isTransfer || (sts2.tripId!=null && sts2.tripId.equals(lastTripId))) {
+			if (isTransfer
+					|| (sts2.tripId != null && sts2.tripId.equals(lastTripId))) {
 				// String arrive = time.format(sts2.getArriveTime().getTime())
 				// .toLowerCase();
 				// arrive = arrive.substring(0, arrive.length() - 2);
@@ -236,7 +249,7 @@ this.context = context;
 				b.append("↝");
 
 				b.append(" ");
-				if (!(sts2.tripId!=null & sts2.tripId.equals(nextTripId))) {
+				if (!(sts2.tripId != null & sts2.tripId.equals(nextTripId))) {
 					String arrive = time.format(sts2.getArriveTime().getTime())
 							.toLowerCase();
 					arrive = arrive.substring(0, arrive.length() - 1).replace(
@@ -246,13 +259,13 @@ this.context = context;
 					b.append(")");
 					b.append(" ");
 					b.append(sts2.schedule.stopIdToName.get(sts2.arriveId));
-					
-					if(sts2.blockId!=null && sts2.blockId.trim().length()>0) {
+
+					if (sts2.blockId != null
+							&& sts2.blockId.trim().length() > 0) {
 						b.append(" #");
 						b.append(sts2.blockId);
 					}
-						
-					
+
 				}
 			}
 
@@ -261,7 +274,7 @@ this.context = context;
 				sts2 = sts2.next();
 				if (added) {
 					b.append(" ");
-					if (sts2.tripId!=null && sts2.tripId.equals(lastTripId)) {
+					if (sts2.tripId != null && sts2.tripId.equals(lastTripId)) {
 
 					} else {
 						if (sts2.isTransfer()) {
@@ -278,7 +291,7 @@ this.context = context;
 			}
 		}
 
-		if (sts2.tripId!=null && !sts2.tripId.equals(lastTripId)) {
+		if (sts2.tripId != null && !sts2.tripId.equals(lastTripId)) {
 			String depart = time.format(sts2.getDepartTime().getTime())
 					.toLowerCase();
 			depart = depart.substring(0, depart.length() - 1).replace(" ", "");
@@ -298,7 +311,7 @@ this.context = context;
 		b.append(arrive);
 		b.append(") ");
 		b.append(sts2.schedule.stopIdToName.get(sts2.arriveId));
-		if(sts2.blockId!=null && sts2.blockId.trim().length()>0) {
+		if (sts2.blockId != null && sts2.blockId.trim().length() > 0) {
 			b.append(" #").append(sts2.blockId);
 		}
 		connections.setText(b.toString());
@@ -311,14 +324,27 @@ this.context = context;
 		tomorrow.set(Calendar.MINUTE, 0);
 		tomorrow.set(Calendar.SECOND, 0);
 		tomorrow.set(Calendar.MILLISECOND, 0);
+		Calendar tomorrow2 = Calendar.getInstance();
+		tomorrow2.add(Calendar.DAY_OF_YEAR, 2);
+		tomorrow2.set(Calendar.HOUR_OF_DAY, 0);
+		tomorrow2.set(Calendar.MINUTE, 0);
+		tomorrow2.set(Calendar.SECOND, 0);
+		tomorrow2.set(Calendar.MILLISECOND, 0);
 		if (!isToday) {
 			tomorrowView.setText(SplashScreenActivity.df.format(sts.departTime
 					.getTime()));
 			tomorrowView.setVisibility(View.VISIBLE);
 		} else {
-			if (sts.departTime.after(tomorrow)) {
-				tomorrowView.setText("next day");
+			if (!android.text.format.DateUtils.isToday(sts.departTime
+					.getTimeInMillis()) && sts.departTime.after(tomorrow)) {
 				tomorrowView.setVisibility(View.VISIBLE);
+				if (sts.departTime.after(tomorrow2)) {
+					tomorrowView.setText((sts.departTime.get(Calendar.MONTH)
+							+ 1 + "/" + sts.departTime
+							.get(Calendar.DAY_OF_MONTH)));
+				} else {
+					tomorrowView.setText("next day");
+				}
 			} else {
 				tomorrowView.setText("");
 				tomorrowView.setVisibility(View.GONE);
@@ -398,10 +424,11 @@ this.context = context;
 	public static CharSequence time(StationToStation sts) {
 		String depart = time.format(sts.getDepartTime().getTime());
 		String arrive = time.format(sts.getArriveTime().getTime());
-		String orig = String.format("%s - %s #%s", depart, arrive, sts.blockId).toLowerCase();
+		String orig = String.format("%s - %s #%s", depart, arrive, sts.blockId)
+				.toLowerCase();
 		SpannableStringBuilder ssb = new SpannableStringBuilder(orig);
 		int pound = orig.indexOf("#");
-		if(pound>=0) {
+		if (pound >= 0) {
 			ssb.setSpan(new SuperscriptSpan(), pound, orig.length(), 0);
 		}
 		return ssb;
@@ -417,7 +444,7 @@ this.context = context;
 		if (sts2 == null || sts2.getArriveTime() == null) {
 		}
 		String arrive = time.format(sts2.getArriveTime().getTime());
-		String orig = String.format("%s - %s", depart,arrive).toLowerCase();
+		String orig = String.format("%s - %s", depart, arrive).toLowerCase();
 		SpannableStringBuilder ssb = new SpannableStringBuilder(orig);
 		return ssb;
 	}
@@ -427,7 +454,7 @@ this.context = context;
 	private Map<String, TrainStatus> reversedTrainStatuses;
 
 	private Map<String, TrainStatus> normalTrainStatuses = trainStatuses;
-	
+
 	private String tripIdForAlarm;
 
 	public String getTripIdForAlarm() {
@@ -462,18 +489,18 @@ this.context = context;
 		traverse();
 		notifyDataSetChanged();
 	}
-	
+
 	public void clear() {
 		stations.clear();
 	}
-	
+
 	int fareAnchor = -1;
 	Double fare;
 
 	public void setFareAnchor(Double fare, int i) {
 		this.fare = fare;
 		this.fareAnchor = i;
-		stations.add(i,null);
+		stations.add(i, null);
 		notifyDataSetChanged();
 	}
 }

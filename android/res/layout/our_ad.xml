@@ -25,7 +25,7 @@
 			android:textSize="20dip"
 			android:textColor="@color/lgrey_start"
 			android:lines="2"
-			android:text="Ad free $0.99\n
+			android:text="Ad free $0.99/mo\n
 Less than a latte"/>
 		<TextView
 			android:layout_width="wrap_content"

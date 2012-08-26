@@ -2,13 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@drawable/history_gradient" >
 
     <ListView
+        android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:divider="@drawable/list_item_divider"
-        android:dividerHeight="2px" >
+        android:divider="@null" >
     </ListView>
 
 </LinearLayout>

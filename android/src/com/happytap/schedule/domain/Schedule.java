@@ -199,8 +199,11 @@ public class Schedule implements Serializable {
 				if (service == null || service.dates == null) {
 					continue;
 				}
+				Calendar before = Calendar.getInstance();
+				before.setTimeInMillis(start.getTime());
+				before.add(Calendar.DAY_OF_YEAR, -1);
 				for (Date date : service.dates) {
-					if (date.getTime() >= start.getTime()
+					if (date.getTime() >= before.getTimeInMillis()
 							&& date.getTime() <= end.getTime()) {
 						try {
 							Date arrive = sdf.parse(b.arrival);
@@ -265,19 +268,26 @@ public class Schedule implements Serializable {
 			List<StationInterval> ints = new ArrayList<StationInterval>(
 					intervals);
 			stationIntervals.put(pair, ints);
-			Collections.sort(ints, new Comparator<StationInterval>() {
-
-				@Override
-				public int compare(StationInterval arg0, StationInterval arg1) {
-					return arg0.departTime.compareTo(arg1.departTime);
-				}
-
-			});
+//			Collections.sort(ints, new Comparator<StationInterval>() {
+//
+//				@Override
+//				public int compare(StationInterval arg0, StationInterval arg1) {
+//					return arg0.departTime.compareTo(arg1.departTime);
+//				}
+//
+//			});
 		}
 		if (transfers.length == 0) {
 			traverse((List<StationInterval>) Collections.EMPTY_LIST, traversal);
 		} else {
-			traverse(stationIntervals.get(transfers[goback]), traversal);
+			Collections.sort(stationIntervals.get(transfers[goback]), new Comparator<StationInterval>() {
+				@Override
+				public int compare(StationInterval lhs, StationInterval rhs) {
+					return lhs.departTime.compareTo(rhs.departTime);
+				}
+			});
+			List<StationInterval> intervals = stationIntervals.get(transfers[goback]);
+			traverse(intervals, traversal);
 		}
 	}
 

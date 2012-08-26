@@ -6,10 +6,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import roboguice.RoboGuice;
 import roboguice.inject.InjectView;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -20,6 +21,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Build;
@@ -36,6 +38,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -43,8 +46,12 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,19 +63,22 @@ import com.googlecode.android.widgets.DateSlider.DefaultDateSlider;
 import com.happytap.schedule.database.DatabaseHelper;
 import com.happytap.schedule.database.DatabaseHelper.InstallDatabaseMeter;
 import com.happytap.schedule.database.PreferencesDao;
-import com.happytap.schedule.database.ScheduleDao;
-import com.happytap.schedule.domain.Favorite;
 import com.happytap.schedule.provider.PreferencesDatabaseProvider;
 import com.happytap.schedule.provider.SQLiteDatabaseProvider;
 import com.happytap.schedule.service.ScheduleService;
+import com.happytap.schedule.service.ThreadHelper;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
 import com.njtransit.rail.R;
 import com.slidingmenu.lib.SlidingMenu;
+import com.slidingmenu.lib.SlidingMenu.OnCloseListener;
+import com.slidingmenu.lib.SlidingMenu.OnOpenListener;
 import com.slidingmenu.lib.app.SlidingActivityBase;
 import com.slidingmenu.lib.app.SlidingActivityHelper;
 
-public class SplashScreenActivity extends ScheduleActivity implements SlidingActivityBase {
+@SuppressLint("NewApi")
+public class SplashScreenActivity extends ScheduleActivity implements
+		SlidingActivityBase, OnOpenListener, OnCloseListener {
 
 	private static final int CHANGE_DATE_DIALOG = 1970;
 	private static final int RETRY = 1;
@@ -108,6 +118,7 @@ public class SplashScreenActivity extends ScheduleActivity implements SlidingAct
 
 	@Inject
 	private DatabaseHelper databaseHelper;
+	
 
 	MenuItem departAt;
 	@InjectView(R.id.departure)
@@ -240,6 +251,7 @@ public class SplashScreenActivity extends ScheduleActivity implements SlidingAct
 				if (!error) {
 					splashContainer.setVisibility(View.GONE);
 					getSupportActionBar().show();
+					history.setAdapter(adapter = new PreferencesAdapter());
 				} else {
 					percentage
 							.setText("Something has gone horribly wrong.  Is your disk full?  Uninstall and reinstall.");
@@ -248,27 +260,29 @@ public class SplashScreenActivity extends ScheduleActivity implements SlidingAct
 			};
 		};
 	}
-	
+
+	private PreferencesAdapter adapter;
 	public View findViewById(int id) {
 		View v = super.findViewById(id);
 		if (v != null)
 			return v;
 		return mHelper.findViewById(id);
 	}
-	
+
 	public void setContentView(int id) {
 		setContentView(getLayoutInflater().inflate(id, null));
 	}
 
 	public void setContentView(View v) {
-		setContentView(v, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		setContentView(v, new LayoutParams(LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT));
 	}
 
 	public void setContentView(View v, LayoutParams params) {
 		super.setContentView(v, params);
 		mHelper.registerAboveContentView(v, params);
 	}
-	
+
 	public void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		mHelper.onPostCreate(savedInstanceState);
@@ -436,35 +450,7 @@ public class SplashScreenActivity extends ScheduleActivity implements SlidingAct
 
 	private OnClickListener favsListener = new OnClickListener() {
 		public void onClick(View arg0) {
-
-			final List<Favorite> favs = preferencesDao.topHistory();
-			
-			ScheduleDao dao = RoboGuice.getInjector(SplashScreenActivity.this).getInstance(ScheduleDao.class);
-			dao.name(favs);
-			final CharSequence[] k = new CharSequence[favs.size()];
-			int i = 0;
-			for (Favorite fav : favs) {
-				k[i++] = fav.sourceName + " ↝ " + fav.targetName;
-			}
-
-			if (favs.isEmpty()) {
-				Toast.makeText(SplashScreenActivity.this,
-						"No favorites available yet.", Toast.LENGTH_SHORT)
-						.show();
-				return;
-			}
-			AlertDialog.Builder builder = new AlertDialog.Builder(
-					SplashScreenActivity.this);
-			builder.setTitle("Favorites");
-			builder.setItems(k, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-					Favorite fav = favs.get(item);
-					arrivalText.setText(fav.targetName);
-					arrivalStopId = fav.targetId;
-					departureText.setText(fav.sourceName);
-					departureStopId = fav.sourceId;
-				}
-			}).show();
+			toggle();
 		};
 	};
 
@@ -580,44 +566,89 @@ public class SplashScreenActivity extends ScheduleActivity implements SlidingAct
 			scheduleEnd.setVisibility(View.GONE);
 		}
 	}
-	
-	
 
 	private SlidingActivityHelper mHelper;
-	
+
+	private View behind;
+
+	private ListView history;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mHelper = new SlidingActivityHelper(this);
+		mHelper.onCreate(savedInstanceState);
 		getSupportActionBar().hide();
 		setContentView(R.layout.main);
 		getSupportActionBar().setDisplayUseLogoEnabled(false);
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
-		mHelper = new SlidingActivityHelper(this);
-		mHelper.onCreate(savedInstanceState);
+
 		SlidingMenu menu = mHelper.getSlidingMenu();
 		menu.setTouchModeBehind(SlidingMenu.TOUCHMODE_FULLSCREEN);
 		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 		menu.setShadowDrawable(R.drawable.defaultshadow);
-		menu.setBehindOffset((int)getResources().getDimension(R.dimen.abs__action_button_min_width));
-		//menu.setShadowWidth(1);
+		menu.setBehindOffset((int) getResources().getDimension(
+				R.dimen.abs__action_button_min_width));
+		// menu.setShadowWidth(1);
 		menu.setBehindScrollScale(.25f);
 		setSlidingActionBarEnabled(true);
 		setContentView(R.layout.main);
-		setBehindContentView(LayoutInflater.from(this).inflate(R.layout.history_list, null));
+		setBehindContentView(behind = LayoutInflater.from(this).inflate(
+				R.layout.history_list, null));
+		menu.setOnOpenListener(this);
+		menu.setOnCloseListener(this);
+		history = (ListView) behind.findViewById(R.id.list);
+		history.setOnItemClickListener(new OnItemClickListener() {
+			
+			@Override
+			public void onItemClick(AdapterView<?> parent, final View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				toggle();
+				ThreadHelper.getScheduler().schedule(new Runnable() {
+					@Override
+					public void run() {
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {								
+								History h = ((Holder) view.getTag()).history;
+								Intent intent = new Intent(SplashScreenActivity.this,
+										LoadScheduleActivity.class);
+								intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION,h.departName
+										);
+								intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION,
+										h.arriveName);
+								intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_START,
+										Calendar.getInstance());
+								intent.putExtra(LoadScheduleActivity.DEPARTURE_ID, h.fromId);
+								intent.putExtra(LoadScheduleActivity.ARRIVAL_ID, h.toId);
+								Calendar tom = Calendar.getInstance();
+								tom.setTimeInMillis(userDefinedDate.getTimeInMillis());
+								tom.add(Calendar.DAY_OF_YEAR, 1);
+								intent.putExtra(LoadScheduleActivity.DEPARTURE_DATE_END, tom);
+								startActivity(intent);
+							}
+						});
+					}
+				},400,TimeUnit.MILLISECONDS);
+				
+			}
+		});
+		history.addHeaderView(LayoutInflater.from(this).inflate(R.layout.history_header, null), null, false);
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.newjersey);
-		if(Build.VERSION.SDK_INT>=11) {
-			splashImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);	
+		if (Build.VERSION.SDK_INT >= 11) {
+			splashImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 			reverse.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 			favs.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		}
-		
+
 		splashImage.setImageDrawable(svg.createPictureDrawable());
-		
+
 		svg = SVGParser.getSVGFromResource(getResources(), R.raw.reload);
 		reverse.setImageDrawable(svg.createPictureDrawable());
-		
+
 		svg = SVGParser.getSVGFromResource(getResources(), R.raw.star);
-		
+
 		favs.setImageDrawable(svg.createPictureDrawable());
 		fixReverseFavs();
 		arrival.setOnClickListener(clickStationListener);
@@ -666,7 +697,8 @@ public class SplashScreenActivity extends ScheduleActivity implements SlidingAct
 
 	public void onCreateContextMenu(android.view.ContextMenu menu, View v,
 			android.view.ContextMenu.ContextMenuInfo menuInfo) {
-		PreferencesDao dao = RoboGuice.getInjector(SplashScreenActivity.this).getInstance(PreferencesDao.class);
+		PreferencesDao dao = RoboGuice.getInjector(SplashScreenActivity.this)
+				.getInstance(PreferencesDao.class);
 
 	}
 
@@ -728,12 +760,12 @@ public class SplashScreenActivity extends ScheduleActivity implements SlidingAct
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
 		depart = menu.add("Depart on").setIcon(R.drawable.ic_time);
-			depart.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		depart.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		prefs = menu.add("Preferences").setIcon(R.drawable.ic_settings);
-				prefs.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		prefs.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		abt = menu.add("About").setIcon(R.drawable.ic_about);
-				abt.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		return super.onCreateOptionsMenu(menu);		
+		abt.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -838,7 +870,8 @@ public class SplashScreenActivity extends ScheduleActivity implements SlidingAct
 	}
 
 	public void setBehindContentView(View v) {
-		setBehindContentView(v, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		setBehindContentView(v, new LayoutParams(LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT));
 	}
 
 	public void setBehindContentView(View v, LayoutParams params) {
@@ -860,9 +893,110 @@ public class SplashScreenActivity extends ScheduleActivity implements SlidingAct
 	public void showBehind() {
 		mHelper.showBehind();
 	}
-	
+
 	public void setSlidingActionBarEnabled(boolean b) {
 		mHelper.setSlidingActionBarEnabled(b);
 	}
 
+	private class PreferencesAdapter extends BaseAdapter {
+
+		
+		@Override
+		public int getCount() {
+			Cursor c = null;
+			try {
+				c = preferencesProvider.get().rawQuery("select count(*) from history", null);
+				c.moveToFirst();
+				return c.getInt(0);
+			} catch (Exception e) {
+				return 0;
+			} finally {
+				try {
+					c.close();
+				} catch (Exception e) {
+					
+				}
+			}			
+		}
+
+		@Override
+		public Object getItem(int position) {
+			Cursor c = preferencesProvider.get().rawQuery("select * from history order by last_updated desc limit " + position + ",1", null);
+			History h = new History();
+			c.moveToFirst();
+			h.fromId = c.getString(c.getColumnIndex("depart_id"));
+			h.toId = c.getString(c.getColumnIndex("arrive_id"));
+			h.departName= c.getString(c.getColumnIndex("depart_name"));
+			h.arriveName = c.getString(c.getColumnIndex("arrive_name"));
+			h.count = c.getInt(c.getColumnIndex("occurrences"));
+			c.close();
+			return h;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			Holder holder;
+			if(convertView==null) {
+				convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.history_view, null);
+				convertView.setTag(holder = new Holder());
+				holder.from = (TextView) convertView.findViewById(R.id.from);
+				holder.to = (TextView) convertView.findViewById(R.id.to);
+				holder.occurrence = (TextView) convertView.findViewById(R.id.occurrence);
+			} else {
+				holder = (Holder) convertView.getTag();
+			}
+			History history = (History) getItem(position);
+			holder.from.setText(history.departName + " ↝");
+			holder.to.setText(history.arriveName);		
+			holder.occurrence.setText(String.valueOf(history.count));
+			holder.history = history;
+			return convertView;
+		}
+				
+
+	};
+	
+	public boolean onMenuItemSelected(int featureId, com.actionbarsherlock.view.MenuItem item) {
+		if(item.getItemId()==android.R.id.home) {
+			toggle();
+			return true;
+		} else {
+			return super.onMenuItemSelected(featureId, item);
+		}
+	};
+	
+	@Override
+	public void onClose() {
+		// TODO Auto-generated method stub
+		getSupportActionBar().setDisplayUseLogoEnabled(false);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+	}
+	
+	@Override
+	public void onOpen() {
+		getSupportActionBar().setDisplayUseLogoEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+	}
+	
+	private class Holder {
+		TextView from;
+		TextView to;
+		TextView occurrence;
+		History history;
+	}
+	private class History {
+		String toId;
+		String fromId;
+		String departName;
+		String arriveName;
+		int count;
+	}
 }

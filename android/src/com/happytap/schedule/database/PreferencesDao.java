@@ -31,12 +31,14 @@ public class PreferencesDao {
 		cv.put("arrive_id", arriveId);
 		cv.put("depart_name", departName);
 		cv.put("arrive_name", arriveName);
+		cv.put("last_updated", System.currentTimeMillis()/1000);
 		if(count==0) {
 			cv.put("occurrences", 1);
 			database.insert("history", null, cv);
 		} else {
 			cursor.moveToFirst();
 			int occurrence = cursor.getInt(0);
+			occurrence++;
 			cv.put("occurrences", occurrence);
 			database.update("history", cv, "depart_id=? and arrive_id=?", new String[] {departId, arriveId});
 		}

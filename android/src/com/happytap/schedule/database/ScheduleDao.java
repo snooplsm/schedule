@@ -154,8 +154,17 @@ public class ScheduleDao {
 		cur.close();
 		Date startDate = new Date(clearExtraFields(start));
 		Date endDate = new Date(clearExtraFields(end));
-		String startString = simpleDate(startDate);
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(startDate);
+		c.add(Calendar.DAY_OF_YEAR, -1);
+		String startString = simpleDate(c.getTime());
+		String middle = simpleDate(startDate);
 		String endString = simpleDate(endDate);
+		
+		System.out.println("start : " + startString);
+		System.out.println("end   : " + endString);
+
 
 		Map<String[], Map<String, List<ConnectionInterval>>> pairToTimes = new HashMap<String[], Map<String, List<ConnectionInterval>>>();
 		Map<String, Integer> transferEdges = new HashMap<String, Integer>();
@@ -166,7 +175,7 @@ public class ScheduleDao {
 		Set<String> tripIds = new HashSet<String>();
 		Map<String, String> routeIds = new HashMap<String, String>();
 		String stationsFragment = "stop_id=" + join(p, " or stop_id=");
-		String query = "select a1.depart,a1.arrive,a1.service_id,a1.trip_id,a1.block_id,a1.route_id,a1.stop_id,a1.lft from nested_trip a1 where a1.stop_id=? or a1.stop_id=? and a1.service_id in (select service_id from service where date=? or date=?)";
+		String query = "select a1.depart,a1.arrive,a1.service_id,a1.trip_id,a1.block_id,a1.route_id,a1.stop_id,a1.lft from nested_trip a1 where a1.stop_id=? or a1.stop_id=? and a1.service_id in (select service_id from service where date in(:foo))";
 		for (i = 0; i < pairs.length; i++) {
 			Map<String, List<ConnectionInterval>> tripToConnectionIntervals = new HashMap<String, List<ConnectionInterval>>();
 			Cursor rur = database
@@ -180,8 +189,8 @@ public class ScheduleDao {
 				continue;
 			}
 			rur.close();
-			Cursor qur = database.rawQuery(query, new String[] { pairs[i][0],
-					pairs[i][1], startString, endString });
+			Cursor qur = database.rawQuery(query.replace(":foo", startString+","+middle+","+endString), new String[] { pairs[i][0],
+					pairs[i][1] });
 			pairToTimes.put(pairs[i], tripToConnectionIntervals);
 			while (qur.moveToNext()) {
 				String depart = qur.getString(0);
@@ -217,8 +226,8 @@ public class ScheduleDao {
 		}
 
 		cur = database.rawQuery(
-				"select date,service_id from service where date=? or date=?",
-				new String[] { startString, endString });
+				"select date,service_id from service where date in (:foo)".replace(":foo", startString+","+middle+","+endString),
+				null);
 		while (cur.moveToNext()) {
 			String serviceId = cur.getString(1);
 			Service s = services.get(serviceId);
@@ -236,7 +245,7 @@ public class ScheduleDao {
 			}
 			Date dateD = cal.getTime();
 			if (dateD.getTime() > endDate.getTime()
-					|| dateD.getTime() < startDate.getTime()) {
+					|| dateD.getTime() < c.getTimeInMillis()) {
 			} else {
 				s.dates.add(dateD);
 			}
