@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/mobile/!svn/ver/19/trunk/android/sherlock
+END
+.classpath
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/mobile/!svn/ver/10/trunk/android/sherlock/.classpath
+END
+project.properties
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/mobile/!svn/ver/10/trunk/android/sherlock/project.properties
+END
+.project
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/mobile/!svn/ver/10/trunk/android/sherlock/.project
+END
+AndroidManifest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/mobile/!svn/ver/10/trunk/android/sherlock/AndroidManifest.xml
+END
+pom.xml
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/mobile/!svn/ver/10/trunk/android/sherlock/pom.xml
+END
+README.md
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/mobile/!svn/ver/10/trunk/android/sherlock/README.md
+END
+build.xml
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/mobile/!svn/ver/19/trunk/android/sherlock/build.xml
+END

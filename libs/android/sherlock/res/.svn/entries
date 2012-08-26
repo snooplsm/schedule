@@ -1,0 +1,106 @@
+10
+
+dir
+78
+https://wlvrn.svn.beanstalkapp.com/mobile/trunk/android/sherlock/res
+https://wlvrn.svn.beanstalkapp.com/mobile
+
+
+
+2012-06-23T23:19:11.380574Z
+10
+snooplsm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1f60b50c-b62d-478b-acbe-309c44302feb
+
+values-xlarge
+dir
+
+values-large-mdpi-1024x600
+dir
+
+values-w360dp
+dir
+
+drawable
+dir
+
+values-w480dp
+dir
+
+layout-v14
+dir
+
+drawable-v11
+dir
+
+values-large-land-hdpi-1024x600
+dir
+
+values-large
+dir
+
+drawable-xhdpi
+dir
+
+values-large-land-mdpi-1024x600
+dir
+
+layout-xlarge
+dir
+
+values
+dir
+
+values-sw600dp
+dir
+
+drawable-hdpi
+dir
+
+values-v11
+dir
+
+layout-large
+dir
+
+drawable-ldpi
+dir
+
+values-v14
+dir
+
+drawable-mdpi
+dir
+
+values-large-hdpi-1024x600
+dir
+
+values-land
+dir
+
+values-w500dp
+dir
+
+layout
+dir
+
+values-w600dp
+dir
+
+color
+dir
+

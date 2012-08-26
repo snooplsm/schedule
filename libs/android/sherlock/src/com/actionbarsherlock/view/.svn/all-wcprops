@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/view
+END
+ActionMode.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/view/ActionMode.java
+END
+CollapsibleActionView.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/view/CollapsibleActionView.java
+END
+MenuItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/view/MenuItem.java
+END
+Menu.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/view/Menu.java
+END
+Window.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/view/Window.java
+END
+ActionProvider.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/view/ActionProvider.java
+END
+MenuInflater.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/view/MenuInflater.java
+END
+SubMenu.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/view/SubMenu.java
+END

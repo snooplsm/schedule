@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/internal/view
+END
+View_OnAttachStateChangeListener.java
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/internal/view/View_OnAttachStateChangeListener.java
+END
+ActionProviderWrapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/internal/view/ActionProviderWrapper.java
+END
+View_HasStateListenerSupport.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/internal/view/View_HasStateListenerSupport.java
+END
+StandaloneActionMode.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/internal/view/StandaloneActionMode.java
+END

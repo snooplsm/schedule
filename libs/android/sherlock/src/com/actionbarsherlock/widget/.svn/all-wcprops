@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/widget
+END
+ActivityChooserModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/widget/ActivityChooserModel.java
+END
+ActivityChooserView.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/widget/ActivityChooserView.java
+END
+ShareActionProvider.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/mobile/!svn/ver/10/trunk/android/sherlock/src/com/actionbarsherlock/widget/ShareActionProvider.java
+END
