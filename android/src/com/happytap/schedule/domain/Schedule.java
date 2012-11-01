@@ -268,14 +268,14 @@ public class Schedule implements Serializable {
 			List<StationInterval> ints = new ArrayList<StationInterval>(
 					intervals);
 			stationIntervals.put(pair, ints);
-//			Collections.sort(ints, new Comparator<StationInterval>() {
-//
-//				@Override
-//				public int compare(StationInterval arg0, StationInterval arg1) {
-//					return arg0.departTime.compareTo(arg1.departTime);
-//				}
-//
-//			});
+			Collections.sort(ints, new Comparator<StationInterval>() {
+
+				@Override
+				public int compare(StationInterval arg0, StationInterval arg1) {
+					return arg0.departTime.compareTo(arg1.departTime);
+				}
+
+			});
 		}
 		if (transfers.length == 0) {
 			traverse((List<StationInterval>) Collections.EMPTY_LIST, traversal);

@@ -3,9 +3,14 @@ package com.happytap.schedule.activity;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import roboguice.RoboGuice;
@@ -31,6 +36,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -48,11 +54,14 @@ import android.view.animation.BounceInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -572,6 +581,11 @@ public class SplashScreenActivity extends ScheduleActivity implements
 	private View behind;
 
 	private ListView history;
+	
+	private View controls;
+	
+	private View trash;
+	private View cancel;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -598,6 +612,9 @@ public class SplashScreenActivity extends ScheduleActivity implements
 		menu.setOnOpenListener(this);
 		menu.setOnCloseListener(this);
 		history = (ListView) behind.findViewById(R.id.list);
+		controls = behind.findViewById(R.id.controls);
+		trash = behind.findViewById(R.id.trash);
+		cancel = behind.findViewById(R.id.cancel);
 		history.setOnItemClickListener(new OnItemClickListener() {
 			
 			@Override
@@ -612,6 +629,10 @@ public class SplashScreenActivity extends ScheduleActivity implements
 							@Override
 							public void run() {								
 								History h = ((Holder) view.getTag()).history;
+								departureStopId=h.fromId;
+								arrivalStopId=h.toId;
+								departureText.setText(h.departName);
+								arrivalText.setText(h.arriveName);
 								Intent intent = new Intent(SplashScreenActivity.this,
 										LoadScheduleActivity.class);
 								intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION,h.departName
@@ -634,7 +655,99 @@ public class SplashScreenActivity extends ScheduleActivity implements
 				
 			}
 		});
-		history.addHeaderView(LayoutInflater.from(this).inflate(R.layout.history_header, null), null, false);
+		View v = LayoutInflater.from(this).inflate(R.layout.history_header, null);
+		Spinner sp = (Spinner) v.findViewById(R.id.spinner);
+		final Spinner more = (Spinner) v.findViewById(R.id.more_overflow);
+		more.setAdapter(new SimpleAdapter(Arrays.asList(new String[]{"","Edit"})) {
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				ImageView v =new ImageView(parent.getContext()); 
+				v.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+				return v;
+			}
+			
+			@Override
+			public View getDropDownView(int position, View convertView,
+					ViewGroup parent) {
+				if(position==0) {
+					View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.empty, null);
+					//v.setVisibility(View.GONE);
+					return v;
+				}
+				View v = super.getDropDownView(position, convertView, parent);
+				
+				return v;
+			}
+		});
+		more.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				if(position==1) {
+					adapter.edit();
+					controls.setVisibility(View.VISIBLE);
+					trash.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							adapter.removeCheckedItems();
+							controls.setVisibility(View.GONE);
+							more.setSelection(0);
+						}
+					});
+					cancel.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							adapter.checked.clear();
+							adapter.view();
+							controls.setVisibility(View.GONE);
+							more.setSelection(0);
+						}
+					});
+				}
+			}
+			
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				
+			}
+		});
+		
+
+		sp.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				String sort = (String)parent.getItemAtPosition(position);
+				adapter.setSort(sort);
+				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("sort", sort).commit();
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		String sort = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("sort", null);
+		final List<String> choices = Arrays.asList(new String[]{"Frequency", "Most Recent", "Name"});
+		sp.setAdapter(new SimpleAdapter(choices));
+//		more.setAdapter(new SimpleAdapter(Arrays.asList("Edit")) {
+//			@Override
+//			public View getView(int position, View convertView, ViewGroup parent) {
+//				View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.more_spinner, null);
+//				return v;
+//			}
+//		});
+		for(int i = 0; i < choices.size(); i++) {
+			String s = choices.get(i);
+			if(s.equals(sort)) {
+				sp.setSelection(i);
+			}
+		}
+		history.addHeaderView(v, null, false);
 		SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.newjersey);
 		if (Build.VERSION.SDK_INT >= 11) {
 			splashImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -900,7 +1013,8 @@ public class SplashScreenActivity extends ScheduleActivity implements
 
 	private class PreferencesAdapter extends BaseAdapter {
 
-		
+		public PreferencesAdapter() {			
+		}
 		@Override
 		public int getCount() {
 			Cursor c = null;
@@ -919,9 +1033,44 @@ public class SplashScreenActivity extends ScheduleActivity implements
 			}			
 		}
 
+		public void removeCheckedItems() {
+			for(Iterator<History> his= checked.iterator(); his.hasNext();) {
+				History h = his.next();
+				preferencesProvider.get().delete("history", "depart_id=? and arrive_id=?", new String[]{h.fromId,h.toId});
+				his.remove();
+			}
+			view();
+			notifyDataSetChanged();
+		}
+
+		private boolean edit = false;
+		public void edit() {
+			
+			edit = true;
+			notifyDataSetChanged();
+		}
+		
+		public void view() {
+			edit = false;
+			notifyDataSetChanged();
+		}
+
+		private String orderBy = "occurrences";
+		
+		public void setSort(String itemAtPosition) {
+			if(itemAtPosition.toLowerCase().equals("frequency")) {
+				orderBy = "occurrences desc";
+			} else if(itemAtPosition.toLowerCase().startsWith("most")){
+				orderBy = "last_updated desc";
+			} else {
+				orderBy = "depart_name asc, arrive_name asc";
+			}			
+			notifyDataSetChanged();
+		}
+
 		@Override
 		public Object getItem(int position) {
-			Cursor c = preferencesProvider.get().rawQuery("select * from history order by last_updated desc limit " + position + ",1", null);
+			Cursor c = preferencesProvider.get().rawQuery("select * from history order by " + orderBy + "  limit " + position + ",1", null);
 			History h = new History();
 			c.moveToFirst();
 			h.fromId = c.getString(c.getColumnIndex("depart_id"));
@@ -938,16 +1087,35 @@ public class SplashScreenActivity extends ScheduleActivity implements
 			// TODO Auto-generated method stub
 			return 0;
 		}
+		
+		@Override
+		public int getItemViewType(int position) {
+			if(edit) {
+				return 1;
+			}
+			return 0;
+		}
+		
+		@Override
+		public int getViewTypeCount() {
+			return 2;
+		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			Holder holder;
 			if(convertView==null) {
-				convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.history_view, null);
+				if(edit) {
+					convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.history_view_edit, null);
+					
+				} else {
+					convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.history_view, null);
+				}
 				convertView.setTag(holder = new Holder());
 				holder.from = (TextView) convertView.findViewById(R.id.from);
 				holder.to = (TextView) convertView.findViewById(R.id.to);
 				holder.occurrence = (TextView) convertView.findViewById(R.id.occurrence);
+				holder.check = (CheckBox) convertView.findViewById(R.id.check);
 			} else {
 				holder = (Holder) convertView.getTag();
 			}
@@ -956,8 +1124,28 @@ public class SplashScreenActivity extends ScheduleActivity implements
 			holder.to.setText(history.arriveName);		
 			holder.occurrence.setText(String.valueOf(history.count));
 			holder.history = history;
+			if(edit) {
+				convertView.setOnClickListener(editListener);
+				if(checked.contains(holder.history)) {
+					holder.check.setChecked(true);
+				}
+			}
 			return convertView;
 		}
+		
+		Set<History> checked = new HashSet<History>();
+		
+		private OnClickListener editListener = new OnClickListener() {
+			public void onClick(View v) {
+				Holder h = (Holder)v.getTag();
+				h.check.toggle();
+				if(h.check.isChecked()) {
+					checked.add(h.history);
+				} else {
+					checked.remove(h.history);
+				}
+			};
+		};
 				
 
 	};
@@ -987,6 +1175,7 @@ public class SplashScreenActivity extends ScheduleActivity implements
 	}
 	
 	private class Holder {
+		public CheckBox check;
 		TextView from;
 		TextView to;
 		TextView occurrence;
@@ -998,5 +1187,48 @@ public class SplashScreenActivity extends ScheduleActivity implements
 		String departName;
 		String arriveName;
 		int count;
+	}
+	
+	private static class SimpleAdapter extends BaseAdapter {
+		
+		private List<String> choices;
+		
+		public SimpleAdapter(List<String> choices) {
+			this.choices = choices;
+		}
+		
+		@Override
+		public int getCount() {
+			return choices.size();
+		}
+
+		@Override
+		public String getItem(int position) {
+			return choices.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.spinner_item, null);
+			TextView t = (TextView) convertView.findViewById(android.R.id.text1);
+			t.setText(getItem(position));
+			return convertView;
+		}
+
+		@Override
+		public View getDropDownView(int position, View convertView,
+				ViewGroup parent) {
+			convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.spinner_item_dropdown, null);
+			TextView t = (TextView) convertView.findViewById(android.R.id.text1);
+			t.setText(getItem(position));
+			return convertView;
+		}
 	}
 }

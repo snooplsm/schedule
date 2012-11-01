@@ -243,6 +243,7 @@
         -->
     </string-array>
 
+    <string name="ad_text">We would love for you to be our sponsor.  Interested parties should contact <a href="mailto:ads@wmwm.us?subject=NJTransit+Rail+Ads">ads@wmwm.us</a></string>
     <string name="application_url">http://bit.ly/njtransit-rail</string>
 
 </resources>

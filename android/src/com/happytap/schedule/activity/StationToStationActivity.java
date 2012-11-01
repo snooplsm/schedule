@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import roboguice.inject.InjectView;
 import android.app.AlarmManager;
@@ -66,6 +68,8 @@ import com.happytap.schedule.service.PurchaseDatabase;
 import com.happytap.schedule.service.PurchaseObserver;
 import com.happytap.schedule.service.ResponseHandler;
 import com.happytap.schedule.util.date.DateUtils;
+import com.happytap.schedule.view.AdPopupView;
+import com.happytap.schedule.view.FarePopupView;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
 import com.njtransit.rail.R;
@@ -148,7 +152,9 @@ public class StationToStationActivity extends ScheduleActivity implements
 	protected void onResume() {
 		super.onResume();
 		paused = false;
-		adapter.setTripIdForAlarm(PreferenceManager.getDefaultSharedPreferences(StationToStationActivity.this).getString("alarm", null));
+		adapter.setTripIdForAlarm(PreferenceManager
+				.getDefaultSharedPreferences(StationToStationActivity.this)
+				.getString("alarm", null));
 		last = new AsyncTask<Void, Integer, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
@@ -288,7 +294,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 				}
 			}
 			if (purchasedAdFree == false) {
-				if ("remove.ads.subscription".equals(itemId) || "remove_ads_monthly".equals(itemId)) {
+				if ("remove.ads.subscription".equals(itemId)
+						|| "remove_ads_monthly".equals(itemId)) {
 					if (purchaseState == PurchaseState.PURCHASED) {
 						purchasedAdFree = true;
 					}
@@ -496,10 +503,10 @@ public class StationToStationActivity extends ScheduleActivity implements
 			if (clearAlarm != null) {
 				if (adapter.getTripIdForAlarm() != null) {
 					clearAlarm.setVisible(true);
-					
-				} else {					
+
+				} else {
 					clearAlarm.setVisible(true);
-					
+
 				}
 			}
 			if (purchase != null) {
@@ -695,7 +702,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 	private PurchaseDatabase mPurchaseDatabase;
 	private SchedulePurchaseObserver mPurchaseObserver;
-	
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		// TODO Auto-generated method stub
@@ -706,9 +713,9 @@ public class StationToStationActivity extends ScheduleActivity implements
 		outState.putString("departureId", departureStopId);
 		outState.putString("arrivalId", arrivalStopId);
 	}
-	
+
 	private long start;
-	
+
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -719,6 +726,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 		arrivalText = savedInstanceState.getString("arrivalText");
 		arrivalStopId = savedInstanceState.getString("arrivalStopId");
 	}
+	
+	private Map<String,Double> fares;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -730,7 +739,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 						+ getIntent().getStringExtra(ARRIVAL_STATION));
 		// getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
 		mBillingService = new BillingService();
 		mBillingService.setContext(this);
 		mPurchaseDatabase = new PurchaseDatabase(this);
@@ -738,7 +747,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		ResponseHandler.register(mPurchaseObserver);
 		adView = new AdView(this, AdSize.SMART_BANNER,
 				getString(R.string.publisherId));
-		double fare = getIntent().getDoubleExtra(LoadScheduleActivity.FARE, -1);
+		fares = (HashMap<String,Double>)getIntent().getSerializableExtra(LoadScheduleActivity.FARE);
 		// if(fare>=0) {
 		// this.fare.setText("Fair: " + LoadScheduleActivity.df.format(fare));
 		// this.fareContainer.setVisibility(View.VISIBLE);
@@ -752,7 +761,10 @@ public class StationToStationActivity extends ScheduleActivity implements
 			orAd.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					showPayloadEditDialog();
+					AdPopupView p = new AdPopupView(v,null);
+					p.show();
+					//
+					//showPayloadEditDialog();
 				}
 			});
 			int rand = 1;
@@ -813,10 +825,11 @@ public class StationToStationActivity extends ScheduleActivity implements
 		} else {
 			schedule = (Schedule) getIntent().getSerializableExtra("schedule");
 		}
-		if(schedule==null) {
+		if (schedule == null) {
 			Intent intent = new Intent(StationToStationActivity.this,
 					LoadScheduleActivity.class);
-			intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION, departureText);
+			intent.putExtra(LoadScheduleActivity.DEPARTURE_STATION,
+					departureText);
 			intent.putExtra(LoadScheduleActivity.ARRIVAL_STATION, arrivalText);
 			Calendar c = Calendar.getInstance();
 			c.setTimeInMillis(start);
@@ -843,16 +856,16 @@ public class StationToStationActivity extends ScheduleActivity implements
 		listView.setOnItemClickListener(this);
 		int index = adapter.findIndexOfCurrent();
 		if (index > 1) {
-			if (fare >= 0) {
-				adapter.setFareAnchor(fare, index - 1);
-				listView.setSelectionFromTop(index-1, 0);
+			if (fares !=null && !fares.isEmpty()) {
+				adapter.setFareAnchor(fares, index - 1);
+				listView.setSelectionFromTop(index - 1, 0);
 			} else {
 				listView.setSelectionFromTop(index - 1, 0);
 			}
 
 		} else {
-			if (fare >= 0) {
-				adapter.setFareAnchor(fare, 0);
+			if (fares !=null && !fares.isEmpty()) {
+				adapter.setFareAnchor(fares, 0);
 			}
 		}
 
@@ -953,6 +966,12 @@ public class StationToStationActivity extends ScheduleActivity implements
 		ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
 		StationToStation sts = adapter.getItem(position);
 		if (sts == null) {
+			View fare = view.findViewById(R.id.fare);
+			if (fare != null) {
+				FarePopupView v = new FarePopupView(fare, null, fares,
+						"Yeah");
+				v.show();
+			}
 			return;
 		}
 		Intent intent = new Intent(this, TripActivity.class)
@@ -1024,9 +1043,12 @@ public class StationToStationActivity extends ScheduleActivity implements
 			protected void onPreExecute() {
 				ScheduleAdapter adapter = (ScheduleAdapter) listView
 						.getAdapter();
-				PreferenceManager.getDefaultSharedPreferences(StationToStationActivity.this).edit().putString("alarm", sts.tripId).commit();
+				PreferenceManager
+						.getDefaultSharedPreferences(
+								StationToStationActivity.this).edit()
+						.putString("alarm", sts.tripId).commit();
 				adapter.setTripIdForAlarm(sts.tripId);
-				//listView.invalidateViews();
+				// listView.invalidateViews();
 			};
 
 			@Override
@@ -1218,7 +1240,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 			return true;
 		}
 		if (item.equals(clearAlarm)) {
-			PreferenceManager.getDefaultSharedPreferences(this).edit().remove("alarm").commit();
+			PreferenceManager.getDefaultSharedPreferences(this).edit()
+					.remove("alarm").commit();
 			getAdapter().setTripIdForAlarm(null);
 			String ns = Context.NOTIFICATION_SERVICE;
 			NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);

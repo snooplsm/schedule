@@ -11,6 +11,7 @@ import roboguice.inject.InjectView;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
@@ -22,9 +23,9 @@ import android.widget.TextView;
 import com.google.ads.Ad;
 import com.google.ads.AdListener;
 import com.google.ads.AdRequest;
+import com.google.ads.AdRequest.ErrorCode;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
-import com.google.ads.AdRequest.ErrorCode;
 import com.google.inject.Inject;
 import com.happytap.schedule.adapter.TripAdapter;
 import com.happytap.schedule.database.ScheduleDao;
@@ -153,56 +154,34 @@ public class TripActivity extends ScheduleActivity {
 			Stack<StationInterval> intervals = new Stack<StationInterval>();
 			List<TripInfo.Stop> stops = new ArrayList<TripInfo.Stop>();
 			intervals.push(interval);
+			TripInfo last;
 			while (!intervals.isEmpty()) {
-				interval = intervals.pop();
+				interval = intervals.pop();				
 				if (interval.tripId != null) {
 					TripInfo tripInfo = dao.getStationTimesForTripId(
 							interval.tripId, interval.departSequence,
 							interval.arriveSequence);
+					last = tripInfo;
 					stops.addAll(tripInfo.stops);
 				}
 				if (interval.hasNext()) {
 					intervals.push(interval.next());
+				} else {
 				}
 				//System.out.println(stops);
 			}
+			last = dao.getStationTimesForTripId(interval.tripId, interval.arriveSequence-1, Integer.MAX_VALUE);
+			View finalStop = LayoutInflater.from(this).inflate(R.layout.final_stop, null);
+			TextView t = (TextView) finalStop.findViewById(R.id.text);
+			Object c= last.stops.get(last.stops.size()-1);
+			t.setText("last stop " + c.toString());
+			listView.addHeaderView(finalStop, null, false);
+			
 			start = getIntent().getLongExtra("start", 0);
 			Calendar startCal = Calendar.getInstance();
 			startCal.setTimeInMillis(start);
 			adapter = new TripAdapter(this, stops,schedule,startCal);
 			listView.setAdapter(adapter);
-			// TripInfo tinfo = dao.getStationTimesForTripId(id);
-			// boolean foundFirst = false;
-			// List<TripInfo.Stop> stops = new ArrayList<TripInfo.Stop>();
-			// stops.addAll(tinfo.stops);
-			//
-			// while (interval.hasNext()) {
-			// interval = interval.next();
-			// tinfo = dao.getStationTimesForTripId(id,interval.departSequence,
-			// interval.arriveSequence);
-			// TripInfo.Stop first = null;
-			// TripInfo.Stop last = null;
-			// for (int i = 0; i < tinfo.stops.size(); i++) {
-			// TripInfo.Stop curr = tinfo.stops.get(i);
-			// if (first == null) {
-			// if (interval.departId.equals(curr.id)) {
-			// first = curr;
-			// stops.add(curr);
-			// for (int j = i + 1; j < tinfo.stops.size(); j++) {
-			// curr = tinfo.stops.get(j);
-			// if (interval.arriveId.equals(curr.id)) {
-			// last = curr;
-			// stops.add(last);
-			// break;
-			// } else {
-			// stops.add(curr);
-			// }
-			// }
-			// break;
-			// }
-			// }
-			// }
-			// }
 		}
 
 		listView.setOnItemClickListener(new OnItemClickListener() {

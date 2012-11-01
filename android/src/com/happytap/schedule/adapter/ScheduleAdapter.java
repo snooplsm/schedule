@@ -10,7 +10,6 @@ import java.util.Map;
 
 import roboguice.util.Strings;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.text.SpannableStringBuilder;
 import android.text.style.SuperscriptSpan;
 import android.view.LayoutInflater;
@@ -148,7 +147,7 @@ public class ScheduleAdapter extends BaseAdapter {
 			duration.setText("");
 			departsIn.setText("");
 			connections.setText("");
-			fare.setText("Fare: " + LoadScheduleActivity.df.format(this.fare));
+			fare.setText("Fare: " + LoadScheduleActivity.df.format(this.fares.get("Adult")));
 			fare.setVisibility(View.VISIBLE);
 			// v.setClickable(false);
 			return v;
@@ -495,10 +494,10 @@ public class ScheduleAdapter extends BaseAdapter {
 	}
 
 	int fareAnchor = -1;
-	Double fare;
+	Map<String,Double> fares;
 
-	public void setFareAnchor(Double fare, int i) {
-		this.fare = fare;
+	public void setFareAnchor(Map<String,Double> fares, int i) {
+		this.fares = fares;
 		this.fareAnchor = i;
 		stations.add(i, null);
 		notifyDataSetChanged();

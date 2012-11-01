@@ -374,4 +374,23 @@ public class ScheduleDao {
 		c.close();
 		return val;
 	}
+	
+	public HashMap<String, Double> getFairs(String departId, String arriveId) {
+		Cursor c = database.rawQuery(
+				"select adult,child,senior,disabled,weekly,ten_trip,monthly,student_monthly from fares where source=? and target=?",
+				new String[] { departId, arriveId });
+		HashMap<String, Double> fares = new HashMap<String,Double>();
+		while (c.moveToNext()) {
+			fares.put("Adult", c.getDouble(0));
+			fares.put("Child",c.getDouble(1));
+			fares.put("Senior",c.getDouble(2));
+			fares.put("Disabled", c.getDouble(3));
+			fares.put("Weekly" , c.getDouble(4));
+			fares.put("Ten Trip" , c.getDouble(5));
+			fares.put("Monthly" , c.getDouble(6));
+			fares.put("Student Monthly" , c.getDouble(7));
+		}
+		c.close();
+		return fares;
+	}
 }

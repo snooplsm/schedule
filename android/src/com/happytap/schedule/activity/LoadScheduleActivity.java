@@ -2,6 +2,7 @@ package com.happytap.schedule.activity;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
@@ -34,7 +35,7 @@ public class LoadScheduleActivity extends RoboActivity {
 	
 	private Messenger mService = null;
 	
-	Double fare;
+	HashMap<String,Double> fares;
 	
 	boolean mIsBound;
 	
@@ -84,7 +85,7 @@ public static DecimalFormat df = new DecimalFormat("$0.00");
 		protected Void doInBackground(Void... arg0) {
 			String departId = getIntent().getStringExtra(StationToStationActivity.DEPARTURE_ID);
 			String arriveId = getIntent().getStringExtra(StationToStationActivity.ARRIVAL_ID);
-			fare = dao.getFair(departId,arriveId);
+			fares = dao.getFairs(departId,arriveId);
 			publishProgress();
 			while(!isCancelled()) {
 				publishProgress();
@@ -116,9 +117,9 @@ public static DecimalFormat df = new DecimalFormat("$0.00");
 				reverse = !reverse;
 				dotdotdot.setText("..");
 			}
-			if(fare!=null) {
+			if(fares!=null && !fares.isEmpty()) {
 				fareText.setVisibility(View.VISIBLE);
-				fareText.setText("Fare: " + df.format(fare));
+				fareText.setText("Fare: " + df.format(fares.get("Adult")));
 			}
 			dotdotdot.refreshDrawableState();
 		}		
@@ -180,7 +181,7 @@ public static DecimalFormat df = new DecimalFormat("$0.00");
                 		intent.putExtra(ARRIVAL_ID, getIntent().getStringExtra(StationToStationActivity.ARRIVAL_ID));
                 		Schedule schedule = (Schedule)obj;
                 		scheduleProvider.setSchedule(schedule);
-                		intent.putExtra(FARE,fare);
+                		intent.putExtra(FARE,fares);
                 		startActivity(intent);
                 		finish();
         			};
