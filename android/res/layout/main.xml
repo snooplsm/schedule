@@ -39,14 +39,15 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
+                        android:layout_toLeftOf="@+id/arrow"
                         android:gravity="center_vertical"
-                        android:paddingLeft="2dip"
-                        android:paddingTop="3dip"
+                        android:padding="@dimen/MainLargeTextPadding"
                         android:text="@string/departure_text"
                         android:textAppearance="@style/TextViewStyleUserDetailsActivityGeneralTitle"
-                        android:textSize="25dip" />
+                        android:textSize="@dimen/MainLargeTextSize" />
 
                     <ImageView
+                        android:id="@id/arrow"
                         android:layout_width="9dip"
                         android:layout_height="13dip"
                         android:layout_alignParentRight="true"
@@ -75,11 +76,10 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
                         android:gravity="center_vertical"
-                        android:paddingLeft="2dip"
-                        android:paddingTop="3dip"
+                        android:padding="@dimen/MainLargeTextPadding"
                         android:text="@string/arrival_text"
                         android:textAppearance="@style/TextViewStyleUserDetailsActivityGeneralTitle"
-                        android:textSize="25dip" />
+                        android:textSize="@dimen/MainLargeTextSize" />
 
                     <ImageView
                         android:layout_width="9dip"

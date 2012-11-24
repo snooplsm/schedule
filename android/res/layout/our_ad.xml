@@ -18,15 +18,15 @@
 			android:textColor="@color/lgrey_start"
 			android:text="["/>
 		<TextView
+		    android:id="@+id/your_ad_here"
 			android:layout_width="wrap_content"
 			android:layout_height="fill_parent"
 			android:gravity="center"
 			android:layout_centerInParent="true"
 			android:textSize="20dip"
 			android:textColor="@color/lgrey_start"
-			android:lines="2"
-			android:text="Ad free $0.99/mo\n
-Less than a latte"/>
+			android:lines="1"
+			android:text="Your ad here."/>
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"

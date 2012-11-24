@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.happytap.schedule.view.RelativeLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:atbat="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/QuickActionMenu_upArrow" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/user_details_activity_general"
+            android:divider="@null"
+            android:padding="10dp"
+            android:textColor="#DDDDDD"
+            android:autoLink="email"
+            android:text="Edit"
+            android:textSize="15dp" />
+    </RelativeLayout>
+
+    <com.happytap.schedule.view.Triangle
+        android:id="@id/QuickActionMenu_upArrow"
+        android:layout_width="24dp"
+        android:layout_height="13dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="-2dp"
+        android:visibility="invisible"
+        atbat:borderColor="#00000000"
+        atbat:rotate="0"
+        atbat:color="#00000000" />
+
+    <com.happytap.schedule.view.Triangle
+        android:id="@+id/QuickActionMenu_downArrow"
+        android:layout_width="24dp"
+        android:layout_height="13dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/container"
+        android:layout_marginTop="-2dp"
+        atbat:borderColor="#00000000"
+        atbat:rotate="180"
+        atbat:color="#00000000" />
+
+</com.happytap.schedule.view.RelativeLayoutCompat>

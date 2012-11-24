@@ -1,15 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/history_gradient" >
+    android:background="@drawable/history_gradient"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/controls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"        
+        android:padding="5dp"
+        android:visibility="gone" >
+
+        <RelativeLayout
+            android:id="@+id/trash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/abs__list_selector_holo_light"
+            android:padding="5dp"
+            android:layout_marginRight="10dp" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_trash" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/abs__list_selector_holo_light"
+            android:padding="5dp"
+            android:layout_marginLeft="10dp" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_cancel" />
+        </RelativeLayout>
+    </LinearLayout>
 
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:divider="@null" >
+        android:layout_above="@id/controls"
+        android:divider="@null"
+        android:listSelector="@drawable/abs__list_selector_holo_light" >
     </ListView>
 
-</LinearLayout>
+</RelativeLayout>

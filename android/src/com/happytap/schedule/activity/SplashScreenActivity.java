@@ -57,6 +57,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -1126,8 +1128,12 @@ public class SplashScreenActivity extends ScheduleActivity implements
 			holder.history = history;
 			if(edit) {
 				convertView.setOnClickListener(editListener);
+				holder.check.setTag(holder);
+				holder.check.setOnCheckedChangeListener(onCheckedChangeListener);
 				if(checked.contains(holder.history)) {
 					holder.check.setChecked(true);
+				} else {
+					holder.check.setChecked(false);
 				}
 			}
 			return convertView;
@@ -1145,6 +1151,19 @@ public class SplashScreenActivity extends ScheduleActivity implements
 					checked.remove(h.history);
 				}
 			};
+		};
+		
+		private OnCheckedChangeListener onCheckedChangeListener = new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				Holder h = (Holder) buttonView.getTag();
+				if(isChecked) {
+					checked.add(h.history);
+				} else {
+					checked.remove(h.history);
+				}
+			}
 		};
 				
 
