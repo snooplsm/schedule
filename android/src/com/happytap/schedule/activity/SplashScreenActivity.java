@@ -80,7 +80,7 @@ import com.happytap.schedule.service.ScheduleService;
 import com.happytap.schedule.service.ThreadHelper;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.SlidingMenu.OnCloseListener;
 import com.slidingmenu.lib.SlidingMenu.OnOpenListener;
@@ -233,7 +233,9 @@ public class SplashScreenActivity extends ScheduleActivity implements
 									.getSharedPreferences("database_info",
 											Context.MODE_PRIVATE);
 							prefs.edit().clear().commit();
-							database.delete();
+							for(File file : database.getParentFile().listFiles()) {
+								file.delete();
+							}
 						} catch (Exception ex) {
 
 						}

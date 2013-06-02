@@ -15,7 +15,7 @@ import com.happytap.schedule.database.TripInfo;
 import com.happytap.schedule.database.TripInfo.Stop;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.view.ProgressView;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class TripAdapter extends ArrayAdapter<TripInfo.Stop> {
 	

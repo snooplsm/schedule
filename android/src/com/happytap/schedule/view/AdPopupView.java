@@ -15,7 +15,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 
 import com.happytap.schedule.view.RelativeLayoutCompat.OnLayoutChangeListener;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class AdPopupView {
 
@@ -40,7 +40,7 @@ public class AdPopupView {
 		
 		// Initialize layout and view references.
 		LayoutInflater inflater = LayoutInflater.from(anchor.getContext());
-		this._root = (RelativeLayoutCompat) inflater.inflate(com.njtransit.rail.R.layout.view_quick_action_ad, null);
+		this._root = (RelativeLayoutCompat) inflater.inflate(us.wmwm.njrail.R.layout.view_quick_action_ad, null);
 		this.initializeViewReferences(this._root);
 		//_blurb.setText(blurb);
 		// Configure popup window for the quick action. It should have no background,

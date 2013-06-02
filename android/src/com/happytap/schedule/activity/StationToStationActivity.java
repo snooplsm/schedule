@@ -72,7 +72,7 @@ import com.happytap.schedule.view.AdPopupView;
 import com.happytap.schedule.view.FarePopupView;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class StationToStationActivity extends ScheduleActivity implements
 		OnItemLongClickListener, OnItemClickListener, OnClickListener,
@@ -152,6 +152,10 @@ public class StationToStationActivity extends ScheduleActivity implements
 	protected void onResume() {
 		super.onResume();
 		paused = false;
+		ScheduleAdapter adapter = (ScheduleAdapter)listView.getAdapter();
+		if(adapter==null) {
+			return;
+		}
 		adapter.setTripIdForAlarm(PreferenceManager
 				.getDefaultSharedPreferences(StationToStationActivity.this)
 				.getString("alarm", null));
@@ -179,6 +183,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 			@Override
 			protected void onProgressUpdate(Integer... values) {
+				ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
 				adapter.notifyDataSetChanged();
 			}
 		};
@@ -222,7 +227,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 					if (abbreviatedName != null && abbreviatedName.length > 1) {
 						vision.startDepartures(schedule, abbreviatedName);
 					}
-				} catch (IOException e) {
+				} catch (Exception e) {
 				}
 				return null;
 			}
@@ -422,8 +427,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 		Intent i = new Intent(Intent.ACTION_SEND);
 		i.setType("plain/text");
 		i.putExtra(Intent.EXTRA_EMAIL,
-				new String[] { "njtransitrail-feedback@wmwm.us" });
-		StringBuilder b = new StringBuilder("NJTransit Rail Feedback "
+				new String[] { "njrail-feedback@wmwm.us" });
+		StringBuilder b = new StringBuilder("NJ Rail Feedback "
 				+ getIntent().getStringExtra(DEPARTURE_STATION) + " : "
 				+ getIntent().getStringExtra(ARRIVAL_STATION));
 		try {

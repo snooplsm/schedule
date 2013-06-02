@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.google.inject.Inject;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class AlarmActivity extends ScheduleActivity {
 

@@ -11,7 +11,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 /**
  * A shape that resembles a triangle. The user can form an equalateral triangle

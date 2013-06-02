@@ -9,7 +9,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class AlarmTimeDialog extends Dialog {
 

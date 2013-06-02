@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public abstract class HourDialog extends Dialog implements
 		android.view.View.OnClickListener {

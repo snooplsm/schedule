@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.happytap.schedule.database.StationDao;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class StationAdapter extends SimpleCursorAdapter {
 	

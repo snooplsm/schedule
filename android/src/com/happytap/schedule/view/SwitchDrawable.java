@@ -12,7 +12,7 @@ import android.graphics.drawable.StateListDrawable;
 
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class SwitchDrawable extends StateListDrawable {
 

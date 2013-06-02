@@ -27,7 +27,7 @@ import android.widget.LinearLayout.LayoutParams;
 
 import com.googlecode.android.widgets.DateSlider.TimeView.DayTimeLayoutView;
 import com.googlecode.android.widgets.DateSlider.TimeView.TimeLayoutView;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class DefaultDateSlider extends DateSlider {
 	

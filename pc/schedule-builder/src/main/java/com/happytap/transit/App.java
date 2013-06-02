@@ -151,7 +151,7 @@ public class App {
 			throw new RuntimeException(e2);
 		}
 		String[] creates = new String[] {
-				"create table if not exists trips(id varchar(50), route_id varchar(50), service_id varchar(50), headsign varchar(255), direction int, block_id varchar(100))",
+				"create table if not exists trips(id varchar(50), route_id varchar(50), service_id varchar(50), headsign varchar(255), direction varchar(255), block_id varchar(100))",
 				"create table if not exists stops(id varchar(50), name varchar(255), lat real, lon real, zone_id varchar(50), alternate_id varchar(50))",
 				"create table if not exists stop_times(trip_id varchar(50), service_id varchar(50), route_id varchar(50), arrival varchar(10), departure varchar(10), stop_id varchar(100), sequence int, pickup_type int, drop_off_type int)",
 				"create table if not exists routes(id varchar(50), agency_id varchar(100), name varchar(255), route_type integer, timezone varchar(100))",
@@ -193,7 +193,7 @@ public class App {
 				prep.setString(3, t.serviceId);
 				prep.setString(4, t.name);
 				if (t.direction != null) {
-					prep.setInt(5, t.direction);
+					prep.setString(5, t.direction);
 				}
 				prep.setString(6, t.blockId);
 				prep.addBatch();
@@ -679,7 +679,7 @@ public class App {
 				trip.route = routes.get(row[routeIdPos].trim());
 				trip.serviceId = row[serviceIdPos].trim();
 				if (directionIdPos >= 0) {
-					trip.direction = toInt(row[directionIdPos].trim());
+					trip.direction = row[directionIdPos].trim();
 				}
 				trip.blockId = row[blockIdPos].trim();
 				System.out.println(trip.blockId);
@@ -698,7 +698,7 @@ public class App {
 		String name;
 		String serviceId;
 		String blockId;
-		Integer direction;
+		String direction;
 
 		TreeMap<Integer, Station> stations = new TreeMap<Integer, Station>();
 	}

@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockActivity;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class ScheduleActivity extends RoboSherlockActivity {
     /** Called when the activity is first created. */

@@ -8,10 +8,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.happytap.schedule.domain.Schedule;
@@ -22,6 +25,10 @@ import com.happytap.schedule.domain.TrainStatus;
  * 
  */
 public class DeparturePoller {
+	
+	private static final String TRK = "TRK";
+	private static final String STATUS = "STATUS";
+	private static final String TRAIN = "TRAIN";
 	
 	public List<TrainStatus> getTrainStatuses(Schedule schedule, String station) throws IOException {
 		URL url = null;
@@ -42,107 +49,49 @@ public class DeparturePoller {
 			StringBuilder data = new StringBuilder();
 			String line = null;
 			List<TrainStatus> statuses = new ArrayList<TrainStatus>(10);
-			int iterations = 0;
 			while ((line = br.readLine()) != null) {
 				data.append(line.toLowerCase());
 			}
 			br.close();
 			Document document = Jsoup.parse(data.toString());
 			
-			int index = data.indexOf("<table");
-			int endIndex = data.indexOf(">",index);		
-			//System.out.println(index);
-			//System.out.println(endIndex);
-			//System.out.println(data.substring(endIndex));
-			while(endIndex!=-1) {				
-				iterations++;
-				if(iterations==30) {
-					break;
+			Elements tables = document.getElementsByTag("table");
+			
+			Element table = tables.first();
+			
+			Elements trs = table.getElementsByTag("tr");
+			
+			Element third = trs.get(2);
+			
+			Elements tds = third.getElementsByTag("td");
+			
+			Map<String, Integer> typeToPosition = new HashMap<String,Integer>();
+			
+			for(int i = 0; i < tds.size(); i++) {
+				Element td = tds.get(i);
+				if(TRK.equalsIgnoreCase(td.text())) {
+					typeToPosition.put(TRK, i);
 				}
-				int tr = data.indexOf("<tr",endIndex);
-				if(tr==-1) {
-					endIndex=-1;
-					continue;
+				if(TRAIN.equalsIgnoreCase(td.text())) {
+					typeToPosition.put(TRAIN, i);
 				}
-				endIndex = tr;
-				int endTr = data.indexOf("</tr>",tr);
-				if(endTr==-1) {
-					endIndex=-1;
-					continue;
-				}
-				line = data.substring(tr,endTr);
-				endIndex = endTr;
-				
-				int train = line.indexOf("train=");
-				if(train==-1) {
-					continue;
-				}
-				train+="train=".length();
-				int trainEnd = line.indexOf("\"",train);
-				String trainStr = line.substring(train,trainEnd);
-				//System.out.println(trainStr);
-				int tdSkip = line.indexOf("<td",trainEnd);
-				if(tdSkip==-1) {
-					continue;
-				}
-				tdSkip+="<td".length();
-				tdSkip = line.indexOf("<td",tdSkip);
-				if(tdSkip==-1) {
-					continue;
-				}
-				tdSkip+="<td".length();
-//				tdSkip = line.indexOf("<td",tdSkip);
-//				if(tdSkip==-1) {
-//					continue;
-//				}
-//				tdSkip+="<td".length();
-				int trackBegin = line.indexOf(">",tdSkip);
-				if(trackBegin==-1) {
-					continue;
-				}
-				trackBegin+=">".length();
-				int trackEnd = line.indexOf("</td",trackBegin);
-				if(trackEnd==-1) {
-					continue;
-				}
-				String track = line.substring(trackBegin,trackEnd);
-				//System.out.println(track);
-				tdSkip = line.indexOf("<td",trackEnd);
-				if(tdSkip==-1) {
-					continue;
-				}
-				tdSkip+="<td".length();
-				tdSkip = line.indexOf("<td",tdSkip);
-				if(tdSkip==-1) {
-					continue;
-				}
-				tdSkip+="<td".length();
-				tdSkip = line.indexOf("<td",tdSkip);
-				if(tdSkip==-1) {
-					continue;
-				}
-				tdSkip+="<td".length();
-				int statusBegin = line.indexOf(">",tdSkip);
-				if(statusBegin==-1) {
-					continue;
-				}
-				statusBegin+=">".length();
-				int statusEnd = line.indexOf("<",statusBegin);
-				if(statusEnd==-1) {
-					continue;
-				}
-				String status = line.substring(statusBegin,statusEnd);
-				if(trainStr==null) {
-					continue;
-				}
-				if(track!=null || status!=null) {
-					TrainStatus tstatus = new TrainStatus();
-					tstatus.setStatus(status);
-					tstatus.setTrack(track);
-					tstatus.setTrain(trainStr);
-					statuses.add(tstatus);
+				if(STATUS.equalsIgnoreCase(td.text())) {
+					typeToPosition.put(STATUS,i);
 				}
 			}
+			
+			for(int i = 3; i < trs.size(); i++) {
+				tds = trs.get(i).getElementsByTag("td");
+				Element train = tds.get(typeToPosition.get(TRAIN));
+				Element track = tds.get(typeToPosition.get(TRK));
+				Element status = tds.get(typeToPosition.get(STATUS));
+					TrainStatus tstatus = new TrainStatus();
+					tstatus.setStatus(status.text());
+					tstatus.setTrack(track.text());
+					tstatus.setTrain(train.text());
+					statuses.add(tstatus);
+			}
+			
 			return statuses;
 		} catch (IOException e) {
 			throw e;

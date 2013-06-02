@@ -34,7 +34,7 @@ import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.StationInterval;
 import com.happytap.schedule.provider.CurrentScheduleProvider;
 import com.happytap.schedule.service.ThreadHelper;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class TripActivity extends ScheduleActivity {
 

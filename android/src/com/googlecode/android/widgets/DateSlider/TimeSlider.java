@@ -26,7 +26,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout.LayoutParams;
 
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class TimeSlider extends DateSlider {
 

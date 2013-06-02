@@ -26,7 +26,7 @@ import com.happytap.schedule.domain.StationInterval;
 import com.happytap.schedule.domain.StationToStation;
 import com.happytap.schedule.domain.TrainStatus;
 import com.happytap.schedule.util.date.DateUtils;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class ScheduleAdapter extends BaseAdapter {
 

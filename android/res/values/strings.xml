@@ -8,7 +8,7 @@
   	<string name="activity_title_schedule"></string>
     <string name="chat_room">#njtrail</string>
     <string name="chat_server">irc.freenode.net</string>
-    <string name="app_name">NJTransit Rail</string>
+    <string name="app_name">NJ Rail</string>
     <string name="billing_not_supported_title">Can\'t make purchases</string>
     <string name="billing_not_supported_message">The Market billing
      service is not available at this time.  You can continue to use this app but you
@@ -31,7 +31,7 @@
     <string formatted="true" name="marketUrl">market://details?id=%s</string>
     <string name="items_you_own">Items you own</string>
     <string name="recent_transactions">Recent activity</string>
-    <string name="establishment">NJTransit</string>
+    <string name="establishment">NJ Transit</string>
     <string name="departure_text">Departure Station</string>
     <string name="arrival_text">Arrival Station</string>
     <string name="dateSliderTitle">Selected date</string>

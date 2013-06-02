@@ -29,7 +29,7 @@ import com.happytap.schedule.database.ScheduleDao;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.provider.CurrentScheduleProvider;
 import com.happytap.schedule.service.ScheduleService;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class LoadScheduleActivity extends RoboActivity {
 	

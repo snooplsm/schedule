@@ -17,13 +17,14 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.view.Menu;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.happytap.jumper.JumpDialog;
 import com.happytap.jumper.JumpListener;
 import com.happytap.schedule.adapter.StationAdapter;
 import com.happytap.schedule.database.StationDao;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class StationListActivity extends ScheduleActivity implements OnItemLongClickListener, OnItemClickListener, JumpListener {
 	
@@ -120,6 +121,26 @@ public class StationListActivity extends ScheduleActivity implements OnItemLongC
 		getCurrentStopId(adapter,position);
 		openContextMenu(adapter);		
 		return true;
+	}
+	
+	com.actionbarsherlock.view.MenuItem jumper;
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		jumper = menu.add("Jumper");
+		jumper.setIcon(R.drawable.ic_action_grid);
+		jumper.setShowAsAction(com.actionbarsherlock.view.MenuItem.SHOW_AS_ACTION_ALWAYS);
+		return super.onCreateOptionsMenu(menu);
+
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(
+			com.actionbarsherlock.view.MenuItem item) {
+		if(item.equals(jumper)) {
+			showDialog(DIALOG_JUMP);
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    package="com.njtransit.rail"
-    android:versionCode="2012082501"
-    android:versionName="2012-08-25" >
+    package="us.wmwm.njrail"
+    android:versionCode="2013052200"
+    android:versionName="2013-05-22" >
 
     <uses-sdk
         android:minSdkVersion="7"

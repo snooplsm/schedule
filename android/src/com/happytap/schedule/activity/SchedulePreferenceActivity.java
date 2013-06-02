@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class SchedulePreferenceActivity extends SherlockPreferenceActivity {
 	

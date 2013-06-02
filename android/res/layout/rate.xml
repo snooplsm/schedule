@@ -24,7 +24,7 @@
 			android:layout_centerInParent="true"
 			android:textSize="20dip"
 			android:textColor="@color/lgrey_start"
-			android:text="Rate NJTransit Rail"/>
+			android:text="Rate NJ Transit Rail"/>
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"

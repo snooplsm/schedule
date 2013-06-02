@@ -877,6 +877,17 @@ def buildGraph(agencies) :
 							# 	indent = indent+1					
 							# print ""
 			conn.commit()
+	c.execute("delete from schedule_path where (source=? and target=?) or (target=? and source=?)",("51","105","51","105"))
+	c.execute("delete from schedule_path where (source=? and target=?) or (target=? and source=?)",("52","105","52","105"))
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("51","105","51","38174",0,0))			
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("51","105","38174","105",0,1))
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("105","51","105","38174",0,0))			
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("105","51","38174","51",0,1))
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("52","105","52","38174",0,0))			
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("52","105","38174","105",0,1))
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("105","52","105","38174",0,0))			
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("105","52","38174","52",0,1))
+	conn.commit()
 	for stop in stations:
 		stop = stations[stop]
 		c.execute("INSERT INTO stop(name,stop_id,lat,lon) values(?,?,?,?)",(stop["name"],stop["id"],stop["lat"],stop["lon"]))

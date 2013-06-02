@@ -30,7 +30,7 @@ import com.happytap.schedule.domain.Favorite;
 import com.happytap.schedule.domain.Schedule;
 import com.happytap.schedule.domain.Service;
 import com.happytap.schedule.domain.StopTime;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 @ContextSingleton
 public class ScheduleDao {

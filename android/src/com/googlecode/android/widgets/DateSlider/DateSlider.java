@@ -33,7 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.googlecode.android.widgets.DateSlider.TimeView.TimeTextView;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public abstract class DateSlider extends Dialog {
 

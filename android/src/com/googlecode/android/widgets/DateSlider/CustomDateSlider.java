@@ -30,7 +30,7 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout.LayoutParams;
 
 import com.googlecode.android.widgets.DateSlider.TimeView.TimeTextView;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class CustomDateSlider extends DateSlider {
 

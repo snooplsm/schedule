@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class AboutActivity extends ScheduleActivity {
 

@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import com.happytap.schedule.activity.LoadScheduleActivity;
 import com.happytap.schedule.view.RelativeLayoutCompat.OnLayoutChangeListener;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 public class FarePopupView {
 
@@ -47,7 +47,7 @@ public class FarePopupView {
 		
 		// Initialize layout and view references.
 		LayoutInflater inflater = LayoutInflater.from(anchor.getContext());
-		this._root = (RelativeLayoutCompat) inflater.inflate(com.njtransit.rail.R.layout.view_quick_action_station, null);
+		this._root = (RelativeLayoutCompat) inflater.inflate(us.wmwm.njrail.R.layout.view_quick_action_station, null);
 		this.initializeViewReferences(this._root);
 		//_blurb.setText(blurb);
 		// Configure popup window for the quick action. It should have no background,

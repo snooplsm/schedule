@@ -23,7 +23,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.google.inject.Inject;
-import com.njtransit.rail.R;
+import us.wmwm.njrail.R;
 
 @ContextSingleton
 public class DatabaseHelper extends SQLiteOpenHelper {
