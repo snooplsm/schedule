@@ -96,7 +96,7 @@
 	</tstamp>
 	
 	<tstamp>
-		<format property="app.versionCode" pattern="yyyyMMdd01"/>
+		<format property="app.versionCode" pattern="yyyyMMddmm"/>
 	</tstamp>
 	
 	<echo message="${app.versionName}"/>
