@@ -1231,14 +1231,14 @@ com.larvalabs.svgandroid.SVGParser$NumberParse:
 com.larvalabs.svgandroid.SVGParser$Properties:
     public java.lang.Float getFloat(java.lang.String,float)
 com.larvalabs.svgandroid.package-info
-com.njtransit.rail.R$array
-com.njtransit.rail.R$attr
-com.njtransit.rail.R$bool
-com.njtransit.rail.R$color
-com.njtransit.rail.R$drawable
-com.njtransit.rail.R$id
-com.njtransit.rail.R$layout
-com.njtransit.rail.R$raw:
+us.wmwm.njrail.R$array
+us.wmwm.njrail.R$attr
+us.wmwm.njrail.R$bool
+us.wmwm.njrail.R$color
+us.wmwm.njrail.R$drawable
+us.wmwm.njrail.R$id
+us.wmwm.njrail.R$layout
+us.wmwm.njrail.R$raw:
     public static final int database_db_aaa
     public static final int database_db_aab
     public static final int database_db_aac
@@ -1360,9 +1360,9 @@ com.njtransit.rail.R$raw:
     public static final int newjersey
     public static final int reload
     public static final int star
-com.njtransit.rail.R$string
-com.njtransit.rail.R$style
-com.njtransit.rail.R$xml
+us.wmwm.njrail.R$string
+us.wmwm.njrail.R$style
+us.wmwm.njrail.R$xml
 d:
     public final synchronized boolean o()
     public final synchronized void y()
