@@ -87,7 +87,7 @@
     </path>
 
     <xpath input="AndroidManifest.xml" expression="/manifest/@package"
-                output="manifest.package" default="com.njtransit.rail"/>
+                output="manifest.package" default="us.wmwm.njrail"/>
 	
 	<echo message="${manifest.package}"/>
 	
@@ -105,14 +105,14 @@
 	<taskdef name="xmltask" classpathref="schedule.antlibs" classname="com.oopsconsultancy.xmltask.ant.XmlTask" />
 	<target name="update-sitemap" description="update the update date">
 	    <xmltask source="res/values/strings.xml" dest="res/values/strings.xml" report="true">
-	        <replace path="/resources/item[@name='paidApp']/text()" withText="true"/>
+	        <replace path="/resources/item[@name='paidApp']/text()" withText="false"/>
 	    	<replace path="/resources/string[@name='publisherId']/text()" withText="${app.publisherId}"/>
 	    	<replace path="/resources/string[@name='app_name']/text()" withText="${app.name}"/>
 	    	<replace path="/resources/string[@name='establishment']/text()" withText="${app.establishment}"/>
 	    </xmltask>
 	    <xmltask source="AndroidManifest.xml" dest="AndroidManifest.xml" report="true">
-	        <replace path="/manifest[@android:versionCode]/@android:versionCode" withText="1"/>
-	    	<replace path="/manifest[@android:versionName]/@android:versionName" withText="1.0"/>
+	        <replace path="/manifest[@android:versionCode]/@android:versionCode" withText="${app.versionCode}"/>
+	    	<replace path="/manifest[@android:versionName]/@android:versionName" withText="${app.versionName}"/>
 	    	<replace path="/manifest/application[@android:debuggable]/@android:debuggable" withText="false"/>
 	    </xmltask>
 	</target>
