@@ -729,7 +729,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		departureText = savedInstanceState.getString("departureText");
 		departureStopId = savedInstanceState.getString("departureId");
 		arrivalText = savedInstanceState.getString("arrivalText");
-		arrivalStopId = savedInstanceState.getString("arrivalStopId");
+		arrivalStopId = savedInstanceState.getString("arrivalId");
 	}
 	
 	private Map<String,Double> fares;
