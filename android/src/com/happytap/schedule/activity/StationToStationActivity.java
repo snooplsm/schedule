@@ -720,17 +720,6 @@ public class StationToStationActivity extends ScheduleActivity implements
 	}
 
 	private long start;
-
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onRestoreInstanceState(savedInstanceState);
-		start = savedInstanceState.getLong("start");
-		departureText = savedInstanceState.getString("departureText");
-		departureStopId = savedInstanceState.getString("departureId");
-		arrivalText = savedInstanceState.getString("arrivalText");
-		arrivalStopId = savedInstanceState.getString("arrivalId");
-	}
 	
 	private Map<String,Double> fares;
 
@@ -739,6 +728,13 @@ public class StationToStationActivity extends ScheduleActivity implements
 		// setTheme(android.R.style.Theme_Light_NoTitleBar);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.station_to_station);
+		
+		if(savedInstanceState!=null) {
+			departureText = savedInstanceState.getString("departureText");
+			departureStopId = savedInstanceState.getString("departureId");
+			arrivalText = savedInstanceState.getString("arrivalText");
+			arrivalStopId = savedInstanceState.getString("arrivalId");
+		}
 		this.getSupportActionBar().setSubtitle(
 				getIntent().getStringExtra(DEPARTURE_STATION) + " \nto\n"
 						+ getIntent().getStringExtra(ARRIVAL_STATION));
@@ -816,20 +812,6 @@ public class StationToStationActivity extends ScheduleActivity implements
 		}
 		adFodder.setVisibility(View.GONE);
 
-		schedule = scheduleProvider.get();
-		if (schedule != null) {
-			new Thread() {
-				public void run() {
-					Intent it = new Intent(StationToStationActivity.this,
-							StationToStationActivity.class);
-					it.putExtras(getIntent());
-					it.putExtra("schedule", schedule);
-					setIntent(it);
-				};
-			}.start();
-		} else {
-			schedule = (Schedule) getIntent().getSerializableExtra("schedule");
-		}
 		if (schedule == null) {
 			Intent intent = new Intent(StationToStationActivity.this,
 					LoadScheduleActivity.class);
