@@ -887,6 +887,10 @@ def buildGraph(agencies) :
 	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("52","105","38174","105",0,1))
 	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("105","52","105","38174",0,0))			
 	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("105","52","38174","52",0,1))
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("37953","150","37953","38174",0,0))
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("37953","150","38174","150",0,1))
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("150","37953","150","38174",0,0))
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("150","37953","38174","37953",0,1))
 	conn.commit()
 	for stop in stations:
 		stop = stations[stop]
