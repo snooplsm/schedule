@@ -152,8 +152,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 	protected void onResume() {
 		super.onResume();
 		paused = false;
-		ScheduleAdapter adapter = (ScheduleAdapter)listView.getAdapter();
-		if(adapter==null) {
+		ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
+		if (adapter == null) {
 			return;
 		}
 		adapter.setTripIdForAlarm(PreferenceManager
@@ -183,7 +183,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 
 			@Override
 			protected void onProgressUpdate(Integer... values) {
-				ScheduleAdapter adapter = (ScheduleAdapter) listView.getAdapter();
+				ScheduleAdapter adapter = (ScheduleAdapter) listView
+						.getAdapter();
 				adapter.notifyDataSetChanged();
 			}
 		};
@@ -720,16 +721,16 @@ public class StationToStationActivity extends ScheduleActivity implements
 	}
 
 	private long start;
-	
-	private Map<String,Double> fares;
+
+	private Map<String, Double> fares;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// setTheme(android.R.style.Theme_Light_NoTitleBar);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.station_to_station);
-		
-		if(savedInstanceState!=null) {
+
+		if (savedInstanceState != null) {
 			departureText = savedInstanceState.getString("departureText");
 			departureStopId = savedInstanceState.getString("departureId");
 			arrivalText = savedInstanceState.getString("arrivalText");
@@ -748,7 +749,8 @@ public class StationToStationActivity extends ScheduleActivity implements
 		ResponseHandler.register(mPurchaseObserver);
 		adView = new AdView(this, AdSize.SMART_BANNER,
 				getString(R.string.publisherId));
-		fares = (HashMap<String,Double>)getIntent().getSerializableExtra(LoadScheduleActivity.FARE);
+		fares = (HashMap<String, Double>) getIntent().getSerializableExtra(
+				LoadScheduleActivity.FARE);
 		// if(fare>=0) {
 		// this.fare.setText("Fair: " + LoadScheduleActivity.df.format(fare));
 		// this.fareContainer.setVisibility(View.VISIBLE);
@@ -762,10 +764,10 @@ public class StationToStationActivity extends ScheduleActivity implements
 			orAd.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					AdPopupView p = new AdPopupView(v,null);
+					AdPopupView p = new AdPopupView(v, null);
 					p.show();
 					//
-					//showPayloadEditDialog();
+					// showPayloadEditDialog();
 				}
 			});
 			int rand = 1;
@@ -811,7 +813,20 @@ public class StationToStationActivity extends ScheduleActivity implements
 			});
 		}
 		adFodder.setVisibility(View.GONE);
-
+		schedule = scheduleProvider.get();
+		if (schedule != null) {
+			new Thread() {
+				public void run() {
+					Intent it = new Intent(StationToStationActivity.this,
+							StationToStationActivity.class);
+					it.putExtras(getIntent());
+					it.putExtra("schedule", schedule);
+					setIntent(it);
+				};
+			}.start();
+		} else {
+			schedule = (Schedule) getIntent().getSerializableExtra("schedule");
+		}
 		if (schedule == null) {
 			Intent intent = new Intent(StationToStationActivity.this,
 					LoadScheduleActivity.class);
@@ -843,7 +858,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		listView.setOnItemClickListener(this);
 		int index = adapter.findIndexOfCurrent();
 		if (index > 1) {
-			if (fares !=null && !fares.isEmpty()) {
+			if (fares != null && !fares.isEmpty()) {
 				adapter.setFareAnchor(fares, index - 1);
 				listView.setSelectionFromTop(index - 1, 0);
 			} else {
@@ -851,7 +866,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 			}
 
 		} else {
-			if (fares !=null && !fares.isEmpty()) {
+			if (fares != null && !fares.isEmpty()) {
 				adapter.setFareAnchor(fares, 0);
 			}
 		}
@@ -955,8 +970,7 @@ public class StationToStationActivity extends ScheduleActivity implements
 		if (sts == null) {
 			View fare = view.findViewById(R.id.fare);
 			if (fare != null) {
-				FarePopupView v = new FarePopupView(fare, null, fares,
-						"Yeah");
+				FarePopupView v = new FarePopupView(fare, null, fares, "Yeah");
 				v.show();
 			}
 			return;
