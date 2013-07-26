@@ -18,29 +18,6 @@ def findDopple(dopples,a):
 	if a in dopples:
 		return dopples[a]
 	return a
-	
-def makePretty(strt):
-	lastChar = " "
-	sb = list(strt)
-	whitespaceDist = 0
-	i = 0
-	while i < len(sb):		
-		nowChar = sb[i]
-		if nowChar != " " and nowChar != ".":
-			whitespaceDist+=1
-		else:
-			if whitespaceDist==2:
-				b = sb[i-1]
-				a = sb[i-2]
-				sb[i-1] = b.upper()
-				sb[i-2] = a.upper()
-		if lastChar==" " or lastChar=="/":
-			sb[i] = nowChar.upper()
-		else:
-			sb[i] = nowChar.lower()
-		lastChar = nowChar
-		i+=1
-	return "".join(sb)
 
 def draw(G,name):
 	k = open(name,"wb")
@@ -272,16 +249,8 @@ def buildGraph(agencies) :
 	transferedges = {}
 	routeToTrips = {}
 	directions = {}
-	departureVision = {}
-	names = {}
-	for override,folder,prepend in agencies:
+	for folder,prepend in agencies:
 #		print folder,prepend
-		namesReader = csv.reader(open(override+"/names.csv"))
-		for row in namesReader:
-			 names[row[0]] = row[1]
-		departureVisionReader = csv.reader(open(override+"/departurevision.csv"))
-		for row in departureVisionReader:
-			departureVision[row[0]]  = row[1]
 		stopReader = csv.reader(open(folder+"/stops.txt","rb"))
 		headers = {}	
 		for row in stopReader:
@@ -616,7 +585,7 @@ def buildGraph(agencies) :
 	draw(G,"stations_before.dot")
 	draw(H,"route_before.dot")
 #	print "transfers"
-	for override,folder,prepend in agencies:
+	for folder,prepend in agencies:
 		transferFile = folder+"/transfers.txt"
 		if os.path.exists(transferFile) :
 			#print "transfers.txt exists"
@@ -922,23 +891,14 @@ def buildGraph(agencies) :
 	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("37953","150","38174","150",0,1))
 	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("150","37953","150","38174",0,0))
 	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("150","37953","38174","37953",0,1))
-	# hoboken 39348
-	# bloomfield 19
-	# newark broad 106
 	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("39348","19","39348","106",0,0))
 	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("39348","19","106","19",0,1))
 	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("19","39348","19","106",0,0))
-	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("19","39348","106","39348",0,1))				
+	c.execute("INSERT INTO schedule_path(source,target,a,b,level,sequence) values(?,?,?,?,?,?)",("19","39348","106","39348",0,1))			
 	conn.commit()
 	for stop in stations:
 		stop = stations[stop]
-		dv = None
-		if stop["id"] in departureVision:
-			dv = departureVision[stop["id"]]
-		name = makePretty(stop["name"])
-		if stop["id"] in names:
-			name = names[stop["id"]]
-		c.execute("INSERT INTO stop(name,stop_id,lat,lon,departure_vision) values(?,?,?,?,?)",(name	,stop["id"],stop["lat"],stop["lon"],dv))
+		c.execute("INSERT INTO stop(name,stop_id,lat,lon) values(?,?,?,?)",(stop["name"],stop["id"],stop["lat"],stop["lon"]))
 	conn.commit()
 	return (prepend,G,H,stations,walks,stopRoutes,tripToStops)
 shutil.rmtree("target",True)
@@ -997,8 +957,7 @@ c.execute("""CREATE TABLE stop (
 		stop_id VARCHAR(20) NOT NULL,
 		name varchar(150),
         lat integer,
-		lon integer,
-		departure_vision varchar(5)
+		lon integer
 );""")
 c.execute("""CREATE TABLE stop_abbreviations (
 		abbreviation VARCHAR(20) NOT NULL,
@@ -1035,7 +994,7 @@ c.execute("""CREATE TABLE IF NOT EXISTS fares (
 
 
 conn.commit()
-results = [buildGraph([("overrides/njtransit","gtfs/njtransit","")])]
+results = [buildGraph([("gtfs/njtransit","")])]
 conn2 = sqlite3.connect("fares.db")
 conn.row_factory = dict_factory
 c2 = conn2.cursor()
