@@ -293,9 +293,12 @@ def buildGraph(agencies) :
 		while len(doppleGanger)>0:
 			for k in doppleGanger:
 				dopples[k] = doppleGanger[k]
-				del doppleGanger[k]
-				del doppleGanger[dopples[k]]
-				del stations[k]
+				if k in doppleGanger:
+					del doppleGanger[k]
+				if dopples[k] in doppleGanger:
+					del doppleGanger[dopples[k]]
+				if k in stations:
+					del stations[k]
 				break
 		for k in dopples:
 			print k,dopples[k]
